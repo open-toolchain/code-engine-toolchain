@@ -1,0 +1,328 @@
+---
+defaultBaseImageVersion: latest
+properties:
+stages:
+- name: Build Stage
+  inputs:
+  - type: git
+    branch: master
+    service: ${GIT_REPO}
+  triggers:
+  - type: commit
+  properties:
+  - name: IMAGE_NAME
+    value: ${IMAGE_NAME}
+    type: text
+  jobs:
+  - name: Build
+    type: builder
+    build_type: cr
+    artifact_dir: ''
+    target:
+      region_id: ${REGISTRY_REGION_ID}
+      api_key: ${API_KEY}
+    namespace: ${REGISTRY_NAMESPACE}
+    image_name: ${IMAGE_NAME}
+    script: |-
+      #!/bin/bash
+
+      mkdir downloads
+      PATH="downloads:$PATH"
+      echo "kubectl version"
+      kubectl version --client
+
+      echo "Build environment variables:"
+      echo "REGISTRY_URL=${REGISTRY_URL}"
+      echo "REGISTRY_NAMESPACE=${REGISTRY_NAMESPACE}"
+      echo "IMAGE_NAME=${IMAGE_NAME}"
+      echo "BUILD_NUMBER=${BUILD_NUMBER}"
+      echo "ARCHIVE_DIR=${ARCHIVE_DIR}"
+      echo "APP_PORT=${APP_PORT}"
+
+      # also run 'env' command to find all available env variables
+      # or learn more about the available environment variables at:
+      # https://cloud.ibm.com/docs/services/ContinuousDelivery/pipeline_deploy_var.html#deliverypipeline_environment
+
+      # To review or change build options use:
+      # ibmcloud cr build --help
+
+      echo "Checking registry namespace: ${REGISTRY_NAMESPACE}"
+      NS=$( ibmcloud cr namespaces | grep ${REGISTRY_NAMESPACE} ||: )
+      if [ -z "${NS}" ]; then
+          echo -e "Registry namespace ${REGISTRY_NAMESPACE} not found, creating it."
+          ibmcloud cr namespace-add ${REGISTRY_NAMESPACE}
+          echo -e "Registry namespace ${REGISTRY_NAMESPACE} created."
+      else
+          echo -e "Registry namespace ${REGISTRY_NAMESPACE} found."
+      fi
+
+      echo -e "Existing images in registry"
+
+      echo "=========================================================="
+      echo -e "BUILDING CONTAINER IMAGE: ${IMAGE_NAME}:${BUILD_NUMBER}"
+      set -x
+      ibmcloud cr build -t ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_NUMBER} .
+      ibmcloud cr image-tag ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_NUMBER} \
+          ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:latest
+
+      set +x
+      ibmcloud cr image-inspect ${REGISTRY_URL}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_NUMBER}
+
+      export PIPELINE_IMAGE_URL="$REGISTRY_URL/$REGISTRY_NAMESPACE/$IMAGE_NAME:$BUILD_NUMBER"
+
+      echo "=========================================================="
+      echo "COPYING ARTIFACTS needed for deployment and testing (in particular build.properties)"
+
+      echo "Checking archive dir presence"
+      mkdir -p $ARCHIVE_DIR
+
+      # Persist env variables into a properties file (build.properties) so that all pipeline stages consuming this
+      # build as input and configured with an environment properties file valued 'build.properties'
+      # will be able to reuse the env variables in their job shell scripts.
+
+      # IMAGE information from build.properties is used in Helm Chart deployment to set the release name
+      echo "IMAGE_NAME=${IMAGE_NAME}" >> $ARCHIVE_DIR/build.properties
+      echo "BUILD_NUMBER=${BUILD_NUMBER}" >> $ARCHIVE_DIR/build.properties
+      # REGISTRY information from build.properties is used in Helm Chart deployment to generate cluster secret
+      echo "REGISTRY_URL=${REGISTRY_URL}" >> $ARCHIVE_DIR/build.properties
+      echo "REGISTRY_NAMESPACE=${REGISTRY_NAMESPACE}" >> $ARCHIVE_DIR/build.properties
+      echo "APP_PORT=${APP_PORT}" >> $ARCHIVE_DIR/build.properties
+
+      echo "File 'build.properties' created for passing env variables to subsequent pipeline jobs:"
+      cat $ARCHIVE_DIR/build.properties
+
+      echo "Copy pipeline scripts along with the build"
+      # Copy scripts (incl. deploy scripts)
+      if [ -d ./scripts/ ]; then
+        if [ ! -d $ARCHIVE_DIR/scripts/ ]; then # no need to copy if working in ./ already
+          cp -r ./scripts/ $ARCHIVE_DIR/
+        fi
+      fi
+
+      if  [[ -f post_build.sh ]]; then
+        chmod +x post_build.sh;
+        echo "executing the post_build script";
+        sh post_build.sh;
+      else
+        echo "the post_build script does not exist";
+      fi
+- name: Deploy Stage
+  inputs:
+  - type: job
+    stage: Build Stage
+    job: Build
+  triggers:
+  - type: stage
+  properties:
+  - name: buildProperties
+    value: build.properties
+    type: file
+  - name: API_KEY
+    value: ${API_KEY}
+    type: secure
+  - name: APP_NAME
+    value: ${APP_NAME}
+    type: text
+  - name: CODE_ENGINE_PROJECT
+    value: ${CODE_ENGINE_PROJECT}
+    type: text
+  - name: CODE_ENGINE_RESOURCE_GROUP
+    value: ${CODE_ENGINE_RESOURCE_GROUP}
+    type: text
+  - name: SERVICE_BINDINGS
+    value: ${SERVICE_BINDINGS}
+    type: text
+  jobs:
+  - name: Deploy
+    type: builder
+    build_type: cr
+    target:
+      api_key: ${API_KEY}
+      region_id: ${CODE_ENGINE_REGION}
+    script: |-
+      #!/bin/bash
+      ibmcloud target -g ${CODE_ENGINE_RESOURCE_GROUP}
+
+      # View build properties
+      cat build.properties
+
+      ibmcloud plugin install code-engine
+
+      echo "Check Code Engine project availability"
+      if ibmcloud ce proj get -n "${CODE_ENGINE_PROJECT}"; then
+        echo -e "Code Engine project ${CODE_ENGINE_PROJECT} found."
+      else
+        echo -e "No Code Engine project with the name ${CODE_ENGINE_PROJECT} found. Creating new project..."
+        ibmcloud ce proj create -n "${CODE_ENGINE_PROJECT}"
+        echo -e "Code Engine project ${CODE_ENGINE_PROJECT} created."
+      fi
+
+      echo "Load Kube config"
+      ibmcloud ce proj select -n "${CODE_ENGINE_PROJECT}" -k
+
+      echo -e "Configuring access to private image registry"
+      IMAGE_PULL_SECRET_NAME="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${REGISTRY_URL}"
+
+      if ! kubectl get secret ${IMAGE_PULL_SECRET_NAME}; then
+        echo -e "${IMAGE_PULL_SECRET_NAME} not found, creating it"
+        # for Container Registry, docker username is 'token' and email does not matter
+        kubectl create secret docker-registry ${IMAGE_PULL_SECRET_NAME} --docker-server=${REGISTRY_URL} --docker-password=${API_KEY} --docker-username=iamapikey --docker-email=a@b.com
+      fi
+
+      IMAGE_URL=${REGISTRY_URL}/${REGISTRY_NAMESPACE}/${IMAGE_NAME}:${BUILD_NUMBER}
+
+      if ibmcloud ce app get -n ${APP_NAME} | grep Age; then
+        echo "Code Engine app with name ${APP_NAME} found, updating it"
+        ibmcloud ce app update -n ${APP_NAME} -i ${IMAGE_URL} --rs ${IMAGE_PULL_SECRET_NAME} || true
+      else
+        echo "Code Engine app with name ${APP_NAME} not found, creating it"
+        ibmcloud ce app create -n ${APP_NAME} -i ${IMAGE_URL} --rs ${IMAGE_PULL_SECRET_NAME} || true
+      fi
+
+      # Bind services, if any
+      while read;
+      do
+        NAME=$(echo "$REPLY" | jq -j '.key')
+        PREFIX=$(echo "$REPLY" | jq -j '.value')
+
+        if ! ibmcloud ce app get -n ${APP_NAME} | grep "$NAME";
+        then
+          ibmcloud ce app bind -n ${APP_NAME} --si "$NAME" -p "$PREFIX" --wto 0;
+        fi
+      done < <(jq -c 'to_entries | .[]' <<< "${SERVICE_BINDINGS}")
+
+      echo "Checking if application is ready..."
+
+      # Get kube service name from metadata name in service file
+      export KUBE_SERVICE_NAME=${APP_NAME}
+
+      for ITERATION in {1..30}
+      do
+        sleep 3
+
+        kubectl get ksvc/${KUBE_SERVICE_NAME} --output=custom-columns=DOMAIN:.status.conditions[*].status
+        SVC_STATUS_READY=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "True")' )
+        echo SVC_STATUS_READY=$SVC_STATUS_READY
+
+        SVC_STATUS_NOT_READY=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "False")' )
+        echo SVC_STATUS_NOT_READY=$SVC_STATUS_NOT_READY
+
+        SVC_STATUS_UNKNOWN=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "Unknown")' )
+        echo SVC_STATUS_UNKNOWN=$SVC_STATUS_UNKNOWN
+
+        if [ \( -n "$SVC_STATUS_NOT_READY" \) -o \( -n "$SVC_STATUS_UNKNOWN" \) ]; then
+          echo "Application not ready, retrying"
+        elif [ -n "$SVC_STATUS_READY" ]; then
+          echo "Application is ready"
+          break
+        else
+          echo "Application status unknown, retrying"
+        fi
+      done
+
+      echo "Application service details:"
+      kubectl describe ksvc/${KUBE_SERVICE_NAME}
+      if [ \( -n "$SVC_STATUS_NOT_READY" \) -o \( -n "$SVC_STATUS_UNKNOWN" \) ]; then
+        echo "Application is not ready after waiting maximum time"
+        exit 1
+      fi
+
+      # Determine app url for polling from knative service
+      TEMP_URL=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status.url' )
+      echo "Application status URL: $TEMP_URL"
+      TEMP_URL=${TEMP_URL%\"} # remove end quote
+      TEMP_URL=${TEMP_URL#\"} # remove beginning quote
+      export APPLICATION_URL=$TEMP_URL
+      if [ -z "$APPLICATION_URL" ]; then
+        echo "Deploy failed, no URL found for knative service"
+        exit 1
+      fi
+      echo "Application is available"
+      echo "=========================================================="
+      echo -e "View the application at: $APPLICATION_URL"
+  - name: Health Check
+    type: builder
+    build_type: cr
+    target:
+      api_key: ${API_KEY}
+      region_id: ${CODE_ENGINE_REGION}
+    script: |-
+      #!/bin/bash
+      ibmcloud target -g ${CODE_ENGINE_RESOURCE_GROUP}
+      ibmcloud plugin install code-engine
+
+      echo "Load Kube config"
+      ibmcloud ce proj select --name ${CODE_ENGINE_PROJECT}
+      eval "$(ibmcloud ce project current | grep export)"
+
+      DEPLOYABLE_JSON=$(ibmcloud ce app get -n ${APP_NAME} -o json)
+      APPLICATION_URL=$(echo $DEPLOYABLE_JSON | jq -j '.status.url')
+
+      if [ $(curl -isL -o /dev/null -w "%{http_code}" ${APPLICATION_URL}) == 200 ]; then
+        echo "Successfully reached health endpoint at $APPLICATION_URL"
+        echo "====================================================================="
+      elif [ $(curl -isL -o /dev/null -w "%{http_code}" ${APPLICATION_URL}/health) == 200 ]; then
+        echo "Successfully reached health endpoint at $APPLICATION_URL/health"
+        echo "====================================================================="
+      else
+        echo "Could not reach health endpoint: $APPLICATION_URL"
+        exit 1
+      fi
+
+      # Get Code Engine app ID to use as deployable mapping ID
+      DEPLOYABLE_GUID=$(ibmcloud ce app get -n ${APP_NAME} -o json | jq -j '.metadata.uid')
+
+      # Update deployable mapping
+      TOOLCHAIN_ENVIRONMENT=$(jq -j '.region_id' _toolchain.json | awk -F: '{print $2}')
+
+      if [ "$TOOLCHAIN_ENVIRONMENT" == "ys1" ]; then
+        TOOLCHAIN_ENVIRONMENT="dev."
+      else
+        TOOLCHAIN_ENVIRONMENT=""
+      fi
+
+      TOOLCHAIN_REGION=$(jq -j '.region_id' _toolchain.json | awk -F: '{print $3}')
+      OTC_API_DM_URL="https://otc-api.${TOOLCHAIN_REGION}.devops.${TOOLCHAIN_ENVIRONMENT}cloud.ibm.com/api/v1/toolchain_deployable_mappings"
+      IAM_TOKEN=$(ibmcloud iam oauth-tokens --output JSON | jq -j '.iam_token')
+
+      # Check if an existing mapping exist with the given deployable guid in toolchain
+      EXISTING_MAPPING=$(curl -H "Authorization: ${IAM_TOKEN}" "${OTC_API_DM_URL}?deployable_guid=${DEPLOYABLE_GUID}")
+      MAPPING_GUID=$(echo ${EXISTING_MAPPING} | jq -j '.items[0].mapping_guid')
+
+      if [ "${MAPPING_GUID}" != "null" ]; then
+        # Delete mapping
+        curl -X DELETE -H "Authorization: ${IAM_TOKEN}" "${OTC_API_DM_URL}/${MAPPING_GUID}"
+      fi
+
+      RESOURCE_GROUP_ID=$(ibmcloud resource group ${CODE_ENGINE_RESOURCE_GROUP} --output JSON | jq -j '.[0].id')
+
+      CONSOLE_URL=$(ibmcloud ce app get -n ${APP_NAME} | grep "Console URL:" | egrep -o 'https?://[^ ]+')
+
+      # Create deployable mapping
+      MAPPING_JSON=$(cat <<END
+      {
+        "deployable": {
+          "deployable_guid": "${DEPLOYABLE_GUID}",
+          "type": "code_engine",
+          "container": {
+            "guid": "${RESOURCE_GROUP_ID}",
+            "type": "resource_group_id"
+          },
+          "url": [
+            "${APPLICATION_URL}",
+            "${CONSOLE_URL}"
+          ]
+        },
+        "toolchain": {
+          "toolchain_guid": "${PIPELINE_TOOLCHAIN_ID}",
+          "region_id": "$(jq -j '.region_id' _toolchain.json)"
+        },
+        "source": {
+          "type": "service_instance",
+          "source_guid": "${PIPELINE_ID}"
+        }
+      }
+      END
+      )
+
+      curl -X POST -H "Authorization: ${IAM_TOKEN}" -H "Content-Type: application/json" -d "${MAPPING_JSON}" "${OTC_API_DM_URL}"
