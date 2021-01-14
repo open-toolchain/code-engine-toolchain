@@ -185,9 +185,8 @@ stages:
         NAME=$(echo "$REPLY" | jq -j '.key')
         PREFIX=$(echo "$REPLY" | jq -j '.value')
 
-        if ! ibmcloud ce app get -n ${APP_NAME} | grep "$NAME";
-        then
-          ibmcloud ce app bind -n ${APP_NAME} --si "$NAME" -p "$PREFIX" --wto 0;
+        if ! ibmcloud ce app get -n ${APP_NAME} | grep "$NAME"; then
+          ibmcloud ce app bind -n ${APP_NAME} --si "$NAME" -p "$PREFIX"
         fi
       done < <(jq -c 'to_entries | .[]' <<< "${SERVICE_BINDINGS}")
 
