@@ -173,10 +173,10 @@ stages:
 
       if ibmcloud ce app get -n ${APP_NAME} | grep Age; then
         echo "Code Engine app with name ${APP_NAME} found, updating it"
-        ibmcloud ce app update -n ${APP_NAME} -i ${IMAGE_URL} --rs ${IMAGE_PULL_SECRET_NAME} || true
+        ibmcloud ce app update -n ${APP_NAME} -i ${IMAGE_URL} --rs ${IMAGE_PULL_SECRET_NAME} -w=false
       else
         echo "Code Engine app with name ${APP_NAME} not found, creating it"
-        ibmcloud ce app create -n ${APP_NAME} -i ${IMAGE_URL} --rs ${IMAGE_PULL_SECRET_NAME} || true
+        ibmcloud ce app create -n ${APP_NAME} -i ${IMAGE_URL} --rs ${IMAGE_PULL_SECRET_NAME} -w=false
       fi
 
       # Bind services, if any
@@ -186,7 +186,7 @@ stages:
         PREFIX=$(echo "$REPLY" | jq -j '.value')
 
         if ! ibmcloud ce app get -n ${APP_NAME} | grep "$NAME"; then
-          ibmcloud ce app bind -n ${APP_NAME} --si "$NAME" -p "$PREFIX"
+          ibmcloud ce app bind -n ${APP_NAME} --si "$NAME" -p "$PREFIX" -w=false
         fi
       done < <(jq -c 'to_entries | .[]' <<< "${SERVICE_BINDINGS}")
 
@@ -195,7 +195,7 @@ stages:
       # Get kube service name from metadata name in service file
       export KUBE_SERVICE_NAME=${APP_NAME}
 
-      for ITERATION in {1..30}
+      for ITERATION in {1..100}
       do
         sleep 3
 
