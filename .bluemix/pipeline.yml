@@ -293,7 +293,7 @@ stages:
         curl -X DELETE -H "Authorization: ${IAM_TOKEN}" "${OTC_API_DM_URL}/${MAPPING_GUID}"
       fi
 
-      RESOURCE_GROUP_ID=$(ibmcloud resource group ${CODE_ENGINE_RESOURCE_GROUP} --output JSON | jq -j '.[0].id')
+      RESOURCE_GROUP_ID=$(ibmcloud target --output JSON | jq -j '.resource_group.guid')
 
       CONSOLE_URL=$(ibmcloud ce app get -n ${APP_NAME} | grep "Console URL:" | egrep -o 'https?://[^ ]+')
 
