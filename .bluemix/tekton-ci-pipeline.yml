@@ -1,0 +1,79 @@
+inputs:
+  - type: git
+    branch: master
+    service: ${TEKTON_CATALOG_REPO}
+    path: git
+  - type: git
+    branch: master
+    service: ${TEKTON_CATALOG_REPO}
+    path: container-registry
+  - type: git
+    service: ${TEKTON_CATALOG_REPO}
+    branch: master
+    path: toolchain
+  - type: git
+    service: ${TEKTON_CATALOG_REPO}
+    branch: master
+    path: devops-insights
+  - type: git
+    branch: master
+    service: ${TEKTON_CATALOG_REPO}
+    path: linter
+  - type: git
+    branch: master
+    service: ${TEKTON_CATALOG_REPO}
+    path: tester
+  - type: git
+    branch: master
+    service: ${TEKTON_CATALOG_REPO}
+    path: utils
+  - type: git
+    branch: ${PIPELINE_REPO_BRANCH}
+    service: ${PIPELINE_REPO}
+    path: .tekton/pipelines
+  - type: git
+    branch: ${PIPELINE_REPO_BRANCH}
+    service: ${PIPELINE_REPO}
+    path: .tekton/tasks
+triggers:
+  - type: git
+    name: commit-push
+    eventListener: ${GIT_COMMIT_EVENT_LISTENER_NAME}
+    service: ${APP_REPO}
+    branch: master
+    events: { "push": true }
+  - type: manual
+    name: manual-run
+    eventListener: manual-run
+    properties: []
+properties:
+  - name: toolchain-apikey
+    type: secure
+    value: ${API_KEY}
+  - name: apikey
+    type: secure
+    value: ${API_KEY}
+  - name: registry-region
+    type: text
+    value: ${REGISTRY_REGION_ID}
+  - name: registry-namespace
+    type: text
+    value: ${REGISTRY_NAMESPACE}
+  - name: image-name
+    type: text
+    value: ${APP_NAME}
+  - name: app-name
+    type: text
+    value: ${APP_NAME}
+  - name: region
+    value: ${CODE_ENGINE_REGION}
+    type: text
+  - name: resource-group
+    value: ${CODE_ENGINE_RESOURCE_GROUP}
+    type: text
+  - name: code-engine-project
+    value: ${CODE_ENGINE_PROJECT}
+    type: text
+  - name: service-bindings
+    value: ${SERVICE_BINDINGS}
+    type: text
