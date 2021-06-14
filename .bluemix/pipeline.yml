@@ -249,10 +249,7 @@ stages:
       #!/bin/bash
       ibmcloud target -g ${CODE_ENGINE_RESOURCE_GROUP}
       ibmcloud plugin install code-engine
-
-      echo "Load Kube config"
-      ibmcloud ce proj select --name ${CODE_ENGINE_PROJECT}
-      eval "$(ibmcloud ce project current | grep export)"
+      ibmcloud ce proj select -n ${CODE_ENGINE_PROJECT}
 
       DEPLOYABLE_JSON=$(ibmcloud ce app get -n ${APP_NAME} -o json)
       APPLICATION_URL=$(echo $DEPLOYABLE_JSON | jq -j '.status.url')
