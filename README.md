@@ -35,6 +35,6 @@ The following best practices are implemented automatically upon app creation:
 ---
 ## Learn more
 
-* [Visual recognition with Code Engine](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-image_classification_code_engine)
+* [Text analysis with Code Engine](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-image_classification_code_engine)
 * [Getting started with toolchains](https://cloud.ibm.com/devops/getting-started)
 * [Getting started with IBM Cloud Continuous Delivery](https://cloud.ibm.com/docs/services/ContinuousDelivery?topic=ContinuousDelivery-getting-started&pos=2)

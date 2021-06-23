@@ -1,0 +1,36 @@
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: check-health
+spec:
+  params:
+    - name: app-url
+      description: The application URL, e.g. its landing page
+      default: ""
+    - name: pipeline-debug
+      description: Pipeline debug mode
+      default: "0"
+  steps:
+    - name: check-health
+      image: ibmcom/pipeline-base-image:2.12
+      script: |
+        #!/bin/bash
+        set -e -o pipefail
+
+        if [ $(params.pipeline-debug) == 1 ]; then
+            pwd
+            env
+            trap env EXIT
+            set -x
+        fi
+
+        if [ $(curl -isL -o /dev/null -w "%{http_code}" $(params.app-url)) == 200 ]; then
+          echo "Successfully reached health endpoint at $(params.app-url)"
+          echo "====================================================================="
+        elif [ $(curl -isL -o /dev/null -w "%{http_code}" $(param.app-url)/health) == 200 ]; then
+          echo "Successfully reached health endpoint at $(params.app-url)/health"
+          echo "====================================================================="
+        else
+          echo "Could not reach health endpoint: $(params.app-url)"
+          exit 1
+        fi

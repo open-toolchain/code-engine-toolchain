@@ -3,7 +3,7 @@ messages:
   $i18n: locales.yml
 template:
   name: "Develop a Code Engine app"
-  description: "With this toolchain, you can develop, and deploy a Code Engine application securely into a shared, multi-tenant Kubernetes cluster on IBM Cloud. By default, the toolchain uses a sample Node.js \"Hello World\" app, but you can link to your own GitHub repository instead. The toolchain is preconfigured for continuous delivery with [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index), source control, issue tracking, and online editing.\n\n You can manage your Code Engine projects and applications in the [console](https://cloud.ibm.com/knative).\n\nThe toolchain uses tools that are part of the Continuous Delivery service. If an instance of that service isn't already in the selected resource group or organization, when you click **Create**, it is automatically added with the free [Lite](/catalog/services/continuous-delivery/) plan selected.\n\nTo get started, click **Create**."
+  description: "With this toolchain, you can develop and deploy a Code Engine application securely into a shared, multi-tenant Kubernetes cluster on IBM Cloud. By default, the toolchain uses a sample Node.js \"Hello World\" app, but you can link to your own GitHub repository instead. The toolchain is preconfigured for continuous delivery with [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index), source control, issue tracking, and online editing.\n\n You can manage your Code Engine projects and applications in the [console](https://cloud.ibm.com/codeengine/overview).\n\nThe toolchain uses tools that are part of the Continuous Delivery service. If an instance of that service isn't already in the selected resource group or organization, when you click **Create**, it is automatically added with the free [Lite](/catalog/services/continuous-delivery/) plan selected.\n\nTo get started, click **Create**."
   header: '![](toolchain.svg?localize)'
   icon: knative.svg
   required:
@@ -11,71 +11,143 @@ template:
     - repo
   info:
     git url: >
-      "[" + $env.repository + "]" +
-        "(" + $env.repository + ")"
+      "[" + $env.repository + "](" + $env.repository + ")"
     git branch: >
-        $env.branch ?
-          '[' + $env.branch + ']('+ $env.repository + '/tree/' + $env.branch + ')' :
-          '[master]('+ $env.repository + '/tree/master)
+      "[" + $env.branch + "](" + $env.repository +
+          "/tree/" + $env.branch + ")"
 toolchain:
-  name: >
-    $env.toolchainName ? '{{toolchainName}}' :
-      'code-engine-toolchain-{{timestamp}}'
+  name: $env.toolchainName || 'code-engine-toolchain-{{timestamp}}'
   template:
     getting_started:
       $ref: "#/messages/template.gettingStarted"
 services:
   repo:
-    service_id: >
-      $env.source_provider ? $env.source_provider : 'hostedgit'
+    service_id: $env.source_provider || 'hostedgit'
     parameters:
       repo_name: '{{toolchain.name}}'
       repo_url: >
         $env.type === 'link' ? $env.app_repo :
-          $env.sourceZipUrl ? '{{sourceZipUrl}}' :
-            'https://github.com/open-toolchain/hello-helm'
+          $env.sourceZipUrl || 'https://github.com/open-toolchain/hello-helm'
       source_repo_url: >
         $env.type === 'fork' || $env.type === 'clone' ? $env.app_repo :
-          $env.sourceZipUrl ? '{{sourceZipUrl}}' : 'https://github.com/open-toolchain/hello-helm'
+          $env.sourceZipUrl || 'https://github.com/open-toolchain/hello-helm'
       type: $env.type || 'clone'
       has_issues: true
       enable_traceability: true
+  pipeline-repo:
+    service_id: $env.source_provider || 'hostedgit'
+    parameters:
+      repo_name: '{{toolchain.name}}-pipeline'
+      repo_url: 'https://github.com/open-toolchain/code-engine-toolchain'
+      source_repo_url: 'https://github.com/open-toolchain/code-engine-toolchain'
+      type: 'clone'
+      has_issues: false
+      enable_traceability: false
+      kind: ['pipeline']
+  tekton-catalog-repo:
+    service_id: $env.source_provider || 'hostedgit'
+    parameters:
+      repo_name: '{{toolchain.name}}-tekton-catalog'
+      repo_url: 'https://github.com/open-toolchain/tekton-catalog'
+      source_repo_url: 'https://github.com/open-toolchain/tekton-catalog'
+      type: 'clone'
+      has_issues: false
+      enable_traceability: false
+      kind: ['pipeline']
+  # pr:
+  #   service_id: 'pipeline'
+  #   parameters:
+  #     services:
+  #       - repo
+  #       - tekton-catalog-repo
+  #     name: 'pr-pipeline'
+  #     type: 'tekton'
+  #     ui-pipeline: true
+  #     configuration:
+  #       content:
+  #         $text: 'pr_pipeline.yml'
+  #       env:
+  #         PIPELINE_REPO: pipeline-repo
+  #         API_KEY: '{{form.pipeline.parameters.api-key}}'
+  #         APP_NAME: '{{form.pipeline.parameters.app-name}}'
+  #         APP_REPO: repo
+  #         ARTIFACTORY_DOCKER_CONFIG_JSON: '{{form.artifactoryComp.parameters.docker_config_json}}'
+  #         PIPELINE_REPO_BRANCH: $env.branch || 'master'
+  #         PRIVATE_WORKER: '{{services.privateWorker.parameters.name}}'
+  #         REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
+  #         REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
+  #         TEKTON_CATALOG_REPO: tekton-catalog-repo
+  #         GIT_COMMIT_EVENT_LISTENER_NAME: >
+  #           if ( $env.source_provider === 'githubconsolidated' ) {
+  #             'github-pr-listener';
+  #           } else if ( $env.source_provider === 'gitlab' ) {
+  #             'gitlab-pr-listener';
+  #           } else if ( $env.source_provider === 'bitbucketgit' ) {
+  #             'bitbucket-commit';
+  #           } else if ( $env.source_provider === 'github_integrated' ) {
+  #             'github-ent-pr-listener';
+  #           } else {
+  #             'gitlab-pr-listener';
+  #           }
+  #       execute: false
   build:
     service_id: pipeline
     parameters:
       services:
         - repo
-      name: '{{services.repo.parameters.repo_name}}'
+      name: 'ci-pipeline'
       ui-pipeline: true
+      type: 'tekton'
       configuration:
         content:
-          $text: pipeline.yml
+          $text: tekton-ci-pipeline.yml
         env:
-          GIT_REPO: repo
-          APP_NAME: '{{form.pipeline.parameters.app-name}}'
-          IMAGE_NAME: '{{form.pipeline.parameters.app-name}}'
-          REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
-          REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           API_KEY: '{{form.pipeline.parameters.api-key}}'
+          APP_NAME: '{{form.pipeline.parameters.app-name}}'
+          APP_REPO: repo
           CODE_ENGINE_PROJECT: '{{form.pipeline.parameters.code-engine-project}}'
           CODE_ENGINE_REGION: '{{form.pipeline.parameters.code-engine-region}}'
           CODE_ENGINE_RESOURCE_GROUP: '{{form.pipeline.parameters.code-engine-resource-group}}'
+          # IMAGE_NAME: '{{form.pipeline.parameters.app-name}}'
+          PIPELINE_REPO: pipeline-repo
+          PIPELINE_REPO_BRANCH: $env.branch || "master"
+          TEKTON_CATALOG_REPO: tekton-catalog-repo
+          GIT_COMMIT_EVENT_LISTENER_NAME: >
+            if ( $env.source_provider === 'githubconsolidated' ) {
+              'github-commit';
+            } else if ( $env.source_provider === 'gitlab' ) {
+              'grit-or-gitlab-commit';
+            } else if ( $env.source_provider === 'bitbucketgit' ) {
+              'bitbucket-commit';
+            } else if ( $env.source_provider === 'github_integrated' ) {
+              'github-ent-commit';
+            } else {
+              'grit-or-gitlab-commit';
+            }
+          IBMCLOUD_API: >
+            if ( $env.env_id === 'ibm:ys1:us-south' || $env.env_id === 'ibm:ys1:eu-gb' ) {
+              "https://test.cloud.ibm.com"
+            } else {
+              "https://cloud.ibm.com"
+            }
+          REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
+          REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
-        execute: true
+        execute: 'manual-run'
+  devops-insights:
+      service_id: 'draservicebroker'
   webide:
     service_id: orion
 form:
   pipeline:
     parameters:
-      app-name: >
-        $env.appName ?
-          '{{appName}}' : '{{services.repo.parameters.repo_name}}'
+      app-name: $env.appName || '{{services.repo.parameters.repo_name}}'
       registry-region: '{{registryRegion}}'
       registry-namespace: '{{registryNamespace}}'
       api-key: '{{apiKey}}'
       code-engine-project: '{{codeEngineProject}}'
       code-engine-region: '{{codeEngineRegion}}'
       code-engine-resource-group: '{{codeEngineResourceGroup}}'
-      service-bindings: '{{serviceBindings}}'
+      service-bindings: '{{serviceBindingsBase64}}'
     schema:
       $ref: form-schema.json
