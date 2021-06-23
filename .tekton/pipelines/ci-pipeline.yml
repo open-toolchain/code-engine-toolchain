@@ -4,6 +4,9 @@ metadata:
   name: code-engine-pipeline
 spec:
   params:
+    - name: ibmcloud-api
+      description: the ibmcloud api
+      default: https://cloud.ibm.com
     - name: repository
       description: the git repo containing source code. If empty, the repository url will be found from toolchain
       default: ""
@@ -63,6 +66,8 @@ spec:
       taskRef:
         name: git-clone-repo
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: continuous-delivery-context-secret
           value: "secure-properties"
         - name: ibmcloud-apikey-secret-key
@@ -96,6 +101,8 @@ spec:
       taskRef:
         name: doi-publish-buildrecord
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: toolchain-apikey-secret-key
           value: "toolchain-apikey"
         - name: app-name
@@ -160,6 +167,8 @@ spec:
       taskRef:
         name: doi-publish-testrecord
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: toolchain-apikey-secret-key
           value: "toolchain-apikey"
         - name: build-number
@@ -180,6 +189,8 @@ spec:
       taskRef:
         name: icr-execute-in-dind
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: continuous-delivery-context-secret
           value: "secure-properties"
         - name: container-registry-apikey-secret-key
@@ -227,6 +238,8 @@ spec:
       taskRef:
         name: icr-check-va-scan
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: continuous-delivery-context-secret
           value: "secure-properties"
         - name: container-registry-apikey-secret-key
@@ -273,6 +286,8 @@ spec:
         name: deploy-to-code-engine
       runAfter: [vulnerability-advisor]
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: shuttle-properties-file
           value: "build.properties"
         - name: app-name
@@ -299,6 +314,8 @@ spec:
       taskRef:
         name: publish-code-engine-deployable-mapping
       params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
         - name: app-name
           value: $(params.app-name)
         - name: region

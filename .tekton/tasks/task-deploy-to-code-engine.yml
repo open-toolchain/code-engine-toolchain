@@ -128,7 +128,6 @@ spec:
           ibmcloud ce app create -n $(params.app-name) -i $(params.image-repository):$(params.image-tags) --rs ${IMAGE_PULL_SECRET_NAME} -w=false
         fi
 
-        # TODO - add support for service bindings
         # Bind services, if any
         while read;
         do

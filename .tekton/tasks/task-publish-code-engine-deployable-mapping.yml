@@ -125,7 +125,14 @@ spec:
         END
         )
 
-        curl -X POST -H "Authorization: ${IAM_TOKEN}" -H "Content-Type: application/json" -d "${MAPPING_JSON}" "${OTC_API_DM_URL}"
+        HTTP_STATUS_CODE=$(curl -s -o /dev/null -w '%{http_code}' -X POST -H "Authorization: ${IAM_TOKEN}" -H "Content-Type: application/json" -d "${MAPPING_JSON}" "${OTC_API_DM_URL}")
+
+        if [ "$HTTP_STATUS_CODE" == "201" ] || [ "$HTTP_STATUS_CODE" == "204" ]; then
+          echo "Deployable mapping created/updated. HTTP Status code = $HTTP_STATUS_CODE"
+        else
+          echo "Fail to create deployable mapping ! HTTP Status code = $HTTP_STATUS_CODE"
+          exit 1
+        fi
       volumeMounts:
         - mountPath: /cd-config
           name: cd-config-volume

@@ -124,6 +124,12 @@ services:
             } else {
               'grit-or-gitlab-commit';
             }
+          IBMCLOUD_API: >
+            if ( $env.env_id === 'ibm:ys1:us-south' || $env.env_id === 'ibm:ys1:eu-gb' ) {
+              "https://test.cloud.ibm.com"
+            } else {
+              "https://cloud.ibm.com"
+            }
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'

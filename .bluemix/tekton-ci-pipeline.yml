@@ -47,6 +47,9 @@ triggers:
     eventListener: manual-run
     properties: []
 properties:
+  - name: ibmcloud-api
+    type: text
+    value: ${IBMCLOUD_API}
   - name: toolchain-apikey
     type: secure
     value: ${API_KEY}
@@ -66,14 +69,14 @@ properties:
     type: text
     value: ${APP_NAME}
   - name: region
+    type: text
     value: ${CODE_ENGINE_REGION}
-    type: text
   - name: resource-group
+    type: text
     value: ${CODE_ENGINE_RESOURCE_GROUP}
-    type: text
   - name: code-engine-project
+    type: text
     value: ${CODE_ENGINE_PROJECT}
-    type: text
   - name: service-bindings
-    value: ${SERVICE_BINDINGS}
     type: text
+    value: ${SERVICE_BINDINGS}
