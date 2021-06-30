@@ -24,6 +24,15 @@ spec:
     - name: service-bindings
       description: JSON object of a map of names to services instances to be bound to the application
       default: "{}"
+    - name: cpu
+      description: number of vCPU of the Code Engine application
+      default: "0.25"
+    - name: max-scale
+      description: maximum scale of the Code Engine application
+      default: "1"
+    - name: memory
+      description: total memory of the Code Engine application
+      default: "0.5G"
     - name: image-repository
       description: the repository for the built image
     - name: image-tags
@@ -125,7 +134,13 @@ spec:
           ibmcloud ce app update -n $(params.app-name) -i $(params.image-repository):$(params.image-tags) --rs ${IMAGE_PULL_SECRET_NAME} -w=false
         else
           echo "Code Engine app with name $(params.app-name) not found, creating it"
-          ibmcloud ce app create -n $(params.app-name) -i $(params.image-repository):$(params.image-tags) --rs ${IMAGE_PULL_SECRET_NAME} -w=false
+          ibmcloud ce app create -n $(params.app-name) \
+            -i $(params.image-repository):$(params.image-tags) \
+            --rs ${IMAGE_PULL_SECRET_NAME} \
+            -w=false \
+            --cpu $(params.cpu) \
+            --max $(params.max-scale) \
+            -m $(params.memory)
         fi
 
         # Bind services, if any
