@@ -30,7 +30,7 @@ inputs:
   - type: git
     branch: ${PIPELINE_REPO_BRANCH}
     service: ${PIPELINE_REPO}
-    path: .tekton/pipelines
+    path: .tekton/ci
   - type: git
     branch: ${PIPELINE_REPO_BRANCH}
     service: ${PIPELINE_REPO}

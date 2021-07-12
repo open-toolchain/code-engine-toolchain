@@ -54,42 +54,48 @@ services:
       has_issues: false
       enable_traceability: false
       kind: ['pipeline']
-  # pr:
-  #   service_id: 'pipeline'
-  #   parameters:
-  #     services:
-  #       - repo
-  #       - tekton-catalog-repo
-  #     name: 'pr-pipeline'
-  #     type: 'tekton'
-  #     ui-pipeline: true
-  #     configuration:
-  #       content:
-  #         $text: 'pr_pipeline.yml'
-  #       env:
-  #         PIPELINE_REPO: pipeline-repo
-  #         API_KEY: '{{form.pipeline.parameters.api-key}}'
-  #         APP_NAME: '{{form.pipeline.parameters.app-name}}'
-  #         APP_REPO: repo
-  #         ARTIFACTORY_DOCKER_CONFIG_JSON: '{{form.artifactoryComp.parameters.docker_config_json}}'
-  #         PIPELINE_REPO_BRANCH: $env.branch || 'master'
-  #         PRIVATE_WORKER: '{{services.privateWorker.parameters.name}}'
-  #         REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
-  #         REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
-  #         TEKTON_CATALOG_REPO: tekton-catalog-repo
-  #         GIT_COMMIT_EVENT_LISTENER_NAME: >
-  #           if ( $env.source_provider === 'githubconsolidated' ) {
-  #             'github-pr-listener';
-  #           } else if ( $env.source_provider === 'gitlab' ) {
-  #             'gitlab-pr-listener';
-  #           } else if ( $env.source_provider === 'bitbucketgit' ) {
-  #             'bitbucket-commit';
-  #           } else if ( $env.source_provider === 'github_integrated' ) {
-  #             'github-ent-pr-listener';
-  #           } else {
-  #             'gitlab-pr-listener';
-  #           }
-  #       execute: false
+  pr:
+    service_id: 'pipeline'
+    parameters:
+      services:
+        - repo
+        - tekton-catalog-repo
+      name: 'pr-pipeline'
+      type: 'tekton'
+      ui-pipeline: true
+      configuration:
+        content:
+          $text: tekton-pr-pipeline.yml
+        env:
+          PIPELINE_REPO: pipeline-repo
+          APP_REPO: repo
+          API_KEY: '{{form.pipeline.parameters.api-key}}'
+          APP_NAME: "{{form.pipeline.parameters.app-name}}"
+          ARTIFACTORY_DOCKER_CONFIG_JSON: '{{form.artifactoryComp.parameters.docker_config_json}}'
+          PRIVATE_WORKER: '{{services.privateWorker.parameters.name}}'
+          PIPELINE_REPO_BRANCH: $env.branch || "master"
+          TEKTON_CATALOG_REPO: tekton-catalog-repo
+          REGISTRY_REGION_ID: "{{form.pipeline.parameters.registry-region}}"
+          REGISTRY_NAMESPACE: "{{form.pipeline.parameters.registry-namespace}}"
+          GIT_COMMIT_EVENT_LISTENER_NAME: >
+            if ( $env.source_provider === 'githubconsolidated' ) {
+              'github-pr-listener';
+            } else if ( $env.source_provider === 'gitlab' ) {
+              'gitlab-pr-listener';
+            } else if ( $env.source_provider === 'bitbucketgit' ) {
+              'bitbucket-commit';
+            } else if ( $env.source_provider === 'github_integrated' ) {
+              'github-ent-pr-listener';
+            } else {
+              'gitlab-pr-listener';
+            }
+          IBMCLOUD_API: >
+            if ( $env.env_id === 'ibm:ys1:us-south' || $env.env_id === 'ibm:ys1:eu-gb' ) {
+              "https://test.cloud.ibm.com"
+            } else {
+              "https://cloud.ibm.com"
+            }
+        execute: false
   build:
     service_id: pipeline
     parameters:
@@ -108,7 +114,6 @@ services:
           CODE_ENGINE_PROJECT: '{{form.pipeline.parameters.code-engine-project}}'
           CODE_ENGINE_REGION: '{{form.pipeline.parameters.code-engine-region}}'
           CODE_ENGINE_RESOURCE_GROUP: '{{form.pipeline.parameters.code-engine-resource-group}}'
-          # IMAGE_NAME: '{{form.pipeline.parameters.app-name}}'
           PIPELINE_REPO: pipeline-repo
           PIPELINE_REPO_BRANCH: $env.branch || "master"
           TEKTON_CATALOG_REPO: tekton-catalog-repo
