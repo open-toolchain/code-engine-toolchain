@@ -18,7 +18,7 @@ You can continuously deliver a secure Code Engine app to a Code Engine project. 
 * Optional: Create a [project](https://cloud.ibm.com/docs/codeengine?topic=codeengine-manage-project). If you do not create one, the toolchain will create one for you.
 
 1. To get started, click **Create toolchain**:
-<br> [![Create toolchain](https://cloud.ibm.com/devops/graphics/create_toolchain_button.png)](https://cloud.ibm.com/devops/setup/deploy?repository=https%3A%2F%2Fgithub.com%2Fyouming-lin%2Fcode-engine-toolchain&env_id=ibm:yp:us-south)
+<br> [![Create toolchain](https://cloud.ibm.com/devops/graphics/create_toolchain_button.png)](https://cloud.ibm.com/devops/setup/deploy?repository=https%3A%2F%2Fgithub.com%2Fopen-toolchain%2Fcode-engine-toolchain)
 2. You can use the default settings, or make changes as needed.
 3. Under **Tool Integrations**, select **Delivery Pipeline**.
 4. Enter your **IBM Cloud API key**, or generate a new API key by clicking **Create**.
