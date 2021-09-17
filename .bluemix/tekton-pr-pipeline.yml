@@ -1,22 +1,22 @@
 inputs:
   - type: git
-    branch: master
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
     service: ${TEKTON_CATALOG_REPO}
     path: git
   - type: git
     service: ${TEKTON_CATALOG_REPO}
-    branch: master
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
     path: toolchain
   - type: git
-    branch: master
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
     service: ${TEKTON_CATALOG_REPO}
     path: linter
   - type: git
-    branch: master
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
     service: ${TEKTON_CATALOG_REPO}
     path: tester
   - type: git
-    branch: master
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
     service: ${TEKTON_CATALOG_REPO}
     path: utils
   - type: git
@@ -27,7 +27,7 @@ triggers:
   - type: git
     name: Git PR Trigger
     service: ${APP_REPO}
-    branch: master
+    branch: ${APP_REPO_BRANCH}
     events:
       pull_request: true
     eventListener: ${GIT_COMMIT_EVENT_LISTENER_NAME}

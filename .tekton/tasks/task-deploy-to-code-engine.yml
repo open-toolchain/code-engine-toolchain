@@ -33,6 +33,9 @@ spec:
     - name: memory
       description: total memory of the Code Engine application
       default: "0.5G"
+    - name: port
+      description: port where the application is listening
+      default: "http1:8080"
     - name: image-repository
       description: the repository for the built image
     - name: image-tags
@@ -131,7 +134,14 @@ spec:
 
         if ibmcloud ce app get -n $(params.app-name) | grep Age; then
           echo "Code Engine app with name ${APP_NAME} found, updating it"
-          ibmcloud ce app update -n $(params.app-name) -i $(params.image-repository):$(params.image-tags) --rs ${IMAGE_PULL_SECRET_NAME} -w=false
+          ibmcloud ce app update -n $(params.app-name) \
+            -i $(params.image-repository):$(params.image-tags) \
+            --rs ${IMAGE_PULL_SECRET_NAME} \
+            -w=false \
+            --cpu $(params.cpu) \
+            --max $(params.max-scale) \
+            -m $(params.memory) \
+            -p $(params.port)
         else
           echo "Code Engine app with name $(params.app-name) not found, creating it"
           ibmcloud ce app create -n $(params.app-name) \
@@ -140,7 +150,8 @@ spec:
             -w=false \
             --cpu $(params.cpu) \
             --max $(params.max-scale) \
-            -m $(params.memory)
+            -m $(params.memory) \
+            -p $(params.port)
         fi
 
         # Bind services, if any

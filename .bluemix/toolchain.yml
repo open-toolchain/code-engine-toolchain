@@ -15,6 +15,7 @@ template:
     git branch: >
       "[" + $env.branch + "](" + $env.repository +
           "/tree/" + $env.branch + ")"
+    hosted_region: "" # this is set automatically by DevOps
 toolchain:
   name: $env.toolchainName || 'code-engine-toolchain-{{timestamp}}'
   template:
@@ -22,34 +23,59 @@ toolchain:
       $ref: "#/messages/template.gettingStarted"
 services:
   repo:
-    service_id: $env.source_provider || 'hostedgit'
+    # must do logic this way instead of
+    # `service_id: $env.source_provider || 'hostedgit'`
+    # or source_provider doesn't work
+    service_id: >
+      $env.source_provider ? $env.source_provider : 'hostedgit'
     parameters:
       repo_name: '{{toolchain.name}}'
       repo_url: >
-        $env.type === 'link' ? $env.app_repo :
-          $env.sourceZipUrl || 'https://github.com/open-toolchain/hello-helm'
+        if ($env.type === 'link') {
+          $env.app_repo
+        } else if ($env.sourceZipUrl) {
+          $env.sourceZipUrl
+        } else if ($env.template.info.hosted_region === "") {
+          'https://github.com/open-toolchain/hello-helm'
+        } else {
+          'https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/hello-helm'
+        }
       source_repo_url: >
-        $env.type === 'fork' || $env.type === 'clone' ? $env.app_repo :
-          $env.sourceZipUrl || 'https://github.com/open-toolchain/hello-helm'
+        if ($env.type === 'fork' || $env.type === 'clone') {
+          $env.app_repo
+        } else if ($env.sourceZipUrl) {
+          $env.sourceZipUrl
+        } else if ($env.template.info.hosted_region === "") {
+          'https://github.com/open-toolchain/hello-helm'
+        } else {
+          'https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/hello-helm'
+        }
       type: $env.type || 'clone'
       has_issues: true
       enable_traceability: true
   pipeline-repo:
-    service_id: $env.source_provider || 'hostedgit'
+    service_id: >
+      $env.source_provider ? $env.source_provider : 'hostedgit'
     parameters:
       repo_name: '{{toolchain.name}}-pipeline'
-      repo_url: 'https://github.com/open-toolchain/code-engine-toolchain'
-      source_repo_url: 'https://github.com/open-toolchain/code-engine-toolchain'
+      repo_url: $env.repository
+      source_repo_url: $env.services.pipeline-repo.parameters.repo_url
       type: 'clone'
       has_issues: false
       enable_traceability: false
       kind: ['pipeline']
   tekton-catalog-repo:
-    service_id: $env.source_provider || 'hostedgit'
+    service_id: >
+      $env.source_provider ? $env.source_provider : 'hostedgit'
     parameters:
       repo_name: '{{toolchain.name}}-tekton-catalog'
-      repo_url: 'https://github.com/open-toolchain/tekton-catalog'
-      source_repo_url: 'https://github.com/open-toolchain/tekton-catalog'
+      repo_url:  >
+        if ($env.template.info.hosted_region === "") {
+          "https://github.com/open-toolchain/tekton-catalog"
+        } else {
+          "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
+        }
+      source_repo_url: $env.services.tekton-catalog-repo.parameters.repo_url
       type: 'clone'
       has_issues: false
       enable_traceability: false
@@ -67,16 +93,16 @@ services:
         content:
           $text: tekton-pr-pipeline.yml
         env:
-          PIPELINE_REPO: pipeline-repo
-          APP_REPO: repo
           API_KEY: '{{form.pipeline.parameters.api-key}}'
           APP_NAME: "{{form.pipeline.parameters.app-name}}"
+          APP_REPO: repo
+          APP_REPO_BRANCH: >
+            if ($env.template.info.hosted_region === "" || $env.sourceZipUrl) {
+              'master'
+            } else {
+              'main'
+            }
           ARTIFACTORY_DOCKER_CONFIG_JSON: '{{form.artifactoryComp.parameters.docker_config_json}}'
-          PRIVATE_WORKER: '{{services.privateWorker.parameters.name}}'
-          PIPELINE_REPO_BRANCH: $env.branch || "master"
-          TEKTON_CATALOG_REPO: tekton-catalog-repo
-          REGISTRY_REGION_ID: "{{form.pipeline.parameters.registry-region}}"
-          REGISTRY_NAMESPACE: "{{form.pipeline.parameters.registry-namespace}}"
           GIT_COMMIT_EVENT_LISTENER_NAME: >
             if ( $env.source_provider === 'githubconsolidated' ) {
               'github-pr-listener';
@@ -95,6 +121,25 @@ services:
             } else {
               "https://cloud.ibm.com"
             }
+          PIPELINE_REPO: pipeline-repo
+          PIPELINE_REPO_BRANCH: >
+            if ($env.branch) {
+              $env.branch
+            } else if ($env.template.info.hosted_region === "") {
+              'master'
+            } else {
+              'main'
+            }
+          PRIVATE_WORKER: '{{services.privateWorker.parameters.name}}'
+          REGISTRY_REGION_ID: "{{form.pipeline.parameters.registry-region}}"
+          REGISTRY_NAMESPACE: "{{form.pipeline.parameters.registry-namespace}}"
+          TEKTON_CATALOG_REPO: tekton-catalog-repo
+          TEKTON_CATALOG_REPO_BRANCH: >
+            if ($env.template.info.hosted_region === "") {
+              'master'
+            } else {
+              'main'
+            }
         execute: false
   build:
     service_id: pipeline
@@ -111,12 +156,15 @@ services:
           API_KEY: '{{form.pipeline.parameters.api-key}}'
           APP_NAME: '{{form.pipeline.parameters.app-name}}'
           APP_REPO: repo
+          APP_REPO_BRANCH: >
+            if ($env.template.info.hosted_region === "" || $env.sourceZipUrl) {
+              'master'
+            } else {
+              'main'
+            }
           CODE_ENGINE_PROJECT: '{{form.pipeline.parameters.code-engine-project}}'
           CODE_ENGINE_REGION: '{{form.pipeline.parameters.code-engine-region}}'
           CODE_ENGINE_RESOURCE_GROUP: '{{form.pipeline.parameters.code-engine-resource-group}}'
-          PIPELINE_REPO: pipeline-repo
-          PIPELINE_REPO_BRANCH: $env.branch || "master"
-          TEKTON_CATALOG_REPO: tekton-catalog-repo
           GIT_COMMIT_EVENT_LISTENER_NAME: >
             if ( $env.source_provider === 'githubconsolidated' ) {
               'github-commit';
@@ -135,9 +183,25 @@ services:
             } else {
               "https://cloud.ibm.com"
             }
+          PIPELINE_REPO: pipeline-repo
+          PIPELINE_REPO_BRANCH: >
+            if ($env.branch) {
+              $env.branch
+            } else if ($env.template.info.hosted_region === "") {
+              'master'
+            } else {
+              'main'
+            }
           REGISTRY_NAMESPACE: '{{form.pipeline.parameters.registry-namespace}}'
           REGISTRY_REGION_ID: '{{form.pipeline.parameters.registry-region}}'
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
+          TEKTON_CATALOG_REPO: tekton-catalog-repo
+          TEKTON_CATALOG_REPO_BRANCH: >
+            if ($env.template.info.hosted_region === "") {
+              'master'
+            } else {
+              'main'
+            }
         execute: 'manual-run'
   devops-insights:
       service_id: 'draservicebroker'

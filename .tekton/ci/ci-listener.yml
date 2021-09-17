@@ -49,7 +49,12 @@ spec:
     - name: service-bindings
       description: service binding JSON for the application deployment
       default: "{}"
+    - name: port
+      description: port where the application is listening
+      default: "http1:8080"
     - name: pipeline-debug
+      description: Pipeline debug mode. Value can be 0 or 1. Default to 0
+      default: "0"
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -106,6 +111,8 @@ spec:
             value: $(params.code-engine-project)
           - name: service-bindings
             value: $(params.service-bindings)
+          - name: port
+            value: $(params.port)
           - name: pipeline-debug
             value: $(params.pipeline-debug)
         workspaces:
