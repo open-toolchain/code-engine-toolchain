@@ -1,3 +1,5 @@
+⚠️ ⚠️ _This branch is no longer supported due to IBM Cloud Container Registry service [deprecating the image build feature](https://www.ibm.com/cloud/blog/announcements/ibm-cloud-container-registry-deprecating-container-builds)._ ⚠️ ⚠️
+
 # ![Icon](./.bluemix/clg-experimental-banner.svg) Developing a Code Engine app
 
 ## How Code Engine deployment works
