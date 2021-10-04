@@ -28,9 +28,12 @@ spec:
     - name: pipeline-debug
       description: Pipeline debug mode
       default: "0"
+    - name: task-image
+      description: image used to execute this task
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-image:2.15"
   steps:
     - name: publish-deployable-mapping
-      image: ibmcom/pipeline-base-image:2.12
+      image: $(params.task-image)
       env:
         - name: PIPELINE_ID
           valueFrom:

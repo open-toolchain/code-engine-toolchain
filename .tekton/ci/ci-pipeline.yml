@@ -339,3 +339,5 @@ spec:
       params:
         - name: app-url
           value: $(tasks.deploy-application.results.app-url)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)

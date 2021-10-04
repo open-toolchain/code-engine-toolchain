@@ -46,6 +46,9 @@ spec:
     - name: pipeline-debug
       description: Pipeline debug mode. Value can be 0 or 1. Default to 0
       default: "0"
+    - name: task-image
+      description: image used to execute this task
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-image:2.15"
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)
@@ -55,7 +58,7 @@ spec:
       mountPath: /artifacts
   steps:
     - name: execute
-      image: ibmcom/pipeline-base-image:2.12
+      image: $(params.task-image)
       workingDir: /artifacts
       env:
         - name: BUILD_NUMBER
