@@ -4,8 +4,10 @@ metadata:
   name: check-health
 spec:
   params:
-    - name: app-url
-      description: The application URL, e.g. its landing page
+    - name: app-hostname
+      description: application protocol + hostname, e.g. https://example.com
+    - name: health-endpoint
+      description: application health endpoint, e.g. /health
       default: ""
     - name: pipeline-debug
       description: Pipeline debug mode
@@ -27,13 +29,13 @@ spec:
             set -x
         fi
 
-        if [ $(curl -isL -o /dev/null -w "%{http_code}" $(params.app-url)) == 200 ]; then
-          echo "Successfully reached health endpoint at $(params.app-url)"
+        if [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)$(params.health-endpoint)") == 200 ]; then
+          echo "Successfully reached health endpoint at $(params.app-hostname)$(params.health-endpoint)"
           echo "====================================================================="
-        elif [ $(curl -isL -o /dev/null -w "%{http_code}" $(param.app-url)/health) == 200 ]; then
-          echo "Successfully reached health endpoint at $(params.app-url)/health"
+        elif [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)") == 200 ]; then
+          echo "Successfully reached application at $(params.app-hostname)"
           echo "====================================================================="
         else
-          echo "Could not reach health endpoint: $(params.app-url)"
+          echo "Could not reach health endpoint at $(params.app-hostname) or at $(params.app-hostname)$(params.health-endpoint)"
           exit 1
         fi

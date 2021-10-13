@@ -83,6 +83,9 @@ properties:
   - name: port
     type: text
     value: "http1:8080"
+  - name: health-endpoint
+    type: text
+    value: "/health"
   - name: pipeline-debug
     type: text
     value: "0"

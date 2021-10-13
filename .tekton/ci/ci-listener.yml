@@ -52,6 +52,9 @@ spec:
     - name: port
       description: port where the application is listening
       default: "http1:8080"
+    - name: health-endpoint
+      description: application health endpoint, e.g. /health
+      default: ""
     - name: pipeline-debug
       description: Pipeline debug mode. Value can be 0 or 1. Default to 0
       default: "0"
@@ -113,6 +116,8 @@ spec:
             value: $(params.service-bindings)
           - name: port
             value: $(params.port)
+          - name: health-endpoint
+            value: $(params.health-endpoint)
           - name: pipeline-debug
             value: $(params.pipeline-debug)
         workspaces:
