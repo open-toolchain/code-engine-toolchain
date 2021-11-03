@@ -103,7 +103,7 @@ spec:
 
         ibmcloud login -a $(params.ibmcloud-api) -r $IBM_CLOUD_REGION --apikey $PIPELINE_BLUEMIX_API_KEY
 
-        ibmcloud target -g $(params.resource-group)
+        ibmcloud target -g "$(params.resource-group)"
 
         # View shuttle properties
         cat $(params.shuttle-properties-file)
