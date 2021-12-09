@@ -13,9 +13,8 @@ You can continuously deliver a secure Code Engine app to a Code Engine project. 
 * Deployment to IBM Code Engine
 
 ## Prerequisites
-* Note that IBM Code Engine is currently in Beta and has [limitations](https://cloud.ibm.com/docs/codeengine?topic=codeengine-getting-started).
-* Install the [IBM Cloud CLI and the IBM Cloud Code Engine plug-in](https://cloud.ibm.com/docs/codeengine?topic=codeengine-kn-install-cli).
-* Optional: Create a [project](https://cloud.ibm.com/docs/codeengine?topic=codeengine-manage-project). If you do not create one, the toolchain will create one for you.
+* Optional: Install the [IBM Cloud CLI and the IBM Cloud Code Engine plug-in](https://cloud.ibm.com/docs/codeengine?topic=codeengine-kn-install-cli) for managing Code Engine projects and applications on your local system.
+* Optional: Create a [project](https://cloud.ibm.com/docs/codeengine?topic=codeengine-manage-project). If you do not create one, the toolchain will create one for you with the project name you enter.
 
 1. To get started, click **Create toolchain**:
 <br> [![Create toolchain](https://cloud.ibm.com/devops/graphics/create_toolchain_button.png)](https://cloud.ibm.com/devops/setup/deploy?repository=https%3A%2F%2Fgithub.com%2Fopen-toolchain%2Fcode-engine-toolchain)
@@ -23,8 +22,7 @@ You can continuously deliver a secure Code Engine app to a Code Engine project. 
 3. Under **Tool Integrations**, select **Delivery Pipeline**.
 4. Enter your **IBM Cloud API key**, or generate a new API key by clicking **Create**.
 5. Confirm the container registry region, container registry namespace, Code Engine region, Code Engine resource group, and Code Engine project name.
-6. If your application integrates with IBM Cloud services, enter a JSON array containing the service instance names.
-7. Click **Create**.
+6. Click **Create**.
 
 The following best practices are implemented automatically upon app creation:
 - Sanity check the Dockerfile before image creation.

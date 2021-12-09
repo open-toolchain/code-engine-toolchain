@@ -1,11 +1,13 @@
-version: '2'
+version: '3'
 messages:
   $i18n: locales.yml
 template:
-  name: "Develop a Code Engine app"
-  description: "With this toolchain, you can develop and deploy a Code Engine application securely into a shared, multi-tenant Kubernetes cluster on IBM Cloud. By default, the toolchain uses a sample Node.js \"Hello World\" app, but you can link to your own GitHub repository instead. The toolchain is preconfigured for continuous delivery with [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index), source control, issue tracking, and online editing.\n\n You can manage your Code Engine projects and applications in the [console](https://cloud.ibm.com/codeengine/overview).\n\nThe toolchain uses tools that are part of the Continuous Delivery service. If an instance of that service isn't already in the selected resource group or organization, when you click **Create**, it is automatically added with the free [Lite](/catalog/services/continuous-delivery/) plan selected.\n\nTo get started, click **Create**."
+  name:
+    $ref: "#/messages/template.name"
+  description:
+    $ref: "#/messages/template.description"
   header: '![](toolchain.svg?localize)'
-  icon: knative.svg
+  icon: code-engine.svg
   required:
     - build
     - repo
@@ -16,12 +18,25 @@ template:
       "[" + $env.branch + "](" + $env.repository +
           "/tree/" + $env.branch + ")"
     hosted_region: "" # this is set automatically by DevOps
+  wizard:
+    $ref: wizard.yml
 toolchain:
   name: $env.toolchainName || 'code-engine-toolchain-{{timestamp}}'
   template:
     getting_started:
       $ref: "#/messages/template.gettingStarted"
 services:
+  sm-vault:
+    service_id: secretsmanager
+    parameters:
+      name: >
+        $env.smName ? '{{smName}}' : 'sm-compliance-secrets'
+      region: >
+        $env.smRegion ? '{{smRegion}}' : ''
+      resource-group: >
+        $env.smResourceGroup ? '{{smResourceGroup}}' : ''
+      instance-name: >
+        $env.smInstanceName ? '{{smInstanceName}}' : ''
   repo:
     # must do logic this way instead of
     # `service_id: $env.source_provider || 'hostedgit'`
@@ -53,6 +68,8 @@ services:
       type: $env.type || 'clone'
       has_issues: true
       enable_traceability: true
+      source_provider: >
+        $env.source_provider ? $env.source_provider : 'hostedgit'
   pipeline-repo:
     service_id: >
       $env.source_provider ? $env.source_provider : 'hostedgit'

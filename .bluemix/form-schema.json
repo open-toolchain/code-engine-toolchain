@@ -59,12 +59,16 @@
       "pattern": "^[a-z0-9_]"
     },
     "code-engine-project": {
-      "description": "Code Engine project",
+      "description": {
+        "$ref": "#/messages/deploy.codeEngineProjectDescription"
+      },
       "type": "string",
       "pattern": "^[a-z0-9_]"
     },
     "code-engine-region": {
-      "description": "Code Engine region",
+      "description": {
+        "$ref": "#/messages/deploy.codeEngineRegionDescription"
+      },
       "type": "string",
       "disabled": false,
       "validator": {
@@ -75,7 +79,9 @@
       }
     },
     "code-engine-resource-group": {
-      "description": "Code Engine resource group",
+      "description": {
+        "$ref": "#/messages/deploy.codeEngineResourceGroupDescription"
+      },
       "type": "string",
       "validator": {
         "v-type": "resource-group",
@@ -174,7 +180,9 @@
       "items": [
         {
           "type": "label",
-          "title": "Code Engine Region"
+          "title": {
+            "$ref": "#/messages/deploy.codeEngineRegionTitle"
+          }
         },
         {
           "type": "label",
@@ -182,7 +190,9 @@
         },
         {
           "type": "label",
-          "title": "Code Engine Resource Group"
+          "title": {
+            "$ref": "#/messages/deploy.codeEngineResourceGroupTitle"
+          }
         },
         {
           "type": "label",
@@ -190,7 +200,9 @@
         },
         {
           "type": "label",
-          "title": "Code Engine Project"
+          "title": {
+            "$ref": "#/messages/deploy.codeEngineProjectTitle"
+          }
         },
         {
           "type": "select",
