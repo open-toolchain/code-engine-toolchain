@@ -48,7 +48,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-image:2.15"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)

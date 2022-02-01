@@ -30,7 +30,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-image:2.15"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
   steps:
     - name: publish-deployable-mapping
       image: $(params.task-image)
