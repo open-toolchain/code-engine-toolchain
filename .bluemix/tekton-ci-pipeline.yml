@@ -80,6 +80,18 @@ properties:
   - name: service-bindings
     type: text
     value: ${SERVICE_BINDINGS}
+  - name: cpu
+    type: text
+    value: "0.25"
+  - name: max-scale
+    type: text
+    value: "1"
+  - name: memory
+    type: text
+    value: "0.5G"
+  - name: min-scale
+    type: text
+    value: "0"
   - name: port
     type: text
     value: "http1:8080"

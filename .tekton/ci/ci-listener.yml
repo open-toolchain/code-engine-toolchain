@@ -46,18 +46,34 @@ spec:
       description: resource group for the application deployment
     - name: code-engine-project
       description: Code Engine project for the application deployment
-    - name: service-bindings
-      description: service binding JSON for the application deployment
-      default: "{}"
-    - name: port
-      description: port where the application is listening
-      default: "http1:8080"
-    - name: health-endpoint
-      description: application health endpoint, e.g. /health
-      default: ""
     - name: pipeline-debug
       description: Pipeline debug mode. Value can be 0 or 1. Default to 0
       default: "0"
+
+      #For deploy task
+    - name: cpu
+      description: number of vCPU of the Code Engine application
+      default: "0.25"
+    - name: max-scale
+      description: maximum scale of the Code Engine application
+      default: "1"
+    - name: memory
+      description: total memory of the Code Engine application
+      default: "0.5G"
+    - name: min-scale
+      description: minimum scale of the Code Engine application
+      default: "0"
+    - name: port
+      description: port where the application is listening
+      default: "http1:8080"
+    - name: service-bindings
+      description: service binding JSON for the application deployment
+      default: "{}"
+
+      #For health task
+    - name: health-endpoint
+      description: application health endpoint, e.g. /health
+      default: ""
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -114,6 +130,14 @@ spec:
             value: $(params.code-engine-project)
           - name: service-bindings
             value: $(params.service-bindings)
+          - name: cpu
+            value: $(params.cpu)
+          - name: max-scale
+            value: $(params.max-scale)
+          - name: memory
+            value: $(params.memory)
+          - name: min-scale
+            value: $(params.min-scale)
           - name: port
             value: $(params.port)
           - name: health-endpoint

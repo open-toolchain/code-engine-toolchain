@@ -33,6 +33,9 @@ spec:
     - name: memory
       description: total memory of the Code Engine application
       default: "0.5G"
+    - name: min-scale
+      description: minimum scale of the Code Engine application
+      default: "0"
     - name: port
       description: port where the application is listening
       default: "http1:8080"
@@ -143,6 +146,7 @@ spec:
             -w=false \
             --cpu $(params.cpu) \
             --max $(params.max-scale) \
+            --min $(params.min-scale) \
             -m $(params.memory) \
             -p $(params.port)
         else
@@ -153,6 +157,7 @@ spec:
             -w=false \
             --cpu $(params.cpu) \
             --max $(params.max-scale) \
+            --min $(params.min-scale) \
             -m $(params.memory) \
             -p $(params.port)
         fi
