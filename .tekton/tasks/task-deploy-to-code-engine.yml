@@ -115,6 +115,7 @@ spec:
         MYREGIONS=($(echo "$(params.region)" | tr ',' '\n'))
         echo -e "Targeting Code Engine projects ${MYPROJECTS[@]} in regions ${MYREGIONS[@]}"
 
+        RESULT=""
         for i in "${!MYPROJECTS[@]}"
         do
             echo "Target region ${MYREGIONS[i]}"
@@ -218,13 +219,12 @@ spec:
             # Record task results
             if [[ "$i" -eq 0 ]];
             then
-                echo -e "At one"
-                echo -n "$APPLICATION_URL" > $(results.app-url.path)
+                RESULT=$APPLICATION_URL
             else
-                echo -e "At two or more"
-                echo -n "$(results.app-url.path),$APPLICATION_URL" > $(results.app-url.path)
+                RESULT=$RESULT,$APPLICATION_URL
             fi
         done
+        echo -n "$RESULT" > $(results.app-url.path)
         echo -n "Task result: $(results.app-url.path)"
       volumeMounts:
         - mountPath: /cd-config
