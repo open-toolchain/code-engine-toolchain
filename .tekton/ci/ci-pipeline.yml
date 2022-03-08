@@ -318,23 +318,23 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    - name: publish-deployable-task
-      runAfter: [deploy-application]
-      taskRef:
-        name: publish-code-engine-deployable-mapping
-      params:
-        - name: ibmcloud-api
-          value: $(params.ibmcloud-api)
-        - name: app-name
-          value: $(params.app-name)
-        - name: region
-          value: $(params.region)
-        - name: resource-group
-          value: $(params.resource-group)
-        - name: code-engine-project
-          value: $(params.code-engine-project)
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
+    # - name: publish-deployable-task
+    #   runAfter: [deploy-application]
+    #   taskRef:
+    #     name: publish-code-engine-deployable-mapping
+    #   params:
+    #     - name: ibmcloud-api
+    #       value: $(params.ibmcloud-api)
+    #     - name: app-name
+    #       value: $(params.app-name)
+    #     - name: region
+    #       value: $(params.region)
+    #     - name: resource-group
+    #       value: $(params.resource-group)
+    #     - name: code-engine-project
+    #       value: $(params.code-engine-project)
+    #     - name: pipeline-debug
+    #       value: $(params.pipeline-debug)
     - name: check-application-health
       taskRef:
         name: check-health
