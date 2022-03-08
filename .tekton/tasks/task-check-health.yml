@@ -29,13 +29,17 @@ spec:
             set -x
         fi
 
-        if [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)$(params.health-endpoint)") == 200 ]; then
-          echo "Successfully reached health endpoint at $(params.app-hostname)$(params.health-endpoint)"
-          echo "====================================================================="
-        elif [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)") == 200 ]; then
-          echo "Successfully reached application at $(params.app-hostname)"
-          echo "====================================================================="
-        else
-          echo "Could not reach health endpoint at $(params.app-hostname) or at $(params.app-hostname)$(params.health-endpoint)"
-          exit 1
-        fi
+        MYURLS=($(echo "$(params.app-hostname)" | tr ',' '\n'))
+        for i in "${!MYURLS[@]}"
+        do
+          if [ $(curl -isL -o /dev/null -w "%{http_code}" "${MYURLS[i]}$(params.health-endpoint)") == 200 ]; then
+            echo "Successfully reached health endpoint at ${MYURLS[i]}$(params.health-endpoint)"
+            echo "====================================================================="
+          elif [ $(curl -isL -o /dev/null -w "%{http_code}" "${MYURLS[i]}") == 200 ]; then
+            echo "Successfully reached application at ${MYURLS[i]}"
+            echo "====================================================================="
+          else
+            echo "Could not reach health endpoint at ${MYURLS[i]} or at ${MYURLS[i]}$(params.health-endpoint)"
+            exit 1
+          fi
+        done
