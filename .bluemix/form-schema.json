@@ -63,7 +63,12 @@
         "$ref": "#/messages/deploy.codeEngineProjectDescription"
       },
       "type": "string",
-      "pattern": "^[a-z0-9_]"
+      "pattern": "^[a-z0-9_]",
+      "v-type": "ce-project-list",
+        "params": [
+          "api-key"
+        ]
+      }
     },
     "code-engine-region": {
       "description": {
