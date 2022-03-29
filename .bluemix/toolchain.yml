@@ -88,7 +88,7 @@ services:
       repo_name: '{{toolchain.name}}-tekton-catalog'
       repo_url:  >
         if ($env.template.info.hosted_region === "") {
-          "https://github.com/open-toolchain/tekton-catalog"
+          "https://github.com/kinueng/tekton-catalog"
         } else {
           "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
         }
