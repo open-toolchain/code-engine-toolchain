@@ -230,7 +230,7 @@ spec:
               IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
             fi
             if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
-            IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
+            IMAGE_TAG=latest
             echo "$IMAGE_TAG"
             # Default docker build / inspect / push command
             docker build --tag "$IMAGE_URL:$IMAGE_TAG" --file $PATH_TO_DOCKERFILE/$DOCKERFILE $PATH_TO_CONTEXT
