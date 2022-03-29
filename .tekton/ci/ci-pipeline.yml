@@ -233,9 +233,9 @@ spec:
             IMAGE_TAG=latest
             echo "$IMAGE_TAG"
             # Default docker build / inspect / push command
-            docker build --tag "$IMAGE_URL:$IMAGE_TAG" --file $PATH_TO_DOCKERFILE/$DOCKERFILE $PATH_TO_CONTEXT
-            docker inspect ${IMAGE_URL}:${IMAGE_TAG}
-            docker push ${IMAGE_URL}:${IMAGE_TAG}
+            docker build --tag "$IMAGE_URL:latest" --file $PATH_TO_DOCKERFILE/$DOCKERFILE $PATH_TO_CONTEXT
+            docker inspect ${IMAGE_URL}:latest
+            docker push ${IMAGE_URL}:latest
         - name: pipeline-debug
           value: $(params.pipeline-debug)
       workspaces:
