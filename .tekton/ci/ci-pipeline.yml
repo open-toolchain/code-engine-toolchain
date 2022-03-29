@@ -335,14 +335,14 @@ spec:
     #       value: $(params.code-engine-project)
     #     - name: pipeline-debug
     #       value: $(params.pipeline-debug)
-    - name: check-application-health
-      taskRef:
-        name: check-health
-      runAfter: [deploy-application]
-      params:
-        - name: app-hostname
-          value: $(tasks.deploy-application.results.app-url)
-        - name: health-endpoint
-          value: $(params.health-endpoint)
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
+    # - name: check-application-health
+    #   taskRef:
+    #     name: check-health
+    #   runAfter: [deploy-application]
+    #   params:
+    #     - name: app-hostname
+    #       value: $(tasks.deploy-application.results.app-url)
+    #     - name: health-endpoint
+    #       value: $(params.health-endpoint)
+    #     - name: pipeline-debug
+    #       value: $(params.pipeline-debug)
