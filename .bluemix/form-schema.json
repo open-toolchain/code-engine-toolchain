@@ -67,7 +67,8 @@
       "validator": {
         "v-type": "ce-project-list",
         "params": [
-          "api-key"
+          "api-key",
+          "code-engine-resource-group"
         ]
       }
     },
