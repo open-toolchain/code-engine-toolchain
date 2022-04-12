@@ -232,7 +232,7 @@
         {
           "type": "select",
           "key": "code-engine-project",
-          "readonly": false
+          "readonly": true
         }
       ]
     }
