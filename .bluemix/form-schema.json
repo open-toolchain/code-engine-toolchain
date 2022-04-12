@@ -223,7 +223,7 @@
         {
           "type": "select",
           "key": "code-engine-resource-group",
-          "readonly": false
+          "readonly": true
         },
         {
           "type": "label",
