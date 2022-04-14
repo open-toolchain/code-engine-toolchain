@@ -214,7 +214,7 @@
         {
           "type": "select",
           "key": "code-engine-region",
-          "readonly": false
+          "readonly": true
         },
         {
           "type": "label",
