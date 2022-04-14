@@ -68,7 +68,8 @@
         "v-type": "ce-project-list",
         "params": [
           "api-key",
-          "code-engine-resource-group"
+          "code-engine-resource-group",
+          "code-engine-region"
         ]
       }
     },
