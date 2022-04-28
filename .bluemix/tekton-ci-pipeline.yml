@@ -8,6 +8,10 @@ inputs:
     service: ${TEKTON_CATALOG_REPO}
     path: container-registry
   - type: git
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
+    service: ${TEKTON_CATALOG_REPO}
+    path: cra
+  - type: git
     service: ${TEKTON_CATALOG_REPO}
     branch: ${TEKTON_CATALOG_REPO_BRANCH}
     path: toolchain

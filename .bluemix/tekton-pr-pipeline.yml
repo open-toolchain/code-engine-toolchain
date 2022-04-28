@@ -14,6 +14,10 @@ inputs:
   - type: git
     branch: ${TEKTON_CATALOG_REPO_BRANCH}
     service: ${TEKTON_CATALOG_REPO}
+    path: cra
+  - type: git
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
+    service: ${TEKTON_CATALOG_REPO}
     path: tester
   - type: git
     branch: ${TEKTON_CATALOG_REPO_BRANCH}
