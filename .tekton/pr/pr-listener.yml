@@ -343,7 +343,7 @@ spec:
 apiVersion: tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: github-ent-pr-listener
+  name: github-pr-listener
 spec:
   triggers:
     - bindings:
