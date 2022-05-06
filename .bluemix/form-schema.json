@@ -70,7 +70,8 @@
           "api-key",
           "code-engine-resource-group",
           "code-engine-region"
-        ]
+        ],
+        "validate": false
       }
     },
     "code-engine-region": {
@@ -232,8 +233,7 @@
         },
         {
           "type": "select",
-          "key": "code-engine-project",
-          "readonly": true
+          "key": "code-engine-project"
         }
       ]
     }
