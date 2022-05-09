@@ -300,13 +300,16 @@
       </g>
     </g>
     <g class="cls-24">
-      <text class="cls-25" transform="translate(29.393 234.812)"><tspan class="cls-26">I</tspan><tspan class="cls-27" x="5.978" y="0">s</tspan><tspan x="12.936" y="0">sue</tspan></text>
-      <text class="cls-25" transform="translate(22.782 251.612)"><tspan class="cls-28">T</tspan><tspan class="cls-29" x="7.546" y="0">r</tspan><tspan class="cls-30" x="13.006" y="0">ac</tspan><tspan class="cls-31" x="28.21" y="0">k</tspan><tspan x="35.91" y="0">er</tspan></text>
+      <text id="headerSVG.issueTracker1" class="cls-25" transform="translate(29.393 234.812)">Issue</text>
+      <text id="headerSVG.issueTracker2" class="cls-25" transform="translate(22.782 251.612)">Tracker</text>
     </g>
-    <text class="cls-25" transform="translate(264.937 234.812)">CI Pipeline</text>
-    <text class="cls-25" transform="translate(410.799 234.812)">Code <tspan x="-4.046" y="16.8">Engine</tspan></text>
-    <text class="cls-32" transform="translate(155.212 88.872)">Orion <tspan class="cls-33"><tspan x="-9.282" y="16.8">Web IDE</tspan></tspan></text>
-    <text class="cls-34" transform="translate(161.962 234.812)">App<tspan class="cls-35" x="-3.444" y="16.8">R</tspan><tspan x="5.782" y="16.8">epo</tspan></text>
+    <text id="headerSVG.ciPipeline" class="cls-25" transform="translate(264.937 234.812)">CI Pipeline</text>
+    <text id="headerSVG.codeEngine1" class="cls-25" transform="translate(410.799 234.812)">Code</text>
+    <text id="headerSVG.codeEngine2" class="cls-25" transform="translate(406.753 251.612)">Engine</text>
+    <text id="headerSVG.orionWebIde1" class="cls-32" transform="translate(155.212 88.872)">Orion</text>
+    <text id="headerSVG.orionWebIde2" class="cls-32" transform="translate(145.93 105.672)">Web IDE</text>
+    <text id="headerSVG.appRepo1" class="cls-34" transform="translate(161.962 234.812)">App</text>
+    <text id="headerSVG.appRepo2" class="cls-34" transform="translate(158.518 251.612)">Repo</text>
     <g>
       <g class="cls-36">
         <rect id="Color" class="cls-37" x="413.133" y="167.394" width="32" height="32"/>
