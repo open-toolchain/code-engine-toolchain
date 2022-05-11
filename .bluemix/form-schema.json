@@ -67,9 +67,8 @@
       "validator": {
         "v-type": "ce-project-list",
         "params": [
-          "api-key",
-          "code-engine-resource-group",
-          "code-engine-region"
+          "code-engine-region", 
+          "code-engine-resource-group"
         ],
         "validate": false
       }
@@ -233,7 +232,8 @@
         },
         {
           "type": "select",
-          "key": "code-engine-project"
+          "key": "code-engine-project",
+          "readonly": false
         }
       ]
     }
