@@ -1,3 +1,14 @@
+---
+###############################################################################
+# Licensed Materials - Property of IBM
+# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
+#
+# Note to U.S. Government Users Restricted Rights:
+# Use, duplication or disclosure restricted by GSA ADP Schedule
+# Contract with IBM Corp.
+###############################################################################
+#NLS_MESSAGEFORMAT_NONE
+#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
 
 # text in toolchain.yml
@@ -37,6 +48,7 @@ headerSVG.codeEngine2: "Engine"
 headerSVG.appRepo1: "App"
 headerSVG.appRepo2: "Repo"
 headerSVG.ciPipeline: "CI Pipeline"
+headerSVG.prPipeline: "PR Pipeline"
 headerSVG.coderisk: "Code Risk"
 headerSVG.analyzer: "Analyzer"
 headerSVG.devops: "DevOps"
