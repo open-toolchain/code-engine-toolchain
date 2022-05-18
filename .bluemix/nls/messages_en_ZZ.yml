@@ -1,3 +1,14 @@
+---
+###############################################################################
+# Licensed Materials - Property of IBM
+# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
+#
+# Note to U.S. Government Users Restricted Rights:
+# Use, duplication or disclosure restricted by GSA ADP Schedule
+# Contract with IBM Corp.
+###############################################################################
+#NLS_MESSAGEFORMAT_NONE
+#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
 
 # text in toolchain.yml
@@ -22,8 +33,6 @@ deploy.codeEngineRegionTitle: "[G' Ｃｏｄｅ Ｅｎgine regionฏูİı｜]"
 deploy.codeEngineRegionDescription: "[G'Ｔｈｅ ＩＢＭ Ｃｌｏｕｄ region for production deploymentฏูİı｜]"
 deploy.codeEngineResourceGroupTitle: "[G'Ｃｏｄｅ Ｅｎｇｉｎe Resource Groupฏูİı｜]"
 deploy.codeEngineResourceGroupDescription: "[G'Ｔｈｅ ＩＢＭ Ｃｌｏｕｄ ｒesource group for production deploymentฏูİı｜]"
-# text in toolchain.svg
-headerSVG.think: "[G'THINKฏูİı｜]"
 #spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "[G'Issueฏูİı｜]"
 headerSVG.issueTracker2: "[G'Trackerฏูİı｜]"
@@ -37,6 +46,11 @@ headerSVG.codeEngine2: "[G'Engineฏูİı｜]"
 headerSVG.appRepo1: "[G'Appฏูİı｜]"
 headerSVG.appRepo2: "[G'Repoฏูİı｜]"
 headerSVG.ciPipeline: "[G'ＣＩ Pipelineฏูİı｜]"
+headerSVG.prPipeline: "[G'ＰＲ Pipelineฏูİı｜]"
+headerSVG.coderisk: "[G'Code Riskฏูİı｜]"
+headerSVG.analyzer: "[G'Analyzerฏูİı｜]"
+headerSVG.devops: "[G'DevOpsฏูİı｜]"
+headerSVG.insights: "[G'Insightsฏูİı｜]"
 wizard.welcome.description: "[G'Ｗｉｔｈ ｔｈｉｓ ｔｏｏｌｃｈａｉｎ, ｙｏｕ ｃａｎ ｄｅｖｅｌｏｐ ａｎｄ ｄｅｐｌｏｙ ａｎ ａｐｐｌｉｃａｔｉｏｎ ｓｅｃｕｒｅｌｙ ｉｎｔｏ Ｃｏｄｅ Ｅｎｇｉｎｅ, ａ ｓｈａｒｅｄ, ｍｕｌｔｉ-ｔｅｎａｎｔ Ｋｕｂｅｒｎｅｔｅｓ ｓｅｒｖｉｃｅ ｏｎ ＩＢＭ Ｃｌｏｕｄ. Ｂｙ ｄｅｆａｕｌt, the toolchain uses a sample Node.js \"Hello World\" app, but you can link to your own GitHub repository instead.\n\n**Note:** You must have either a Pay-As-You-Go account or a Subscription account to use Code Engine as your deployment target. If you are using a free Lite account, you must upgrade it.ฏูİı｜]"
 wizard.sourceHost: "[G'Ｓｏｕｒce Providerฏูİı｜]"
 wizard.step.application.title: "[G'Ａｐplicationฏูİı｜]"
