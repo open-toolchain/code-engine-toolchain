@@ -114,6 +114,15 @@
       "url": "/devops/validator/validator-v1.html"
     },
     {
+      "type": "notification",
+      "display": {
+         "style": "info",
+         "subtitle": {
+            "$ref": "#/messages/deploy.notification"
+         }
+      }
+   },
+    {
       "type": "text",
       "readonly": false,
       "title": {
@@ -142,7 +151,10 @@
           "type": "label",
           "title": {
             "$ref": "#/messages/deploy.containerregRegion"
-          }
+          },
+          "tooltip": {
+            "$ref": "#/messages/deploy.codeengine.cr"
+         }
         },
         {
           "type": "label",
@@ -152,7 +164,10 @@
           "type": "label",
           "title": {
             "$ref": "#/messages/deploy.containerregns"
-          }
+          },
+          "tooltip": {
+            "$ref": "#/messages/deploy.icr.ns"
+         }
         },
         {
           "type": "select",
@@ -190,7 +205,11 @@
           "type": "label",
           "title": {
             "$ref": "#/messages/deploy.codeEngineRegionTitle"
-          }
+          },
+          "tooltip": {
+            "$ref": "#/messages/deploy.codeengine.region"
+         }
+
         },
         {
           "type": "label",
@@ -200,7 +219,11 @@
           "type": "label",
           "title": {
             "$ref": "#/messages/deploy.codeEngineResourceGroupTitle"
-          }
+          },
+          "tooltip": {
+            "$ref": "#/messages/deploy.codeengine.rg"
+         }
+
         },
         {
           "type": "label",
@@ -210,7 +233,11 @@
           "type": "label",
           "title": {
             "$ref": "#/messages/deploy.codeEngineProjectTitle"
-          }
+          },
+          "tooltip": {
+            "$ref": "#/messages/deploy.codeengine.project"
+         }
+
         },
         {
           "type": "select",
