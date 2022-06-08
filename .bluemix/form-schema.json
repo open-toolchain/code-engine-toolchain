@@ -63,7 +63,7 @@
         "$ref": "#/messages/deploy.codeEngineProjectDescription"
       },
       "type": "string",
-      "pattern": "^[a-z0-9_]",
+      "pattern": "\\S",
       "validator": {
         "v-type": "ce-project-list",
         "params": [
