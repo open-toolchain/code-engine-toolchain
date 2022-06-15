@@ -288,53 +288,53 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    # - name: deploy-application
-    #   taskRef:
-    #     name: deploy-to-code-engine
-    #   runAfter: [vulnerability-advisor]
-    #   params:
-    #     - name: ibmcloud-api
-    #       value: $(params.ibmcloud-api)
-    #     - name: shuttle-properties-file
-    #       value: "build.properties"
-    #     - name: app-name
-    #       value: $(params.app-name)
-    #     - name: region
-    #       value: $(params.region)
-    #     - name: resource-group
-    #       value: $(params.resource-group)
-    #     - name: code-engine-project
-    #       value: $(params.code-engine-project)
-    #     - name: service-bindings
-    #       value: $(params.service-bindings)
-    #     - name: port
-    #       value: $(params.port)
-    #     - name: image-repository
-    #       value: $(tasks.containerize.results.image-repository)
-    #     - name: image-tags
-    #       value: $(tasks.containerize.results.image-tags)
-    #     - name: pipeline-debug
-    #       value: $(params.pipeline-debug)
-    #   workspaces:
-    #     - name: artifacts
-    #       workspace: pipeline-ws
-    # - name: publish-deployable-task
-    #   runAfter: [deploy-application]
-    #   taskRef:
-    #     name: publish-code-engine-deployable-mapping
-    #   params:
-    #     - name: ibmcloud-api
-    #       value: $(params.ibmcloud-api)
-    #     - name: app-name
-    #       value: $(params.app-name)
-    #     - name: region
-    #       value: $(params.region)
-    #     - name: resource-group
-    #       value: $(params.resource-group)
-    #     - name: code-engine-project
-    #       value: $(params.code-engine-project)
-    #     - name: pipeline-debug
-    #       value: $(params.pipeline-debug)
+    - name: deploy-application
+      taskRef:
+        name: deploy-to-code-engine
+      runAfter: [vulnerability-advisor]
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: shuttle-properties-file
+          value: "build.properties"
+        - name: app-name
+          value: $(params.app-name)
+        - name: region
+          value: $(params.region)
+        - name: resource-group
+          value: $(params.resource-group)
+        - name: code-engine-project
+          value: $(params.code-engine-project)
+        - name: service-bindings
+          value: $(params.service-bindings)
+        - name: port
+          value: $(params.port)
+        - name: image-repository
+          value: $(tasks.containerize.results.image-repository)
+        - name: image-tags
+          value: $(tasks.containerize.results.image-tags)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-ws
+    - name: publish-deployable-task
+      runAfter: [deploy-application]
+      taskRef:
+        name: publish-code-engine-deployable-mapping
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: app-name
+          value: $(params.app-name)
+        - name: region
+          value: $(params.region)
+        - name: resource-group
+          value: $(params.resource-group)
+        - name: code-engine-project
+          value: $(params.code-engine-project)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
     # - name: check-application-health
     #   taskRef:
     #     name: check-health
