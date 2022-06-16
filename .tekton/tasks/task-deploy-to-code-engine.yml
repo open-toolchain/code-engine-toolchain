@@ -151,6 +151,7 @@ spec:
                 --ephemeral-storage $(params.ephemeral-storage)
             else
                 echo "Code Engine app with name $(params.app-name) not found, creating it"
+                echo "cpu $(params.cpu) memory $(params.memory) ephemeral-storage $(params.ephemeral-storage)"
                 ibmcloud ce app create -n $(params.app-name) \
                 -i $(params.image-repository):$(params.image-tags) \
                 --rs ${IMAGE_PULL_SECRET_NAME} \

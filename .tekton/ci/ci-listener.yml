@@ -61,6 +61,12 @@ spec:
     - name: ephemeral-storage
       description: Ephemeral storage
       default: "0.4G"
+    - name: cpu
+      description: number of vCPU of the Code Engine application
+      default: "0.5"
+    - name: memory
+      description: total memory of the Code Engine application
+      default: "1G"
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -123,6 +129,12 @@ spec:
             value: $(params.health-endpoint)
           - name: pipeline-debug
             value: $(params.pipeline-debug)
+          - name: ephemeral-storage
+            value: $(params.ephemeral-storage)
+          - name: cpu
+            value: $(params.cpu)
+          - name: memory
+            value: $(params.memory)
         workspaces:
           - name: pipeline-ws
             persistentVolumeClaim:
