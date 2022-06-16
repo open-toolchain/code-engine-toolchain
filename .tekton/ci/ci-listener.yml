@@ -58,6 +58,9 @@ spec:
     - name: pipeline-debug
       description: Pipeline debug mode. Value can be 0 or 1. Default to 0
       default: "0"
+    - name: ephemeral-storage
+      description: Ephemeral storage
+      default: "0.4G"
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim

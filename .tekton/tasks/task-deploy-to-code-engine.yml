@@ -26,13 +26,16 @@ spec:
       default: "{}"
     - name: cpu
       description: number of vCPU of the Code Engine application
-      default: "0.25"
+      default: "0.5"
     - name: max-scale
       description: maximum scale of the Code Engine application
       default: "1"
     - name: memory
       description: total memory of the Code Engine application
-      default: "0.5G"
+      default: "1G"
+    - name: ephemeral-storage
+      description: Ephemeral storage
+      default: "0.4G"
     - name: port
       description: port where the application is listening
       default: "http1:8080"
@@ -144,7 +147,8 @@ spec:
                 --cpu $(params.cpu) \
                 --max $(params.max-scale) \
                 -m $(params.memory) \
-                -p $(params.port)
+                -p $(params.port) \
+                --ephemeral-storage $(params.ephemeral-storage)
             else
                 echo "Code Engine app with name $(params.app-name) not found, creating it"
                 ibmcloud ce app create -n $(params.app-name) \
@@ -154,7 +158,8 @@ spec:
                 --cpu $(params.cpu) \
                 --max $(params.max-scale) \
                 -m $(params.memory) \
-                -p $(params.port)
+                -p $(params.port) \
+                --ephemeral-storage $(params.ephemeral-storage)
             fi
 
             # Bind services, if any
