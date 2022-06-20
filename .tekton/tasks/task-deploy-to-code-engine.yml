@@ -30,6 +30,9 @@ spec:
     - name: max-scale
       description: maximum scale of the Code Engine application
       default: "10"
+    - name: min-scale
+      description: minimum scale of the Code Engine application
+      default: "1"
     - name: memory
       description: total memory of the Code Engine application
       default: "1G"
@@ -146,6 +149,7 @@ spec:
                 -w=false \
                 --cpu $(params.cpu) \
                 --max $(params.max-scale) \
+                --min $(params.min-scale) \
                 -m $(params.memory) \
                 -p $(params.port) \
                 --ephemeral-storage $(params.ephemeral-storage)
@@ -157,6 +161,7 @@ spec:
                 -w=false \
                 --cpu $(params.cpu) \
                 --max $(params.max-scale) \
+                --min $(params.min-scale) \
                 -m $(params.memory) \
                 -p $(params.port) \
                 --ephemeral-storage $(params.ephemeral-storage)
