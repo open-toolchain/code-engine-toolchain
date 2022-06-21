@@ -1,10 +1,18 @@
 ---
-version: "1"
+version: "2"
 messages:
   $i18n: locales.yml
 welcome:
   description:
     $ref: "#/messages/wizard.welcome.description"
+  documentation:
+    text:
+      $ref: "#/messages/wizard.welcome.documentation.link.text"
+    url: https://cloud.ibm.com/docs/codeengine?topic=codeengine-getting-started
+  tutorial:
+    text:
+      $ref: "#/messages/wizard.welcome.tutorial.link.text"
+    url: https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine
 steps:
   - name: app
     title:

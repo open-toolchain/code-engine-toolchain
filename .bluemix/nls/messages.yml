@@ -103,3 +103,5 @@ wizard.optional.tools.doi.description: "DevOps Insights provides comprehensive i
 wizard.summary.title: "Summary"
 wizard.summary.success.title: "Congratulations"
 wizard.summary.success.subtitle: "You have completed the configuration of your toolchain. Click the 'Create' button below to create the toolchain with your chosen tools and settings."
+wizard.welcome.documentation.link.text: "Documentation"
+wizard.welcome.tutorial.link.text: "Tutorial"
