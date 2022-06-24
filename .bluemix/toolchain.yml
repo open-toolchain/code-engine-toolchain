@@ -174,10 +174,10 @@ services:
           APP_NAME: '{{form.pipeline.parameters.app-name}}'
           APP_REPO: repo
           APP_REPO_BRANCH: >
-            if ($form.pipeline.parameters.branch) {
-              $form.pipeline.parameters.branch
+            if ($env.template.info.hosted_region === "" || $env.sourceZipUrl) {
+              'master'
             } else {
-              'draft'
+              'main'
             }
           CODE_ENGINE_PROJECT: '{{form.pipeline.parameters.code-engine-project}}'
           CODE_ENGINE_REGION: '{{form.pipeline.parameters.code-engine-region}}'
