@@ -8,6 +8,9 @@ spec:
     - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
+    - name: git-token
+      description: access token for the git repo
+      default: ""
     - name: target-repository
       description: the repo integration name
     - name: target-branch
@@ -154,6 +157,8 @@ spec:
         params:
           - name: ibmcloud-api
             value: $(params.ibmcloud-api)
+          - name: git-token
+            value: $(params.git-token)
           - name: pr-commit-id
             value: $(params.pr-commit-id)
           - name: target-repository
