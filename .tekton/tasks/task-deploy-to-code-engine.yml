@@ -52,6 +52,9 @@ spec:
     - name: task-image
       description: image used to execute this task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
+    - name: deployment-timeout
+      description: maximum timeout for the application deployment.
+      default: "300"
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)
@@ -175,10 +178,13 @@ spec:
 
         echo "Checking if application is ready..."
         KUBE_SERVICE_NAME=$(params.app-name)
-
-        for ITERATION in {1..100}
+        
+        DEPLOYMENT_TIMEOUT=$(params.deployment-timeout)
+        echo "Timeout for the application deployment is ${DEPLOYMENT_TIMEOUT}"
+        ITERATION=0
+        while [[ "${ITERATION}" -le "${DEPLOYMENT_TIMEOUT}" ]]
         do
-          sleep 3
+          sleep 1
 
           kubectl get ksvc/${KUBE_SERVICE_NAME} --output=custom-columns=DOMAIN:.status.conditions[*].status
           SVC_STATUS_READY=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "True")' )
@@ -198,6 +204,7 @@ spec:
           else
             echo "Application status unknown, retrying"
           fi
+          ITERATION="${ITERATION}"+1
         done
 
         echo "Application service details:"

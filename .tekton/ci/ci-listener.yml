@@ -78,6 +78,9 @@ spec:
     - name: health-endpoint
       description: application health endpoint, e.g. /health
       default: ""
+    - name: deployment-timeout
+      description: maximum timeout for the application deployment.
+      default: "300"
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -152,6 +155,8 @@ spec:
             value: $(params.pipeline-debug)
           - name: custom-script
             value: $(params.custom-script)
+          - name: deployment-timeout
+            value: $(params.deployment-timeout)
         workspaces:
           - name: pipeline-ws
             persistentVolumeClaim:

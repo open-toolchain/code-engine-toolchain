@@ -71,6 +71,9 @@ spec:
     - name: service-bindings
       description: JSON object of a map of names to services instances to be bound to the application
       default: "{}"
+    - name: deployment-timeout
+      description: maximum timeout for the application deployment.
+      default: "300"
 
       # For health task
     - name: health-endpoint
@@ -355,6 +358,8 @@ spec:
           value: $(tasks.containerize.results.image-tags)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
+        - name: deployment-timeout
+          value: $(params.deployment-timeout)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
