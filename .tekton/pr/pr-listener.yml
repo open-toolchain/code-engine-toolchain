@@ -5,6 +5,8 @@ metadata:
   name: pr-template
 spec:
   params:
+    - name: apikey
+      description: The ibmcloud api key
     - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
@@ -143,6 +145,14 @@ spec:
         volumeMode: Filesystem
         accessModes:
           - ReadWriteOnce
+    - apiVersion: v1
+      kind: Secret
+      metadata:
+        name: cd-secret
+      type: Opaque
+      stringData:
+        API_KEY: $(params.apikey)
+        DOCKER_SECRET: $(params.docker-registry-secret)
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
