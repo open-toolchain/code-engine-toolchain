@@ -186,15 +186,11 @@ spec:
         do
           sleep 1
 
-          kubectl get ksvc/${KUBE_SERVICE_NAME} --output=custom-columns=DOMAIN:.status.conditions[*].status
           SVC_STATUS_READY=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "True")' )
-          echo SVC_STATUS_READY=$SVC_STATUS_READY
 
           SVC_STATUS_NOT_READY=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "False")' )
-          echo SVC_STATUS_NOT_READY=$SVC_STATUS_NOT_READY
 
           SVC_STATUS_UNKNOWN=$( kubectl get ksvc/${KUBE_SERVICE_NAME} -o json | jq '.status?.conditions[]?.status?|select(. == "Unknown")' )
-          echo SVC_STATUS_UNKNOWN=$SVC_STATUS_UNKNOWN
 
           if [ \( -n "$SVC_STATUS_NOT_READY" \) -o \( -n "$SVC_STATUS_UNKNOWN" \) ]; then
             echo "Application not ready, retrying"
