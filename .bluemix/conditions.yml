@@ -255,22 +255,6 @@ vault_conditions:
 tools_conditions:
   - condition:
       any:
-        - parameter: webide
-          value: true
-    actions:
-      - type: create-service
-        service_id: orion
-        service_label: webide
-  - condition:
-      any:
-        - parameter: webide
-          value: false
-    actions:
-      - type: delete-service
-        service_id: orion
-        service_label: webide
-  - condition:
-      any:
         - parameter: doi
           value: true
     actions:

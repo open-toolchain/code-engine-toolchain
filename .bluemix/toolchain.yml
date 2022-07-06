@@ -222,8 +222,6 @@ services:
         execute: 'manual-run'
   devops-insights:
       service_id: 'draservicebroker'
-  webide:
-    service_id: orion
 form:
   pipeline:
     parameters:
