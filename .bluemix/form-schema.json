@@ -139,6 +139,14 @@
       "key": "api-key"
     },
     {
+      "type": "select",
+      "key": "code-engine-resource-group",
+      "readonly": true,
+      "title": {
+        "$ref": "#/messages/deploy.rg"
+      }
+    },
+    {
       "type": "table",
       "columnCount": 3,
       "widths": [
@@ -192,13 +200,11 @@
     },
     {
       "type": "table",
-      "columnCount": 5,
+      "columnCount": 3,
       "widths": [
-        "32%",
-        "2%",
-        "32%",
-        "2%",
-        "32%"
+        "50%",
+        "3%",
+        "47%"
       ],
       "items": [
         {
@@ -208,20 +214,6 @@
           },
           "tooltip": {
             "$ref": "#/messages/deploy.codeengine.region"
-         }
-
-        },
-        {
-          "type": "label",
-          "title": ""
-        },
-        {
-          "type": "label",
-          "title": {
-            "$ref": "#/messages/deploy.codeEngineResourceGroupTitle"
-          },
-          "tooltip": {
-            "$ref": "#/messages/deploy.codeengine.rg"
          }
 
         },
@@ -242,15 +234,6 @@
         {
           "type": "select",
           "key": "code-engine-region",
-          "readonly": true
-        },
-        {
-          "type": "label",
-          "title": ""
-        },
-        {
-          "type": "select",
-          "key": "code-engine-resource-group",
           "readonly": true
         },
         {

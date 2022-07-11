@@ -40,6 +40,7 @@ deploy.codeengine.region: "Please select a region where your Code Engine project
 deploy.codeengine.cr: "Choose Container Registry region from the dropdown"
 deploy.icr.ns: "Please select a Container Registry namespace or enter a new name for the container registry namespace. Note: this name must be unique."
 deploy.notification: "Enter details of existing Code Engine project in this step. If a project does not exist, provide a name and it will be automatically created in your selected resource group and region."
+deploy.rg: "Resource group"
 
 #spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "Issue"

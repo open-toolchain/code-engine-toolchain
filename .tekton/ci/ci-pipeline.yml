@@ -378,6 +378,8 @@ spec:
           value: $(params.registry-region)
         - name: registry-namespace
           value: $(params.registry-namespace)
+        - name: resource-group
+          value: $(params.resource-group)
         - name: image-name
           value: $(params.image-name)
         - name: path-to-context
