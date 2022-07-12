@@ -130,6 +130,8 @@ spec:
 
         echo "Loading Kube config..."
         ibmcloud ce proj select -n $(params.code-engine-project) -k
+        echo "Updating CE project to binding resource group..."
+        ibmcloud ce project update --binding-resource-group "$(params.resource-group)"
 
         echo -e "Configuring access to private image registry"
         PIPELINE_TOOLCHAIN_ID=$(jq -j '.toolchain_guid' /artifacts/_toolchain.json)
