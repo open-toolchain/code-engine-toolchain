@@ -257,6 +257,8 @@ spec:
           value: $(params.vulnerability-report)
         - name: cra-scan-image
           value: $(params.cra-scan-image)
+        - name: custom-script
+          value: $(params.custom-script)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
