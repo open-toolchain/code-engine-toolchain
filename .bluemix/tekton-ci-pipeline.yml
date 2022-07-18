@@ -112,4 +112,4 @@ properties:
     value: ${APP_REPO_BRANCH}
   - name: deployment-timeout
     type: text
-    value: 300
+    value: "300"
