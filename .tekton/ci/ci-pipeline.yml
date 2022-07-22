@@ -209,6 +209,8 @@ spec:
           value: $(params.pipeline-debug)
         - name: ibmcloud-region
           value: $(params.ibmcloud-region)
+        - name: registry-region
+          value: $(params.registry-region)
         - name: env-props
           value: $(params.env-props)
         - name: fileignore
