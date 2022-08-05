@@ -130,8 +130,17 @@ spec:
 
         echo "Loading Kube config..."
         ibmcloud ce proj select -n $(params.code-engine-project) -k
-        echo "Updating CE project to binding resource group..."
-        ibmcloud ce project update --binding-resource-group "$(params.resource-group)"
+        
+        RG_NAME=$(ibmcloud resource groups --output json | jq '.[] | select(.id=="$(params.resource-group)") | .name')
+        # check to see if "$(params.resource-group)" is a name or an ID
+        if [ "${RG_NAME}" == "" ]; then
+          RG_NAME="${params.resource-group}"
+        fi
+        # check to see if $RG_NAME is not the default resource group
+        if [ $(ibmcloud resource groups --output json | jq '.[] | select(.name=="$RG_NAME") | .default') == 'false' ]; then
+          echo "Updating Code Engine project to bind to resource group $RG_NAME..."
+          ibmcloud ce project update --binding-resource-group "$RG_NAME"
+        fi
 
         echo -e "Configuring access to private image registry"
         PIPELINE_TOOLCHAIN_ID=$(jq -j '.toolchain_guid' /artifacts/_toolchain.json)
