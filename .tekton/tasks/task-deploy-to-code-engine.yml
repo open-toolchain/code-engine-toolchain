@@ -134,7 +134,7 @@ spec:
         RG_NAME=$(ibmcloud resource groups --output json | jq '.[] | select(.id=="$(params.resource-group)") | .name')
         # check to see if "$(params.resource-group)" is a name or an ID
         if [ "${RG_NAME}" == "" ]; then
-          RG_NAME="${params.resource-group}"
+          RG_NAME="$(params.resource-group)"
         fi
         # check to see if $RG_NAME is not the default resource group
         if [ $(ibmcloud resource groups --output json | jq '.[] | select(.name=="$RG_NAME") | .default') == 'false' ]; then
