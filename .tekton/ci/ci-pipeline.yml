@@ -330,6 +330,8 @@ spec:
           value: $(params.cpu)
         - name: memory
           value: $(params.memory)
+        - name: registry-namespace
+          value: $(params.registry-namespace)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
