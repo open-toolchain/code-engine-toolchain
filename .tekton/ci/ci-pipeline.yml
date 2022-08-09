@@ -66,6 +66,9 @@ spec:
     - name: memory
       description: total memory of the Code Engine application
       default: "1G"
+    - name: min-scale
+      description: minimum scale of the Code Engine application
+      default: "1"
   workspaces:
     - name: pipeline-ws
   tasks:
@@ -330,6 +333,8 @@ spec:
           value: $(params.cpu)
         - name: memory
           value: $(params.memory)
+        - name: min-scale
+          value: $(params.min-scale)
         - name: registry-namespace
           value: $(params.registry-namespace)
       workspaces:

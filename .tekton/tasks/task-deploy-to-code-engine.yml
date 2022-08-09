@@ -32,7 +32,7 @@ spec:
       default: "10"
     - name: min-scale
       description: minimum scale of the Code Engine application
-      default: "2"
+      default: "1"
     - name: memory
       description: total memory of the Code Engine application
       default: "1G"
