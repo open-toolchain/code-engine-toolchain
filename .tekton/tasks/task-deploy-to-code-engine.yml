@@ -117,8 +117,8 @@ spec:
 
         ibmcloud plugin install code-engine
 
-        echo "Deleting untagged images from namespace ${params.registry-namespace}"
-        ibmcloud cr image-prune-untagged --force --restrict $(params.registry-namespace)
+        echo "Deleting untagged images from namespace $(params.registry-namespace)"
+        ibmcloud cr image-prune-untagged --force --restrict "$(params.registry-namespace)"
 
         # Kin: See if projects need to be created if missing (This means to)
         echo "Check if the Code Engine projects are availability on IBM Cloud"
