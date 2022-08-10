@@ -138,6 +138,8 @@ spec:
             value: $(params.cpu)
           - name: memory
             value: $(params.memory)
+          - name: message
+            value: $(params.message)
           - name: min-scale
             value: $(params.min-scale)
         workspaces:

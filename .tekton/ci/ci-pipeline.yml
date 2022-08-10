@@ -66,6 +66,9 @@ spec:
     - name: memory
       description: total memory of the Code Engine application
       default: "1G"
+    - name: message
+      description: the message to send to Slack
+      default: "Hello World!"
     - name: min-scale
       description: minimum scale of the Code Engine application
       default: "1"
@@ -368,3 +371,13 @@ spec:
           value: $(params.health-endpoint)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
+    - name: post-to-slack
+      taskRef:
+        name: slack-post-message
+      runAfter: [deploy-application]
+      params:
+        - name: message
+          value: $(tasks.deploy-application.results.app-url)
+      workspaces:
+        - name: workspace
+          workspace: pipeline-ws
