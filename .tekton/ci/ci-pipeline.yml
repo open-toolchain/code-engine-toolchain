@@ -374,10 +374,10 @@ spec:
     - name: post-to-slack
       taskRef:
         name: slack-post-message
-      runAfter: [git-clone]
+      runAfter: [deploy-application]
       params:
         - name: message
-          value: $(params.message)
+          value: $(tasks.deploy-application.results.app-url)
       workspaces:
         - name: workspace
           workspace: pipeline-ws
