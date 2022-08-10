@@ -69,6 +69,9 @@ spec:
     - name: message
       description: the message to send to Slack
       default: "Hello World!"
+    - name: min-scale
+      description: minimum scale of the Code Engine application
+      default: "1"
   workspaces:
     - name: pipeline-ws
   tasks:
@@ -333,6 +336,10 @@ spec:
           value: $(params.cpu)
         - name: memory
           value: $(params.memory)
+        - name: min-scale
+          value: $(params.min-scale)
+        - name: registry-namespace
+          value: $(params.registry-namespace)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws

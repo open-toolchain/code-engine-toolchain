@@ -55,6 +55,8 @@ spec:
     - name: task-image
       description: image used to execute this task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
+    - name: registry-namespace
+      description: container registry namespace
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)
@@ -114,6 +116,9 @@ spec:
         export $(cut -d= -f1 $(params.shuttle-properties-file))
 
         ibmcloud plugin install code-engine
+
+        echo "Deleting untagged images from namespace $(params.registry-namespace)"
+        ibmcloud cr image-prune-untagged --force --restrict "$(params.registry-namespace)"
 
         # Kin: See if projects need to be created if missing (This means to)
         echo "Check if the Code Engine projects are availability on IBM Cloud"

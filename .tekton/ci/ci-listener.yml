@@ -67,6 +67,9 @@ spec:
     - name: memory
       description: total memory of the Code Engine application
       default: "1G"
+    - name: min-scale
+      description: minimum scale of the Code Engine application
+      default: "1"
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -137,6 +140,8 @@ spec:
             value: $(params.memory)
           - name: message
             value: $(params.message)
+          - name: min-scale
+            value: $(params.min-scale)
         workspaces:
           - name: pipeline-ws
             persistentVolumeClaim:
