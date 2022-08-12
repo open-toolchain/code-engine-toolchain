@@ -14,7 +14,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
   steps:
     - name: check-health
       image: $(params.task-image)

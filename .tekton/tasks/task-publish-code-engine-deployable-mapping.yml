@@ -30,7 +30,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
   steps:
     - name: publish-deployable-mapping
       image: $(params.task-image)
@@ -66,7 +66,7 @@ spec:
 
         ibmcloud login -a $(params.ibmcloud-api) -r $IBM_CLOUD_REGION --apikey $IBM_CLOUD_API_KEY
         ibmcloud target -g $(params.resource-group)
-        ibmcloud plugin install code-engine
+        echo "y" | ibmcloud plugin install code-engine
         ibmcloud ce proj select -n $(params.code-engine-project)
 
         DEPLOYABLE_JSON=$(ibmcloud ce app get -n $(params.app-name) -o json)

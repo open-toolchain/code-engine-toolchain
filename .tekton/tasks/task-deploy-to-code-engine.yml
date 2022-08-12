@@ -51,7 +51,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.2"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
     - name: deployment-timeout
       description: maximum timeout for the application deployment.
       default: "300"
@@ -117,7 +117,7 @@ spec:
         source $(params.shuttle-properties-file)
         export $(cut -d= -f1 $(params.shuttle-properties-file))
 
-        ibmcloud plugin install code-engine
+        echo "y" | ibmcloud plugin install code-engine
 
         echo "Check Code Engine project availability"
         if ibmcloud ce proj get -n $(params.code-engine-project); then
