@@ -1,21 +1,15 @@
 ---
-###############################################################################
-# Licensed Materials - Property of IBM
-# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
-#
-# Note to U.S. Government Users Restricted Rights:
-# Use, duplication or disclosure restricted by GSA ADP Schedule
-# Contract with IBM Corp.
-###############################################################################
-#NLS_MESSAGEFORMAT_NONE
-#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
+
+# text in toolchain.yml
 template.name: "开发 Code Engine 应用程序"
 template.description: "（需要现收现付帐户）使用此工具链，您可以安全地开发应用程序并将其部署到 Code Engine（IBM Cloud 上的一种共享的多租户 Kubernetes 服务）中。 缺省情况下，此工具链使用样本 Node.js 的“Hello World”应用程序，但您可改为链接到您自己的 GitHub 存储库。 预先配置了此工具链，用于带 [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index) 的持续交付、源代码控制、问题跟踪和联机编辑。\n\n 您可以在[控制台](https://cloud.ibm.com/codeengine/projects) 中管理 Code Engine 项目与应用程序。\n\n工具链使用属于 Continuous Delivery 服务的工具。 如果所选资源组或组织中没有该服务的实例，那么当您单击**创建**时，会自动添加该服务实例并选择免费[轻量](/catalog/services/continuous-delivery/)套餐。\n\n单击**创建**以开始。"
 template.gettingStarted: "**工具链已就绪！**\n\n**快速启动：** 将更改落实到 Git 存储库以触发新的 Docker 映像构建，该构建已扫描到漏洞并部署在 Code Engine 项目中。 有关逐步指示信息，请参阅此工具链的[教程](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)。"
+
+# text in form-schema.json
 deploy.title: "Hello World 部署阶段"
 deploy.description: "Hello World 简单工具链"
-deploy.longDescription: "Delivery Pipeline 会自动持续构建、测试和部署 Docker 应用程序。"
+deploy.longDescription: "Delivery Pipeline 会自动持续构建、测试和部署 Docker 应用程序。 \n\n [查看文档](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "应用程序名称"
 deploy.appDescription: "应用程序的名称。"
 deploy.apikeyDescription: "使用 IBM Cloud API 密钥来访问 IBM Cloud。 可以使用“bx iam API-key-create”获取 API 密钥，也可以通过位于 https://cloud.ibm.com/iam/apikeys 的控制台（通过单击 **创建 IBM Cloud API 密钥**）（每个 API 密钥只能查看一次）。"
@@ -25,17 +19,26 @@ deploy.apikey: "IBM Cloud API 密钥"
 deploy.containerregRegion: "Container Registry 区域"
 deploy.containerregns: "Container Registry 名称空间"
 deploy.codeEngineProjectTitle: "Code Engine 项目"
-deploy.codeEngineProjectDescription: "如果 Code Engine 项目尚不存在，那么会自动创建该项目"
+deploy.codeEngineProjectDescription: "项目名称"
 deploy.codeEngineRegionTitle: " Code Engine 区域"
 deploy.codeEngineRegionDescription: "用于生产部署的 IBM Cloud 区域"
 deploy.codeEngineResourceGroupTitle: "Code Engine 资源组"
 deploy.codeEngineResourceGroupDescription: "用于生产部署的 IBM Cloud 资源组"
+deploy.codeengine.project: "请选择现有 Code Engine 项目，或者输入新项目的名称。"
+deploy.codeengine.rg: "请选择资源组。"
+deploy.codeengine.region: "请选择 Code Engine 项目存的区域在或将创建的区域。"
+deploy.codeengine.cr: "从下拉列表中选择 Container Registry 区域"
+deploy.icr.ns: "请选择 Container Registry 名称空间或输入容器注册表名称空间的新名称。 注：此名称必须唯一。"
+deploy.notification: "在此步骤中输入现有 Code Engine 项目的详细信息。 如果项目不存在，请提供名称，并且将在所选资源组和区域中自动创建该项目。"
+deploy.rg: "资源组"
+
+#spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "问题"
 headerSVG.issueTracker2: "跟踪程序"
-headerSVG.orionWebIde1: "Orion"
-headerSVG.orionWebIde2: "WEB IDE"
+#spanned over two lines "Code Engine"
 headerSVG.codeEngine1: "代码"
 headerSVG.codeEngine2: "引擎"
+#spanned over two lines "App Repo"
 headerSVG.appRepo1: "应用程序"
 headerSVG.appRepo2: "Repo"
 headerSVG.ciPipeline: "CI 管道"
@@ -81,11 +84,10 @@ wizard.vault.info: "请识别包含您的私钥的密钥提供者："
 wizard.step.deploymentStrategy.title: "部署"
 wizard.optional.tools.title: "其他工具"
 wizard.optional.tools.longDescription: "这些是可选工具，可包含在工具链中。"
-wizard.optional.tools.webide.title: "Orion Web IDE（无需配置）"
-wizard.optional.tools.webide.description: "在此基于浏览器的集成开发环境 (IDE) 中开发 Web 和云。"
 wizard.optional.tools.doi.title: "DevOps Insights（无需配置）"
 wizard.optional.tools.doi.description: "DevOps Insights 通过常见的持续集成和持续交付工具为您提供全面的洞察，从而可以更好地控制应用程序交付，加快交付速度。"
 wizard.summary.title: "摘要"
 wizard.summary.success.title: "恭喜"
 wizard.summary.success.subtitle: "您已完成工具链的配置。 单击下面的“创建”按钮以使用所选工具和设置来创建工具链。"
-...
+wizard.welcome.documentation.link.text: "文档"
+wizard.welcome.tutorial.link.text: "教程"

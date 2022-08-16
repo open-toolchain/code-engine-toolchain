@@ -1,21 +1,15 @@
 ---
-###############################################################################
-# Licensed Materials - Property of IBM
-# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
-#
-# Note to U.S. Government Users Restricted Rights:
-# Use, duplication or disclosure restricted by GSA ADP Schedule
-# Contract with IBM Corp.
-###############################################################################
-#NLS_MESSAGEFORMAT_NONE
-#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
+
+# text in toolchain.yml
 template.name: "Développer une application Code Engine"
 template.description: "(Compte Paiement à la carte requis) Avec cette chaîne d'outils, vous pouvez développer et déployer une application de manière sécurisée dans Code Engine, un service Kubernetes partagé et multilocataires sur IBM Cloud. Par défaut, la chaîne d'outils utilise un exemple d'application Node.js \"Hello World\", mais vous pouvez établir une liaison vers votre propre référentiel GitHub à la place. La chaîne d'outils est configurée pour la distribution continue avec [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index), le contrôle des sources, le suivi des problèmes et l'édition en ligne.\n\n Vous pouvez gérer vos projets et applications Code Engine dans la [console](https://cloud.ibm.com/codeengine/projects).\n\nLa chaîne d'outils utilise des outils qui font partie du service de livraison continue. Si aucune instance de ce service n'existe dans l'organisation ou le groupe de ressources sélectionné, une instance est ajoutée automatiquement lorsque vous cliquez sur **Créer**, avec le plan gratuit [Lite](/catalog/services/continuous-delivery/) sélectionné.\n\nPour commencer, cliquez sur **Créer**."
 template.gettingStarted: " **Votre chaîne d'outils est prête !**\n\n**Démarrage rapide :** Valider une modification de référentiel Git pour déclencher une nouvelle génération d'image Docker, qui est analysée à la recherche de vulnérabilités et déployée dans votre projet Code Engine. Pour des instructions pas à pas, suivez le [tutoriel](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine) pour cette chaîne d'outils."
+
+# text in form-schema.json
 deploy.title: "Etape de déploiement Hello World"
 deploy.description: "Chaîne d'outils simple Hello World"
-deploy.longDescription: "Delivery Pipeline automatise la génération, le test et le déploiement en continu de l'application Docker."
+deploy.longDescription: "Delivery Pipeline automatise la génération, le test et le déploiement en continu de l'application Docker. \n\n [Afficher les documents](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "Nom de l'application"
 deploy.appDescription: "Nom de votre application."
 deploy.apikeyDescription: "La clé d'API IBM Cloud est utilisée pour accéder à IBM Cloud. Vous pouvez obtenir votre clé d'API avec \"bx iam api-key-create\" ou via la console à l'adresse https://cloud.ibm.com/iam/apikeys en cliquant sur **Créer une clé d'API IBM Cloud** (Chaque clé d'API ne peut être visualisée qu'une seule fois)."
@@ -25,17 +19,26 @@ deploy.apikey: "Clé d'API IBM Cloud"
 deploy.containerregRegion: "Région du registre de conteneurs"
 deploy.containerregns: "Espace de nom du registre de conteneurs"
 deploy.codeEngineProjectTitle: "Projet Code Engine"
-deploy.codeEngineProjectDescription: "Si le projet Code Engine n'existe pas déjà, il est crée automatiquement"
+deploy.codeEngineProjectDescription: "Nom de votre projet"
 deploy.codeEngineRegionTitle: " Région Code Engine"
 deploy.codeEngineRegionDescription: "Région IBM Cloud du déploiement de production"
 deploy.codeEngineResourceGroupTitle: "Groupe de ressources Code Engine"
 deploy.codeEngineResourceGroupDescription: "Groupe de ressources IBM Cloud pour le déploiement de production"
+deploy.codeengine.project: "Sélectionnez un projet Code Engine existant ou entrez le nom d'un nouveau projet."
+deploy.codeengine.rg: "Sélectionnez un groupe de ressources."
+deploy.codeengine.region: "Sélectionnez une région dans laquelle votre projet Code Engine existe ou sera créé."
+deploy.codeengine.cr: "Choisissez la région Container Registry dans la liste déroulante."
+deploy.icr.ns: "Sélectionnez un espace de nom Container Registry ou entrez un nouveau nom pour l'espace de nom du registre de conteneur. Remarque : ce nom doit être unique."
+deploy.notification: "Entrez les détails du projet Code Engine existant dans cette étape. Si un projet n'existe pas, donnez-lui un nom et il sera automatiquement créé dans le groupe de ressources et la région que vous avez sélectionnés."
+deploy.rg: "Groupe de ressources"
+
+#spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "Problème"
 headerSVG.issueTracker2: "Dispositif de suivi"
-headerSVG.orionWebIde1: "Orion"
-headerSVG.orionWebIde2: "IDE WEB"
+#spanned over two lines "Code Engine"
 headerSVG.codeEngine1: "Code"
 headerSVG.codeEngine2: "Engine"
+#spanned over two lines "App Repo"
 headerSVG.appRepo1: "Application"
 headerSVG.appRepo2: "Repo"
 headerSVG.ciPipeline: "Pipeline IC"
@@ -81,11 +84,10 @@ wizard.vault.info: "Identifiez les fournisseurs de secrets contenant vos secrets
 wizard.step.deploymentStrategy.title: "Déployer"
 wizard.optional.tools.title: "Autres outils"
 wizard.optional.tools.longDescription: "Voici des outils facultatifs pouvant être inclus dans votre chaîne d'outils."
-wizard.optional.tools.webide.title: "Orion WebIDE (aucune configuration requise)"
-wizard.optional.tools.webide.description: "Développez pour le Web et le cloud dans cet environnement de développement intégré (IDE)."
 wizard.optional.tools.doi.title: "DevOps Insights (aucune configuration requise)"
 wizard.optional.tools.doi.description: "DevOps Insights fournit des informations complètes tirées d'outils populaires d'intégration continue et de distribution continue pour améliorer la vitesse et le contrôle de la distribution de vos applications."
 wizard.summary.title: "Récapitulatif"
 wizard.summary.success.title: "Félicitations !"
 wizard.summary.success.subtitle: "Vous avez terminé la configuration de votre chaîne d'outils. Cliquez sur le bouton 'Créer' ci-dessous pour créer la chaîne d'outils avec les outils et les paramètres de votre choix."
-...
+wizard.welcome.documentation.link.text: "Documentation"
+wizard.welcome.tutorial.link.text: "Tutoriel"

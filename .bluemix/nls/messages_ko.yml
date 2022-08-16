@@ -1,21 +1,15 @@
 ---
-###############################################################################
-# Licensed Materials - Property of IBM
-# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
-#
-# Note to U.S. Government Users Restricted Rights:
-# Use, duplication or disclosure restricted by GSA ADP Schedule
-# Contract with IBM Corp.
-###############################################################################
-#NLS_MESSAGEFORMAT_NONE
-#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
+
+# text in toolchain.yml
 template.name: "Code Engine 앱 개발"
-template.description: "(종량과금제 계정 필요) 이 도구 체인을 사용하여 IBM Cloud에서 애플리케이션을 Code Engine, 공유, 다중 테넌트 Kubernetes 서비스로 안전하게 개발하고 배치할 수 있습니다. 기본적으로 도구 체인은 샘플 Node.js \"Hello World\" 앱을 사용하지만 사용자가 사용자 자체 GitHub 저장소에 링크할 수 있습니다. 도구 체인은 [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index)가 포함된 지속적 딜리버리, 소스 제어, 문제 추적 및 온라인 편집을 위해 사전 구성되어 있습니다.\n\n [console](https://cloud.ibm.com/codeengine/projects)에서 Code Engine 프로젝트 및 애플리케이션을 관리할 수 있습니다.\n\n이 도구 체인은 지속적 딜리버리 서비스의 일부인 도구를 사용합니다. 해당 서비스의 인스턴스가 선택된 리소스 그룹이나 조직에 아직 없는 경우, **작성**을 클릭하면 무료 [Lite](/catalog/services/continuous-delivery/) 플랜이 선택된 상태로 인스턴스가 자동으로 추가됩니다.\n\n\\n\\n시작하려면 **작성**을 클릭하십시오."
-template.gettingStarted: " **도구 체인이 준비되었습니다!**\n\n** 빠른 시작:** 새 Docker 이미지 빌드를 트리거하려면 Git repo에 변경사항을 커미트하십시오. 이는 취약성에 대해 스캔되고 Code Engine 프로젝트에 배치됩니다. 단계별 지시사항은 이 도구 체인의 [학습서](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)를 참조하십시오."
+template.description: "(종량과금제 계정 필요) 이 도구 체인을 사용하여 IBM Cloud에서 애플리케이션을 Code Engine, 공유, 다중 테넌트 Kubernetes 서비스로 안전하게 개발하고 배치할 수 있습니다. 기본적으로 도구 체인은 샘플 Node.js \"Hello World\" 앱을 사용하지만 사용자가 사용자 자체 GitHub 저장소에 링크할 수 있습니다. 도구 체인은 [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index)가 포함된 지속적 딜리버리, 소스 제어, 문제 추적 및 온라인 편집을 위해 사전 구성되어 있습니다.\n\n [console](https://cloud.ibm.com/codeengine/projects)에서 Code Engine 프로젝트 및 애플리케이션을 관리할 수 있습니다.\n\n이 도구 체인은 지속적 딜리버리 서비스의 일부인 도구를 사용합니다. 해당 서비스의 인스턴스가 선택된 리소스 그룹이나 조직에 아직 없는 경우, **작성**을 클릭하면 무료 [Lite](/catalog/services/continuous-delivery/) 플랜이 선택된 상태로 인스턴스가 자동으로 추가됩니다.\n\n\n\n시작하려면 **작성**을 클릭하십시오."
+template.gettingStarted: " **도구 체인이 준비되었습니다!**\n\n**빠른 시작:** 새 Docker 이미지 빌드를 트리거하려면 Git repo에 변경사항을 커미트하십시오. 이는 취약성에 대해 스캔되고 Code Engine 프로젝트에 배치됩니다. 단계별 지시사항은 이 도구 체인의 [학습서](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)를 참조하십시오."
+
+# text in form-schema.json
 deploy.title: "Hello World 배치 단계"
 deploy.description: "hello World 단순 도구 체인"
-deploy.longDescription: "Delivery Pipeline을 사용하여 Docker 애플리케이션의 지속적인 빌드, 테스트 및 배치를 자동화합니다."
+deploy.longDescription: "Delivery Pipeline을 사용하여 Docker 애플리케이션의 지속적인 빌드, 테스트 및 배치를 자동화합니다. \n\n [문서 보기](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "앱 이름"
 deploy.appDescription: "사용자 애플리케이션의 이름입니다."
 deploy.apikeyDescription: "IBM Cloud API 키는 IBM Cloud에 액세스하는 데 사용됩니다. API 키는 'bx iam API-key-create'를 사용하거나 https://cloud.ibm.com/iam/apikeys의 콘솔을 통해 **IBM Cloud API 키 작성**(각 API 키 한 번만 볼 수 있습니다)."
@@ -25,17 +19,26 @@ deploy.apikey: "IBM Cloud API 키"
 deploy.containerregRegion: "컨테이너 레지스트리 지역"
 deploy.containerregns: "컨테이너 레지스트리 네임스페이스"
 deploy.codeEngineProjectTitle: "Code Engine 프로젝트"
-deploy.codeEngineProjectDescription: "Code Engine 프로젝트가 이미 존재하지 않는 경우 자동으로 작성됩니다."
+deploy.codeEngineProjectDescription: "프로젝트의 이름"
 deploy.codeEngineRegionTitle: " Code Engine 영역"
 deploy.codeEngineRegionDescription: "프로덕션 배치를 위한 IBM Cloud 지역"
 deploy.codeEngineResourceGroupTitle: "Code Engine 자원 그룹"
 deploy.codeEngineResourceGroupDescription: "프로덕션 배치를 위한 IBM Cloud 리소스 그룹"
+deploy.codeengine.project: "기존 Code Engine 프로젝트를 선택하거나 새 프로젝트의 이름을 입력하십시오."
+deploy.codeengine.rg: "리소스 그룹을 선택하십시오."
+deploy.codeengine.region: "Code Engine 프로젝트가 있는 또는 작성할 영역을 선택하십시오."
+deploy.codeengine.cr: "드롭 다운에서 Container Registry 영역을 선택하십시오."
+deploy.icr.ns: "Container Registry 네임스페이스를 선택하거나 컨테이너 레지스트리 네임스페이스의 새 이름을 입력하십시오. 참고: 이 이름은 고유해야 합니다."
+deploy.notification: "이 단계에서 기존 Code Engine 프로젝트의 세부사항을 입력하십시오. 프로젝트가 없는 경우 이름을 제공하면 선택한 리소스 그룹 및 영역에 자동으로 작성됩니다."
+deploy.rg: "자원 그룹"
+
+#spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "문제"
 headerSVG.issueTracker2: "추적 프로그램"
-headerSVG.orionWebIde1: "Orion"
-headerSVG.orionWebIde2: "WEB IDE"
+#spanned over two lines "Code Engine"
 headerSVG.codeEngine1: "코드"
 headerSVG.codeEngine2: "엔진"
+#spanned over two lines "App Repo"
 headerSVG.appRepo1: "앱"
 headerSVG.appRepo2: "저장소"
 headerSVG.ciPipeline: "CI Pipeline"
@@ -81,11 +84,10 @@ wizard.vault.info: "사용자의 시크릿을 포함하는 시크릿 제공자�
 wizard.step.deploymentStrategy.title: "배치"
 wizard.optional.tools.title: "기타 도구"
 wizard.optional.tools.longDescription: "도구 체인에 포함될 수 있는 선택적 도구입니다."
-wizard.optional.tools.webide.title: "Orion WebIDE(필요한 구성 없음)"
-wizard.optional.tools.webide.description: "이 브라우저 기반 IDE(Integrated Development Environment)에서 웹 및 클라우드 관련 개발을 수행합니다."
 wizard.optional.tools.doi.title: "DevOps Insights(필요한 구성 없음)"
 wizard.optional.tools.doi.description: "DevOps Insights는 많이 사용되는 지속적 통합 및 지속적 딜리버리 도구에서 포괄적인 인사이트를 제공하여 애플리케이션 딜리버리의 속도 및 제어 기능을 개선합니다."
 wizard.summary.title: "요약"
 wizard.summary.success.title: "축하합니다!"
 wizard.summary.success.subtitle: "도구 체인 구성을 완료했습니다. 아래의 '작성' 단추를 클릭하여 선택한 도구 및 설정으로 도구 체인을 작성하십시오."
-...
+wizard.welcome.documentation.link.text: "문서"
+wizard.welcome.tutorial.link.text: "Tutorial"

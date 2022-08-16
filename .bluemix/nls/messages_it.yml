@@ -1,21 +1,15 @@
 ---
-###############################################################################
-# Licensed Materials - Property of IBM
-# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
-#
-# Note to U.S. Government Users Restricted Rights:
-# Use, duplication or disclosure restricted by GSA ADP Schedule
-# Contract with IBM Corp.
-###############################################################################
-#NLS_MESSAGEFORMAT_NONE
-#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
+
+# text in toolchain.yml
 template.name: "Sviluppa un'app Code Engine"
 template.description: "(È richiesto un account Pay-As-You-Go) Con questa toolchain, puoi sviluppare e distribuire un'applicazione in modo sicuro in Code Engine, un servizio di Kubernetes condiviso e multi-tenant su IBM Cloud. Per impostazione predefinita, la toolchain utilizza un'app \"Hello World\" Node.js di esempio, ma puoi effettuare il collegamento al tuo repository GitHub. La toolchain è preconfigurata per Continuous Delivery con controllo origine [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index), Issue tracking e modifica in linea.\n\nPuoi gestire i progetti e le applicazioni Code Engine nella [console](https://cloud.ibm.com/codeengine/projects).\n\nLa toolchain utilizza strumenti che fanno parte del servizio Continuous Delivery. Se un'istanza di tale servizio non è già presente nell'organizzazione o nel gruppo di risorse selezionato, quando fai clic su **Crea**, viene automaticamente aggiunta al piano gratuito [Lite](/catalog/services/continuous-delivery/) selezionato.\n\nPer iniziare, fai clic su **Crea**."
 template.gettingStarted: " **La toolchain è pronta!**\n\n**Avvio rapido:** Eseguire il Commit di una modifica nel repository Git per attivare la creazione di una nuova immagine Docker, che viene scansionata per le vulnerabilità e distribuita al progetto Code Engine. Per istruzioni dettagliate, consultare il [tutorial](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine) per questa toolchain."
+
+# text in form-schema.json
 deploy.title: "Stage di distribuzione Hello World"
 deploy.description: "Toolchain semplice Hello World"
-deploy.longDescription: "Delivery Pipeline automatizza la build, la verifica e la distribuzione continue dell'applicazione Docker."
+deploy.longDescription: "Delivery Pipeline automatizza la build, la verifica e la distribuzione continue dell'applicazione Docker. \n\n [Visualizza la documentazione](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "Nome app"
 deploy.appDescription: "Il nome dell'applicazione"
 deploy.apikeyDescription: "La chiave API IBM Cloud è utilizzata per accedere all'IBM Cloud. È possibile ottenere la propria chiave API con 'bx iam API-key-create' o tramite la console all'indirizzo https://cloud.ibm.com/iam/apikeys facendo clic su **Crea una chiave API IBM Cloud** (Ogni tasto api può essere visualizzato una sola volta)."
@@ -25,17 +19,26 @@ deploy.apikey: "Chiave API IBM Cloud"
 deploy.containerregRegion: "Regione registro contenitore"
 deploy.containerregns: "Spazio dei nomi registro contenitore"
 deploy.codeEngineProjectTitle: "Progetto Code Engine"
-deploy.codeEngineProjectDescription: "Se il progetto Code Engine non è già esistente, viene creato automaticamente"
+deploy.codeEngineProjectDescription: "Nome del progetto"
 deploy.codeEngineRegionTitle: " Regione Code Engine"
 deploy.codeEngineRegionDescription: "La regione IBM Cloud per la distribuzione di produzione"
 deploy.codeEngineResourceGroupTitle: "Gruppo di risorse Code Engine"
 deploy.codeEngineResourceGroupDescription: "Il gruppo di risorse IBM Cloud per la distribuzione di produzione"
+deploy.codeengine.project: "Selezionare un progetto Code Engine esistente o immettere un nome per il nuovo progetto."
+deploy.codeengine.rg: "Selezionare un gruppo di risorse."
+deploy.codeengine.region: "Selezionare una regione in cui il progetto Code Engine risiede o verrà creato."
+deploy.codeengine.cr: "Scegliere la regione del Container Registry dall'elenco a discesa"
+deploy.icr.ns: "Selezionare un namespace del Container Registry oppure immettere un nuovo nome per il namespace del registro contenitore. Nota: il nome deve essere univoco."
+deploy.notification: "Immettere le informazioni del progetto Code Engine esistente in questo passo. Se il progetto non esiste, fornire un nome e il progetto verrà creato automaticamente nel gruppo di risorse selezionato e nella regione."
+deploy.rg: "Gruppo di risorse"
+
+#spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "Problema"
 headerSVG.issueTracker2: "Tracker"
-headerSVG.orionWebIde1: "Orion"
-headerSVG.orionWebIde2: "IDE WEB"
+#spanned over two lines "Code Engine"
 headerSVG.codeEngine1: "Codice"
 headerSVG.codeEngine2: "Motore"
+#spanned over two lines "App Repo"
 headerSVG.appRepo1: "App"
 headerSVG.appRepo2: "Repository"
 headerSVG.ciPipeline: "Pipeline CI"
@@ -81,11 +84,10 @@ wizard.vault.info: "Identifica i provider di segreti contenenti i tuoi segreti:"
 wizard.step.deploymentStrategy.title: "Distribuisci"
 wizard.optional.tools.title: "Altri Tool"
 wizard.optional.tools.longDescription: "Si tratta di strumenti facoltativi che possono essere inclusi nella tua toolchain."
-wizard.optional.tools.webide.title: "Orion WebIDE (nessuna configurazione richiesta)"
-wizard.optional.tools.webide.description: "Consente di sviluppare per il web e per il cloud in questo ambiente IDE (integrated development environment) su browser."
 wizard.optional.tools.doi.title: "DevOps Insights (nessuna configurazione richiesta)"
 wizard.optional.tools.doi.description: "DevOps Insights fornisce informazioni generali sugli strumenti di integrazione e distribuzione continua per incrementare la velocità e il controllo della distribuzione dell'applicazione."
 wizard.summary.title: "Riepilogo"
 wizard.summary.success.title: "Congratulazioni"
 wizard.summary.success.subtitle: "È stata completata la configurazione della toolchain. Fare clic sul pulsante 'Crea' per creare la toolchain con gli strumenti e le impostazioni scelte."
-...
+wizard.welcome.documentation.link.text: "Documentazione"
+wizard.welcome.tutorial.link.text: "Supporto didattico"

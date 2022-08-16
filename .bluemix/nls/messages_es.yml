@@ -1,21 +1,15 @@
 ---
-###############################################################################
-# Licensed Materials - Property of IBM
-# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
-#
-# Note to U.S. Government Users Restricted Rights:
-# Use, duplication or disclosure restricted by GSA ADP Schedule
-# Contract with IBM Corp.
-###############################################################################
-#NLS_MESSAGEFORMAT_NONE
-#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
+
+# text in toolchain.yml
 template.name: "Desarrollar una aplicación Code Engine"
 template.description: "(Es necesaria una cuenta de pago por uso) Con esta cadena de herramientas, puede desarrollar y desplegar una aplicación de forma segura en Code Engine, un servicio Kubernetes compartido y de varios arrendatarios en IBM Cloud. De forma predeterminada, la cadena de herramientas utiliza una aplicación de muestra Node.js \"Hello World\", pero puede enlazar a su propio repositorio GitHub en su lugar. La cadena de herramientas está preconfigurada para la entrega continua con [Asesor de vulnerabilidades](https://cloud.ibm.com/docs/services/va?topic=va-va_index), control de origen, seguimiento de problemas y edición en línea.\n\n Puede gestionar sus proyectos y aplicaciones Code Engine en [console](https://cloud.ibm.com/codeengine/projects).\n\nLa cadena de herramientas utiliza herramientas que forman parte del servicio de entrega continua. Si aún no hay una instancia de dicho servicio en la organización o el grupo de recursos seleccionado, cuando pulse **Crear**, se añadirá automáticamente con el plan sin coste [Lite](/catalog/services/continuous-delivery/) seleccionado.\n\nPara comenzar, pulse **Crear**."
-template.gettingStarted: " **¡La cadena de herramientas está lista!**\n\n** Inicio rápido:** Confirme un cambio en el repositorio Git para desencadenar una nueva compilación de imagen de Docker, que se explora para ver vulnerabilidades y se despliega en el proyecto Code Engine. Para obtener instrucciones paso a paso, consulte el [tutorial](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine) para esta cadena de herramientas."
+template.gettingStarted: " **¡La cadena de herramientas está lista!**\n\n**Inicio rápido:** Confirme un cambio en el repositorio Git para desencadenar una nueva compilación de imagen de Docker, que se explora para ver vulnerabilidades y se despliega en el proyecto Code Engine. Para obtener instrucciones paso a paso, consulte el [tutorial](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine) para esta cadena de herramientas."
+
+# text in form-schema.json
 deploy.title: "Hello World Deploy Stage"
 deploy.description: "cadena de herramientas simple hello World"
-deploy.longDescription: "Delivery Pipeline automatiza la creación, la realización de pruebas y el despliegue continuo de la aplicación Docker."
+deploy.longDescription: "Delivery Pipeline automatiza la creación, la realización de pruebas y el despliegue continuo de la aplicación Docker. \n\n [Ver documentos](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "Nombre de aplicación"
 deploy.appDescription: "El nombre de la aplicación."
 deploy.apikeyDescription: "La clave de API de IBM Cloud se utiliza para acceder a IBM Cloud. Puede obtener la clave de API con 'bx iam API-key-create' o a través de la consola en https://cloud.ibm.com/iam/apikeys pulsando **Crear una clave de API de IBM Cloud** (Cada clave de API sólo se puede ver una vez)."
@@ -25,17 +19,26 @@ deploy.apikey: "Clave de API de IBM Cloud"
 deploy.containerregRegion: "Región de registro del contenedor"
 deploy.containerregns: "Espacio de nombres del registro del contenedor"
 deploy.codeEngineProjectTitle: "Proyecto Code Engine"
-deploy.codeEngineProjectDescription: "Si el proyecto Code Engine todavía no existe, se crea automáticamente"
+deploy.codeEngineProjectDescription: "Nombre del proyecto"
 deploy.codeEngineRegionTitle: " Región de Code Engine"
 deploy.codeEngineRegionDescription: "La región de IBM Cloud para el despliegue de producción"
 deploy.codeEngineResourceGroupTitle: "Grupo de recursos de Code Engine"
 deploy.codeEngineResourceGroupDescription: "El grupo de recursos de IBM Cloud para el despliegue de producción"
+deploy.codeengine.project: "Seleccione un proyecto de Code Engine existente o escriba un nombre para un proyecto nuevo."
+deploy.codeengine.rg: "Seleccione un grupo de recursos."
+deploy.codeengine.region: "Seleccione una región donde exista o se vaya a crear el proyecto de Code Engine."
+deploy.codeengine.cr: "Seleccione la región de Container Registry en el menú desplegable."
+deploy.icr.ns: "Seleccione un espacio de nombres de Container Registry o especifique un nombre nuevo para el espacio de nombres de Container Registry. Nota: este nombre debe ser exclusivo."
+deploy.notification: "Especifique los detalles del proyecto de Code Engine existente en este paso. Si un proyecto no existe, proporcione un nombre y se creará automáticamente en el grupo de recursos y la región seleccionados."
+deploy.rg: "Grupo de recursos"
+
+#spanned over two lines "Issue Tracker"
 headerSVG.issueTracker1: "Problema"
 headerSVG.issueTracker2: "Rastreador"
-headerSVG.orionWebIde1: "Orion"
-headerSVG.orionWebIde2: "IDE WEB"
+#spanned over two lines "Code Engine"
 headerSVG.codeEngine1: "Código"
 headerSVG.codeEngine2: "Motor"
+#spanned over two lines "App Repo"
 headerSVG.appRepo1: "App"
 headerSVG.appRepo2: "Repo"
 headerSVG.ciPipeline: "Interconexión CI"
@@ -81,11 +84,10 @@ wizard.vault.info: "Identifique los proveedores de secretos que contienen sus se
 wizard.step.deploymentStrategy.title: "Desplegar"
 wizard.optional.tools.title: "Otras herramientas"
 wizard.optional.tools.longDescription: "Estas son herramientas opcionales que se pueden incluir en la cadena de herramientas."
-wizard.optional.tools.webide.title: "Orion WebIDE (no requiere configuración)"
-wizard.optional.tools.webide.description: "Desarrollo para web y nube en IDE basado en navegador."
 wizard.optional.tools.doi.title: "DevOps Insights (no requiere configuración)"
 wizard.optional.tools.doi.description: "DevOps Insights proporciona información completa de herramientas populares de integración continua y de entrega continua para aumentar la velocidad y el control de la entrega de aplicaciones."
 wizard.summary.title: "Resumen"
 wizard.summary.success.title: "¡Enhorabuena!"
 wizard.summary.success.subtitle: "Ha completado la configuración de la cadena de herramientas. Pulse el siguiente botón 'Crear' para crear la cadena de herramientas con las herramientas y los valores que ha elegido."
-...
+wizard.welcome.documentation.link.text: "Documentación"
+wizard.welcome.tutorial.link.text: "Guía de aprendizaje"
