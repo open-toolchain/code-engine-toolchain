@@ -338,8 +338,6 @@ spec:
           value: $(params.memory)
         - name: min-scale
           value: $(params.min-scale)
-        - name: registry-namespace
-          value: $(params.registry-namespace)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
@@ -371,6 +369,22 @@ spec:
           value: $(params.health-endpoint)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
+    - name: cleanup-untagged-images
+      taskRef:
+        name: cleanup-images
+      runAfter: [deploy-application]
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: resource-group
+          value: $(params.resource-group)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+        - name: registry-namespace
+          value: $(params.registry-namespace)
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-ws
     - name: post-to-slack
       taskRef:
         name: slack-post-message
