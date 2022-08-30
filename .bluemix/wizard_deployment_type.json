@@ -1,0 +1,97 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "messages": {
+        "$i18n": "locales.yml"
+    },
+    "title": {
+        "$ref": "#/messages/wizard.deploy.title"
+    },
+    "description": "",
+    "longDescription": "Select your application build strategy and deployment type",
+    "type": "object",
+    "properties": {
+        "strategy": {
+            "type": "string",
+            "enum": [
+                {
+                    "name": {
+                        "$ref": "#/messages/wizard.deploy.dockerfile"
+                    },
+                    "value": "dockerfile"
+                },
+                {
+                    "name": {
+                        "$ref": "#/messages/wizard.deploy.buildpacks"
+                    },
+                    "value": "buildpacks"
+                }
+                
+            ]
+        },
+        "deployment": {
+            "type": "string",
+            "enum": [
+                {
+                    "name": {
+                        "$ref": "#/messages/wizard.deploy.application"
+                    },
+                    "value": "application"
+                },
+                {
+                    "name": {
+                        "$ref": "#/messages/wizard.deploy.job"
+                    },
+                    "value": "job"
+                }
+            ]
+        }
+    },
+    "form": [
+        {
+            "type": "info",
+            "text": {
+                "$ref": "#/messages/wizard.deploy.target.strategy"
+            }
+        },
+        {
+            "type": "label",
+            "text": ""
+        },
+        {
+            "type": "tilegroup",
+            "key": "strategy",
+            "display": {
+                "showLabel": false,
+                "orientation": "horizontal"
+            }
+        },
+        {
+            "type": "label",
+            "text": ""
+        },
+        {
+            "type": "label",
+            "title": ""
+        },
+        {
+            "type": "info",
+            "text": {
+                "$ref": "#/messages/wizard.deploy.target.deployment"
+            }
+        },
+        {
+            "type": "tilegroup",
+            "key": "deployment",
+            "display": {
+                "showLabel": false,
+                "orientation": "horizontal"
+            }
+        },
+        {
+            "type": "info",
+            "text": {
+                "$ref": "#/messages/deploy.deploytarget.help"
+            }
+        }
+    ]
+}

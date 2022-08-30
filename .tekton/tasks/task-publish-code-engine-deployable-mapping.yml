@@ -31,6 +31,9 @@ spec:
     - name: task-image
       description: image used to execute this task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
+    - name: deployment-type
+      description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
+      default: "application"
   steps:
     - name: publish-deployable-mapping
       image: $(params.task-image)
@@ -53,6 +56,11 @@ spec:
             env
             trap env EXIT
             set -x
+        fi
+
+        if [[ "$(params.deployment-type)" == "job" ]]; then
+            echo "Deploying your code as Code Engine application...."
+            exit 0
         fi
 
         # SETUP BEGIN

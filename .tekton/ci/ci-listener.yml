@@ -170,6 +170,21 @@ spec:
     - name: cra-scan-image
       description: Image to use for `scan` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
+
+    # BuildPack related params
+    - name: size
+      description:  The size to use for the build, which determines the amount of resources used. Valid values include small, medium, large, xlarge.
+      default: "medium"  
+    - name: build-strategy
+      description:  The strategy to use for building the image. Valid values are 'dockerfile' and 'buildpacks'. 
+      default: "dockerfile"
+    - name: deployment-type
+      description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
+      default: "application"
+    - name: maxexecutiontime
+      description: The maximum execution time in seconds for runs of the job. 
+      default: "7200"
+
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -198,6 +213,8 @@ spec:
         pipelineRef:
           name: code-engine-pipeline
         params:
+          - name: apikey
+            value: $(params.apikey)
           - name: ibmcloud-api
             value: $(params.ibmcloud-api)
           - name: repository
@@ -305,6 +322,14 @@ spec:
             value: $(params.vulnerability-report)
           - name: cra-scan-image
             value: $(params.cra-scan-image)
+          - name: size
+            value: $(params.size)
+          - name: build-strategy
+            value: $(params.build-strategy)
+          - name: deployment-type
+            value: $(params.deployment-type)
+          - name: maxexecutiontime
+            value: $(params.maxexecutiontime)
         workspaces:
           - name: pipeline-ws
             persistentVolumeClaim:

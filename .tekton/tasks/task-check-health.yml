@@ -29,7 +29,9 @@ spec:
             set -x
         fi
 
-        if [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)$(params.health-endpoint)") == 200 ]; then
+        if [[ "$(params.app-hostname)" == "Code Engine Job created/updated" ]]; then
+          echo "Code Engine job created/updated. health check not required....."
+        elif [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)$(params.health-endpoint)") == 200 ]; then
           echo "Successfully reached health endpoint at $(params.app-hostname)$(params.health-endpoint)"
           echo "====================================================================="
         elif [ $(curl -isL -o /dev/null -w "%{http_code}" "$(params.app-hostname)") == 200 ]; then

@@ -113,3 +113,15 @@ properties:
   - name: deployment-timeout
     type: text
     value: "300"
+  - name: build-strategy
+    type: text
+    value: ${BUILD_STRATEGY}
+  - name: deployment-type
+    type: text
+    value: ${DEPLOYMENT_TYPE}
+  - name: path-to-context
+    type: text
+    value: "."
+  - name: path-to-dockerfile
+    type: text
+    value: "."

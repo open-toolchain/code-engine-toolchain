@@ -116,7 +116,13 @@ steps:
           - form: wizard_vault
             parameter: hashicorp-vault
             value: true
-
+  - name: build
+    label:
+      $ref: "#/messages/wizard.step.build.label"
+    title:
+      $ref: "#/messages/wizard.step.build.title"
+    form: buildpipeline
+    
   - name: deploy
     label:
       $ref: "#/messages/wizard.step.deploy.label"

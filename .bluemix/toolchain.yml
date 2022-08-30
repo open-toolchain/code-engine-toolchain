@@ -219,6 +219,8 @@ services:
             } else {
               'main'
             }
+          BUILD_STRATEGY: '{{form.buildpipeline.parameters.strategy}}' 
+          DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
         execute: 'manual-run'
   devops-insights:
       service_id: 'draservicebroker'
@@ -235,3 +237,13 @@ form:
       service-bindings: '{{serviceBindingsBase64}}'
     schema:
       $ref: form-schema.json
+  buildpipeline:
+    parameters:
+      strategy: >
+        $env.strategy ?
+          '{{strategy}}' : 'dockerfile'
+      deployment: >
+        $env.deployment ?
+          '{{deployment}}' : 'application'
+    schema:
+      $ref: wizard_deployment_type.json
