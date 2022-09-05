@@ -1,3 +1,16 @@
+---
+###############################################################################
+# Licensed Materials - Property of IBM
+# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
+#
+# Note to U.S. Government Users Restricted Rights:
+# Use, duplication or disclosure restricted by GSA ADP Schedule
+# Contract with IBM Corp.
+###############################################################################
+#NLS_MESSAGEFORMAT_NONE
+#NLS_ENCODING=UTF-8
+#The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
+
 # text in toolchain.yml
 template.name: "[G'Ｄｅｖｅｌｏｐ ａ Ｃode Engine appฏูİı｜]"
 template.description: "[G'(Ｐａｙ-Ａｓ-Ｙｏｕ-Ｇｏ ａｃｃｏｕｎｔ ｒｅｑｕｉｒｅｄ) Ｗｉｔｈ ｔｈｉｓ ｔｏｏｌｃｈａｉｎ, ｙｏｕ ｃａｎ ｄｅｖｅｌｏｐ ａｎｄ ｄｅｐｌｏｙ ａｎ ａｐｐｌｉｃａｔｉｏｎ ｓｅｃｕｒｅｌｙ ｉｎｔｏ Ｃｏｄｅ Ｅｎｇｉｎｅ, ａ ｓｈａｒｅｄ, ｍｕｌｔｉ-ｔｅｎａｎｔ Ｋｕｂｅｒｎｅｔｅｓ ｓｅｒｖｉｃｅ ｏｎ ＩＢＭ Ｃｌｏｕｄ. Ｂｙ ｄｅｆａｕｌｔ, ｔｈｅ ｔｏｏｌｃｈａｉｎ ｕｓｅｓ ａ ｓａｍｐｌｅ Ｎｏｄｅ.ｊｓ \"Ｈｅｌｌｏ Ｗｏｒｌｄ\" ａｐｐ, ｂｕｔ ｙｏｕ ｃａｎ ｌｉｎｋ ｔｏ ｙｏｕｒ ｏｗｎ ＧｉｔＨｕｂ ｒｅｐｏｓｉｔｏｒｙ ｉｎｓｔｅａｄ. Ｔｈｅ ｔｏｏｌｃｈａｉｎ ｉｓ ｐｒｅｃｏｎｆｉｇｕｒｅｄ ｆｏｒ ｃｏｎｔｉｎuous delivery with [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index), source control, issue tracking, and online editing.\n\n You can manage your Code Engine projects and applications in the [console](https://cloud.ibm.com/codeengine/projects).\n\nThe toolchain uses tools that are part of the Continuous Delivery service. If an instance of that service isn't already in the selected resource group or organization, when you click **Create**, it is automatically added with the free [Lite](/catalog/services/continuous-delivery/) plan selected.\n\nTo get started, click **Create**.ฏูİı｜]"
@@ -86,3 +99,13 @@ wizard.summary.success.title: "[G'Ｃｏｎｇratulationsฏูİı｜]"
 wizard.summary.success.subtitle: "[G'Ｙｏｕ ｈａｖｅ ｃｏｍｐｌｅｔｅｄ ｔｈｅ ｃｏｎｆｉｇｕｒａｔｉｏｎ ｏｆ ｙour toolchain. Click the 'Create' button below to create the toolchain with your chosen tools and settings.ฏูİı｜]"
 wizard.welcome.documentation.link.text: "[G'Ｄｏｃumentationฏูİı｜]"
 wizard.welcome.tutorial.link.text: "[G'Tutorialฏูİı｜]"
+wizard.deploy.title: "[G'Ｈｏｗ ｄｏ ｙｏｕ ｗａｎｔ to build and deploy your applicationฏูİı｜]"
+wizard.deploy.buildpacks: "[G'Ｂｕild Packsฏูİı｜]"
+wizard.deploy.dockerfile: "[G'Ｄockerfileฏูİı｜]"
+wizard.deploy.application: "[G'Ａｐplicationฏูİı｜]"
+wizard.deploy.job: "[G'Jobฏูİı｜]"
+wizard.deploy.target.strategy: "[G'Ｃｏｄｅ Ｅｎｇｉｎｅ ｓｕｐports building from a Dockerfile and Cloud Native Buildpacks ฏูİı｜]"
+wizard.deploy.target.deployment: "[G'Ｓｅｌｅｃｔ ｙｏｕｒ ａpplication deployment typeฏูİı｜]"
+deploy.deploytarget.help : "[G'Ｆｏｒ ｍｏｒｅ ｉｎｆｏ, [Ｖｉｅｗ ｄｏｃｓ](ｈｔｔｐｓ://ｃｌｏｕｄ.ｉｂｍ.ｃｏｍ/ｄｏｃｓ/ｃｏｄeengine?topic=codeengine-deploy-app-tutorial) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)ฏูİı｜]"
+wizard.step.build.label: "[G'Strategyฏูİı｜]"
+wizard.step.build.title: "[G'Strategyฏูİı｜]"
