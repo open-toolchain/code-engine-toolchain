@@ -90,6 +90,7 @@ wizard.vault.notification.sutitle: "164:As a best practice, store the secrets in
 wizard.vault.hashicorp.description: "165:HashiCorp Vault is a secrets management solution that brokers access to systems for both humans and machines through programmatic access."
 wizard.vault.info: "166:Please identify the secrets providers containing your secrets:"
 wizard.step.deploymentStrategy.title: "167:Deploy"
+wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
 wizard.optional.tools.title: "168:Other Tools"
 wizard.optional.tools.longDescription: "169:These are optional tools that can be included in your toolchain."
 wizard.optional.tools.doi.title: "170:DevOps Insights (no configuration required)"

@@ -82,6 +82,7 @@ wizard.vault.notification.sutitle: "Als bewährtes Verfahren speichern Sie gehei
 wizard.vault.hashicorp.description: "HashiCorp Vault ist eine Lösung zur Verwaltung geheimer Schlüssel, die Zugriff auf Systeme sowohl für Menschen als auch für Maschinen programmgesteuert makelt."
 wizard.vault.info: "Geben Sie die Provider geheimer Schlüssel an, die Ihre geheimen Schlüssel enthalten:"
 wizard.step.deploymentStrategy.title: "Bereitstellung"
+wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
 wizard.optional.tools.title: "Andere Tools"
 wizard.optional.tools.longDescription: "Dies sind optionale Tools, die in Ihre Toolchain eingeschlossen werden können."
 wizard.optional.tools.doi.title: "DevOps Insights (keine Konfiguration erforderlich)"

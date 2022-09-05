@@ -7,7 +7,9 @@
         "$ref": "#/messages/wizard.deploy.title"
     },
     "description": "",
-    "longDescription": "Select your application build strategy and deployment type",
+    "longDescription": {
+        "$ref": "#/messages/wizard.step.deploymentStrategy.description"
+    },
     "type": "object",
     "properties": {
         "strategy": {

@@ -90,6 +90,7 @@ wizard.vault.notification.sutitle: "As a best practice, store the secrets in one
 wizard.vault.hashicorp.description: "HashiCorp Vault is a secrets management solution that brokers access to systems for both humans and machines through programmatic access.~otc-ui1282"
 wizard.vault.info: "Please identify the secrets providers containing your secrets:~otc-ui1283"
 wizard.step.deploymentStrategy.title: "Deploy~otc-ui1284"
+wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
 wizard.optional.tools.title: "Other Tools~otc-ui1285"
 wizard.optional.tools.longDescription: "These are optional tools that can be included in your toolchain.~otc-ui1286"
 wizard.optional.tools.doi.title: "DevOps Insights (no configuration required)~otc-ui1287"
