@@ -82,7 +82,7 @@ wizard.vault.notification.sutitle: "우수 사례로서 다음 도구 중 하나
 wizard.vault.hashicorp.description: "HashiCorp Vault는 프로그래밍 방식의 액세스를 통해 사용자와 머신 모두에 대한 시스템 액세스를 중개하는 시크릿 관리 솔루션입니다."
 wizard.vault.info: "사용자의 시크릿을 포함하는 시크릿 제공자를 식별하십시오."
 wizard.step.deploymentStrategy.title: "배치"
-wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
+wizard.step.deploymentStrategy.description: "애플리케이션 빌드 전략 및 배치 유형 선택"
 wizard.optional.tools.title: "기타 도구"
 wizard.optional.tools.longDescription: "도구 체인에 포함될 수 있는 선택적 도구입니다."
 wizard.optional.tools.doi.title: "DevOps Insights(필요한 구성 없음)"

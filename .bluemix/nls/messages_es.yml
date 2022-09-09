@@ -82,7 +82,7 @@ wizard.vault.notification.sutitle: "Se recomienda almacenar los secretos en una 
 wizard.vault.hashicorp.description: "HashiCorp Vault es una solución de gestión de secretos que distribuye el acceso a sistemas tanto para personas como para máquinas a través de un acceso programático."
 wizard.vault.info: "Identifique los proveedores de secretos que contienen sus secretos:"
 wizard.step.deploymentStrategy.title: "Desplegar"
-wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
+wizard.step.deploymentStrategy.description: "Seleccione la estrategia de compilación de aplicaciones y el tipo de despliegue"
 wizard.optional.tools.title: "Otras herramientas"
 wizard.optional.tools.longDescription: "Estas son herramientas opcionales que se pueden incluir en la cadena de herramientas."
 wizard.optional.tools.doi.title: "DevOps Insights (no requiere configuración)"

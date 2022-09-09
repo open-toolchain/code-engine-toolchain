@@ -82,7 +82,7 @@ wizard.vault.notification.sutitle: "最佳实践是将私钥存储在以下某�
 wizard.vault.hashicorp.description: "HashiCorp Vault 是一种密钥管理解决方案，它通过编程访问来代理人和机器对系统的访问权。"
 wizard.vault.info: "请识别包含您的私钥的密钥提供者："
 wizard.step.deploymentStrategy.title: "部署"
-wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
+wizard.step.deploymentStrategy.description: "选择应用程序构建策略和部署类型"
 wizard.optional.tools.title: "其他工具"
 wizard.optional.tools.longDescription: "这些是可选工具，可包含在工具链中。"
 wizard.optional.tools.doi.title: "DevOps Insights（无需配置）"

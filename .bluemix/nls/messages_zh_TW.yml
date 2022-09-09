@@ -82,7 +82,7 @@ wizard.vault.notification.sutitle: "作為最佳作法，請將密鑰儲存在�
 wizard.vault.hashicorp.description: "「HashiCorp 加密配置檔」是一個密鑰管理解決方案，它可透過程式化的存取方式以中介的身分來存取人類與機器的系統。"
 wizard.vault.info: "請識別包含您密鑰的密鑰提供者："
 wizard.step.deploymentStrategy.title: "Deploy"
-wizard.step.deploymentStrategy.description: "Select your application build strategy and deployment type"
+wizard.step.deploymentStrategy.description: "選取應用程式建置策略及部署類型"
 wizard.optional.tools.title: "其他工具"
 wizard.optional.tools.longDescription: "這些是可包括在您的工具鏈中的選用工具。"
 wizard.optional.tools.doi.title: "DevOps Insights（不需要配置）"
