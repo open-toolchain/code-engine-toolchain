@@ -28,7 +28,7 @@ deploy.codeengine.project: "Wählen Sie ein vorhandenes Code Engine-Projekt aus 
 deploy.codeengine.rg: "Wählen Sie eine Ressourcengruppe aus."
 deploy.codeengine.region: "Wählen Sie eine Region aus, in der Ihr Code Engine-Projekt vorhanden ist oder erstellt wird."
 deploy.codeengine.cr: "Wählen Sie in der Dropdown-Liste die Container-Registry-Region aus."
-deploy.icr.ns: "Wählen Sie einen Container-Registry-Namensbereich aus oder geben Sie einen neuen Namen für den Container-Registry-Namensbereich ein. Hinweis: Dieser Name muss eindeutig sein."
+deploy.icr.ns: "Wählen Sie einen Container-Registry-Namespace aus oder geben Sie einen neuen Namen für den Container-Registry-Namespace ein. Hinweis: Dieser Name muss eindeutig sein."
 deploy.notification: "Geben Sie in diesem Schritt Details zum vorhandenen Code Engine-Projekt ein. Wenn kein Projekt vorhanden ist, geben Sie einen Namen an, der automatisch in Ihrer ausgewählten Ressourcengruppe und Region erstellt wird."
 deploy.rg: "Ressourcengruppe"
 

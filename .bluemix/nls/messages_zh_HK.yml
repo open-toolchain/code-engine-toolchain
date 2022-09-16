@@ -4,7 +4,7 @@
 # text in toolchain.yml
 template.name: "開發 Code Engine 應用程式"
 template.description: "（需要隨收隨付制帳戶）使用此工具鏈，可以安全地開發應用程式並將其部署至 Code Engine，這是 IBM Cloud 上的共用多租戶 Kubernetes 服務。 依預設，此工具鏈會使用範例 Node.js \"Hello World\" 應用程式，但是您可以改為鏈結至自己的 GitHub 儲存庫。 此工具鏈已針對具有[漏洞顧問](https://cloud.ibm.com/docs/services/va?topic=va-va_index)的 Continuous Delivery、來源控制、問題追蹤及線上編輯進行預先配置。\n\n 可以在 [主控台](https://cloud.ibm.com/codeengine/projects) 中管理 Code Engine 專案及應用程式。\n\n工具鏈使用屬於 Continuous Delivery 服務的工具。 當您按一下**建立**時，如果選取的資源群組或組織中尚未具有該服務的實例，則它會自動新增選定的免費 [Lite](/catalog/services/continuous-delivery/) 方案。\n\n若要開始使用，請按一下**建立**。"
-template.gettingStarted: "**工具鏈已備妥！**\n\n**快速入門：** 將變更確定至 Git 儲存庫，以觸發新的 Docker 映像檔建置，其會掃描是否有漏洞並在 Code Engine 專案中進行部署。 如需逐步指示，請參閱此工具鏈的 [指導教學](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)。"
+template.gettingStarted: " **工具鏈已備妥！**\n**快速入門：** 將變更確定至 Git 儲存庫，以觸發新的 Docker 映像檔建置，其會掃描是否有漏洞並在 Code Engine 專案中進行部署。 如需逐步指示，請參閱此工具鏈的[指導教學](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)。"
 
 # text in form-schema.json
 deploy.title: "Hello World 部署階段"
