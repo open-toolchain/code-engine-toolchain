@@ -143,7 +143,7 @@ spec:
           RG_NAME="$(params.resource-group)"
         fi
         # check to see if $RG_NAME is not the default resource group
-        if [ $(ibmcloud resource groups --output json | jq '.[] | select(.name=="$RG_NAME") | .default') == 'false' ]; then
+        if [ $(ibmcloud resource groups --output json | jq -r --arg RG_NAME "$RG_NAME" '.[] | select(.name==$RG_NAME) | .default') == 'false' ]; then
           echo "Updating Code Engine project to bind to resource group $RG_NAME..."
           ibmcloud ce project update --binding-resource-group "$RG_NAME"
         fi
