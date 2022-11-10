@@ -123,7 +123,12 @@ spec:
         source $(params.shuttle-properties-file)
         export $(cut -d= -f1 $(params.shuttle-properties-file))
 
-        echo "y" | ibmcloud plugin install code-engine
+        # Make sure that the latest version of Code Engine CLI is installed
+        if ! ibmcloud plugin show code-engine >/dev/null 2>&1; then
+            ibmcloud plugin install code-engine
+        else
+            ibmcloud plugin update code-engine --force
+        fi
 
         echo "Check Code Engine project availability"
         if ibmcloud ce proj get -n $(params.code-engine-project); then
