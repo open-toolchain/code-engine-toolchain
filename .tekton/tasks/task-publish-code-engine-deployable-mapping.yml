@@ -30,7 +30,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
     - name: deployment-type
       description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
       default: "application"
