@@ -73,7 +73,7 @@ spec:
         fi
 
         ibmcloud login -a $(params.ibmcloud-api) -r $IBM_CLOUD_REGION --apikey $IBM_CLOUD_API_KEY
-        ibmcloud target -g $(params.resource-group)
+        ibmcloud target -g "$(params.resource-group)"
 
         # Make sure that the latest version of Code Engine CLI is installed
         if ! ibmcloud plugin show code-engine >/dev/null 2>&1; then

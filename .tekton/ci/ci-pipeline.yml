@@ -442,7 +442,7 @@ spec:
                 IBM_CLOUD_REGION=$(jq -r '.region_id' /artifacts/_toolchain.json | awk -F: '{print $3}')
               fi
               ibmcloud login --apikey "$(params.apikey)" -r "${IBM_CLOUD_REGION}"
-              ibmcloud target -g $(params.resource-group)
+              ibmcloud target -g "$(params.resource-group)"
               echo "Select Code engine project $(params.code-engine-project)"
               
               if ibmcloud ce project select -n "$(params.code-engine-project)" > /dev/null 2>&1 ;
