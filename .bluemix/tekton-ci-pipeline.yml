@@ -89,19 +89,31 @@ properties:
   - name: cpu
     type: text
     value: "0.25"
-  - name: max-scale
+  - name: app-max-scale
     type: text
     value: "1"
   - name: memory
     type: text
     value: "0.5G"
-  - name: min-scale
+  - name: ephemeral-storage
+    type: text
+    value: "0.4G"
+  - name: app-min-scale
     type: text
     value: "0"
-  - name: port
+  - name: app-port
     type: text
-    value: "http1:8080"
-  - name: health-endpoint
+    value: "8080"
+  - name: app-visibility
+    type: single_select
+    value:
+      "0": "public"
+      "1": "private"
+      "2": "project"
+  - name: app-concurrency
+    type: text
+    value: "100"
+  - name: app-health-endpoint
     type: text
     value: "/health"
   - name: pipeline-debug
@@ -110,12 +122,23 @@ properties:
   - name: branch
     type: text
     value: ${APP_REPO_BRANCH}
-  - name: deployment-timeout
+  - name: app-deployment-timeout
     type: text
     value: "300"
   - name: build-strategy
     type: text
     value: ${BUILD_STRATEGY}
+  - name: build-use-native-docker
+    type: single_select
+    value:
+      "0": "false"
+      "1": "true"
+  - name: build-size
+    type: text
+    value: "medium"
+  - name: build-timeout
+    type: text
+    value: "600"
   - name: deployment-type
     type: text
     value: ${DEPLOYMENT_TYPE}

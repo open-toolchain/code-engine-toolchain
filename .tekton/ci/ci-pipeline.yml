@@ -12,7 +12,7 @@ spec:
       default: ""
     - name: branch
       description: the branch for the git repo
-      default: "master"
+      default: "main"
     - name: revision
       description: the git revision/commit for the git repo
       default: ""
@@ -54,20 +54,29 @@ spec:
       description: The command(s) to run the build in run-build step. It will override the default commands
 
     - name: cpu
-      description: number of vCPU of the Code Engine application
+      description: the amount of vCPU set for each instance of the application or job
       default: "0.25"
-    - name: max-scale
+    - name: memory
+      description: the amount of memory set for each instance of the application or job
+      default: "0.5G"
+    - name: ephemeral-storage
+      description: the amount of ephemeral storage to set for each instance of the application or job
+      default: "0.4G"
+    - name: app-max-scale
       description: maximum scale of the Code Engine application
       default: "1"
-    - name: memory
-      description: total memory of the Code Engine application
-      default: "0.5G"
-    - name: min-scale
+    - name: app-min-scale
       description: minimum scale of the Code Engine application
       default: "0"
-    - name: port
+    - name: app-port
       description: port where the application is listening
-      default: "http1:8080"
+      default: "8080"
+    - name: app-visibility
+      description: the visibility for the application. Valid values are 'public', 'private' and 'project'.
+      default: "public"
+    - name: app-concurrency
+      description: the maximum number of requests that can be processed concurrently per instance. 
+      default: "100"
     - name: service-bindings
       description: JSON object of a map of names to services instances to be bound to the application
       default: "{}"
@@ -76,7 +85,7 @@ spec:
       default: "300"
 
       # For health task
-    - name: health-endpoint
+    - name: app-health-endpoint
       description: application health endpoint, e.g. /health
       default: ""
 
@@ -168,18 +177,32 @@ spec:
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
     
     # BuildPack related params
-    - name: size
-      description:  The size to use for the build, which determines the amount of resources used. Valid values include small, medium, large, xlarge.
-      default: "medium"  
     - name: build-strategy
       description:  The strategy to use for building the image. Valid values are 'dockerfile' and 'buildpacks'. 
       default: "dockerfile"
+    - name: build-timeout
+      description: the amount of time, in seconds, that can pass before the build run must succeed or fail.
+      default: "600"
+    - name: build-size
+      description: the size to use for the build, which determines the amount of resources used. Valid values include small, medium, large, xlarge.
+      default: "medium"
     - name: deployment-type
       description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
       default: "application"
-    - name: maxexecutiontime
+    - name: build-use-native-docker
+      description:  Optional property to opt-in for using native docker build capabilities as opposed to use Code Engine build to containerize the source. Note this setting only takes effect if the build-strategy is set to 'dockerfile'. Valid values are 'true' and 'false'. 
+      default: "false"
+    
+    # Job specific configuration
+    - name: job-instances
+      description: Specifies the number of instances that are used for runs of the job. When you use this option, the system converts to array indices. For example, if you specify 'instances' of 5, the system converts to 'array-indices' of '0 - 4'
+      default: "1"
+    - name: job-maxexecutiontime
       description: The maximum execution time in seconds for runs of the job. 
       default: "7200"
+    - name: job-retrylimit
+      description: The number of times to rerun an instance of the job before the job is marked as failed.
+      default: "3"
   workspaces:
     - name: pipeline-ws
   tasks:
@@ -415,7 +438,7 @@ spec:
         - name: docker-commands
           value: |
             # Minting image tag using format: BUILD_NUMBER-BRANCH-COMMIT_ID-TIMESTAMP
-            # e.g. 3-master-50da6912-20181123114435
+            # e.g. 3-main-50da6912-20181123114435
             # (use build number as first segment to allow image tag as a patch release name according to semantic versioning)
             GIT_BRANCH="$(tasks.git-clone.results.git-branch)"
             GIT_COMMIT="$(tasks.git-clone.results.git-commit)"
@@ -427,50 +450,117 @@ spec:
             fi
             if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
             IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
-            echo "$IMAGE_TAG"
+            echo "Image tag: $IMAGE_TAG"
+            
             BUILD_STRATEGY="$(params.build-strategy)"
-            if [[ "$BUILD_STRATEGY" == "buildpacks" ]]; then
+            echo "Configured build strategy: $BUILD_STRATEGY"
+            if [[ "$BUILD_STRATEGY" == "dockerfile" && "$(params.build-use-native-docker)" == "true" ]]; then
+              echo "Using native docker build capabilities to build the application container image."
+              
+              # Use docker build / inspect / push command
+              docker build --tag "$IMAGE_URL:$IMAGE_TAG" --file $PATH_TO_DOCKERFILE/$DOCKERFILE $PATH_TO_CONTEXT
+              docker inspect ${IMAGE_URL}:${IMAGE_TAG}
+              docker push ${IMAGE_URL}:${IMAGE_TAG}
+
+            else
+
+              #
+              # Setting up the IBM Cloud CLI including the Code Engine plugin
               apk update
               apk add curl 
               curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-              echo "Install the code engine plugin"
-              ibmcloud plugin install code-engine
-               if [ "$(params.region)" ]; then
+      
+              #
+              # Make sure that the latest version of Code Engine CLI is installed
+              echo "Install the Code Engine plugin"      
+              if ! ibmcloud plugin show code-engine >/dev/null 2>&1; then
+                  ibmcloud plugin install code-engine
+              else
+                  ibmcloud plugin update code-engine --force
+              fi
+
+              #
+              # Targetting the region and resource group
+              if [ "$(params.region)" ]; then
                 # if cluster region is in the 'ibm:yp:<region>' just keep the region part
                 IBM_CLOUD_REGION=$(echo "$(params.region)" | awk -F ':' '{print $NF;}')
               else
                 IBM_CLOUD_REGION=$(jq -r '.region_id' /artifacts/_toolchain.json | awk -F: '{print $3}')
               fi
               ibmcloud login --apikey "$(params.apikey)" -r "${IBM_CLOUD_REGION}"
+              
               ibmcloud target -g "$(params.resource-group)"
               echo "Select Code engine project $(params.code-engine-project)"
               
+              #
+              # Make sure the Code Engine project exists
+              echo "Selecting Code Engine project '$(params.code-engine-project)' ..."
               if ibmcloud ce project select -n "$(params.code-engine-project)" > /dev/null 2>&1 ;
                 then 
-                echo "selected the project."
+                echo "Selected the project."
               else 
-                echo "IBM code engine project does not exists, Creating it......."
+                echo "IBM Code Engine project does not exists, Creating it..."
                 ibmcloud ce project  create -n "$(params.code-engine-project)"
               fi
 
-              if ibmcloud ce registry get --name "${PIPELINE_ID}" > /dev/null 2>&1 ;
-                then 
-                echo "${PIPELINE_ID} Secret to push and pull the image already exists."
-              else 
-                echo "Secret to push and pull the image does not exists, Creating it......."
-                ibmcloud ce registry create  --name "${PIPELINE_ID}" --email a@b.com  --password="$(params.apikey)" --server "${REGISTRY_URL}" --username iamapikey
+              #
+              # Make sure the image is stored using the private ICR endpoint
+              # The Code Engine build will make sure that a corresponding registry secret is being created
+              IMAGE_URL_TO_USE=$IMAGE_URL
+              if [[ ! $IMAGE_URL == private.* ]];
+              then
+                IMAGE_URL_TO_USE="private.$IMAGE_URL"
+                echo "Pointing image reference to private ICR location: '$IMAGE_URL_TO_USE'"
               fi
-              echo "using Buildpacks to build application"
-              IBMCLOUD_TRACE=true ibmcloud ce buildrun submit --name "${PIPELINE_RUN_ID}" --strategy buildpacks --image "$IMAGE_URL:$IMAGE_TAG" --registry-secret "${PIPELINE_ID}" --source "$PATH_TO_DOCKERFILE" --context-dir "$PATH_TO_CONTEXT" --wait --wait-timeout $(params.deployment-timeout)
-              docker pull ${IMAGE_URL}:${IMAGE_TAG}
-            else
-              echo "Using Dockerfile to build the application image."
-              # Default docker build / inspect / push command
-              docker build --tag "$IMAGE_URL:$IMAGE_TAG" --file $PATH_TO_DOCKERFILE/$DOCKERFILE $PATH_TO_CONTEXT
-              docker inspect ${IMAGE_URL}:${IMAGE_TAG}
-              docker push ${IMAGE_URL}:${IMAGE_TAG}
+
+              #
+              # Check whether the repository defined a .ceignore to set optimize the build
+              # See https://cloud.ibm.com/docs/codeengine?topic=codeengine-plan-build#build-plan-repo
+              if [ ! -f ".ceignore" ]; then
+                echo "File .ceignore does not exist. Using '.dockerignore' or '.gitignore' instead"
+
+                # Given the order of copy statements, .dockerignore will be used to define the .ceignore if present
+                [ -f .gitignore ] && cp .gitignore .ceignore
+                [ -f .dockerignore ] && cp .dockerignore .ceignore
+              fi
+              if [ -f ".ceignore" ]; then
+                echo "Following file patterns aren't considered as part of the build:"
+                cat .ceignore
+              fi
+
+              #
+              # Printing build configuration, prior submitting it
+              echo "Using Code Engine to build the application container image '$IMAGE_URL_TO_USE:$IMAGE_TAG'."
+              echo "   strategy: $BUILD_STRATEGY"
+              echo "   source: $PATH_TO_DOCKERFILE"
+              echo "   dockerfile: $DOCKERFILE"
+              echo "   context-dir: $PATH_TO_CONTEXT"
+              echo "   size: $(params.build-size)"
+              echo "   timeout: $(params.build-timeout)"
+
+              #
+              # Submit the build
+              # In case of an error print the logs
+              BUILD_RUN_NAME="toolchain-run-${PIPELINE_RUN_ID}"
+              ibmcloud ce buildrun submit --name "${BUILD_RUN_NAME}" \
+                  --source "$PATH_TO_DOCKERFILE" \
+                  --context-dir "$PATH_TO_CONTEXT" \
+                  --strategy "$BUILD_STRATEGY" \
+                  --size $(params.build-size) \
+                  --image "$IMAGE_URL_TO_USE:$IMAGE_TAG" \
+                  --timeout $(params.build-timeout) \
+                  --dockerfile "$DOCKERFILE" \
+                  --wait --wait-timeout $(params.deployment-timeout) \
+                  || (ibmcloud ce buildrun logs --buildrun "${BUILD_RUN_NAME}" && exit 1)
+
+              #
+              # Print the build run logs
+              ibmcloud ce buildrun logs --buildrun "${BUILD_RUN_NAME}"
             fi
             
+            #
+            # Pull the image
+            docker pull ${IMAGE_URL}:${IMAGE_TAG}
         - name: pipeline-debug
           value: $(params.pipeline-debug)
       workspaces:
@@ -544,14 +634,20 @@ spec:
           value: $(params.service-bindings)
         - name: cpu
           value: $(params.cpu)
-        - name: max-scale
-          value: $(params.max-scale)
+        - name: app-max-scale
+          value: $(params.app-max-scale)
         - name: memory
           value: $(params.memory)
-        - name: min-scale
-          value: $(params.min-scale)
-        - name: port
-          value: $(params.port)
+        - name: ephemeral-storage
+          value: $(params.ephemeral-storage)
+        - name: app-min-scale
+          value: $(params.app-min-scale)
+        - name: app-port
+          value: $(params.app-port)
+        - name: app-visibility
+          value: $(params.app-visibility)
+        - name: app-concurrency
+          value: $(params.app-concurrency)
         - name: image-repository
           value: $(tasks.containerize.results.image-repository)
         - name: image-tags
@@ -562,8 +658,12 @@ spec:
           value: $(params.deployment-timeout)
         - name: deployment-type
           value: $(params.deployment-type)
-        - name: maxexecutiontime
-          value: $(params.maxexecutiontime)
+        - name: job-instances
+          value: $(params.job-instances)
+        - name: job-maxexecutiontime
+          value: $(params.job-maxexecutiontime)
+        - name: job-retrylimit
+          value: $(params.job-retrylimit)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
@@ -593,7 +693,7 @@ spec:
       params:
         - name: app-hostname
           value: $(tasks.deploy-application.results.app-url)
-        - name: health-endpoint
-          value: $(params.health-endpoint)
+        - name: app-health-endpoint
+          value: $(params.app-health-endpoint)
         - name: pipeline-debug
           value: $(params.pipeline-debug)

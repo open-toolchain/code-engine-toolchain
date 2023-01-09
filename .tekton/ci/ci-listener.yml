@@ -13,7 +13,7 @@ spec:
       default: ""
     - name: branch
       description: the branch for the git repo
-      default: "master"
+      default: "main"
     - name: revision
       description: the git revision/commit for the git repo
       default: ""
@@ -56,29 +56,38 @@ spec:
       description: The command(s) to run the build in run-build step. It will override the default commands
 
     - name: cpu
-      description: number of vCPU of the Code Engine application
+      description: the amount of vCPU set for each instance of the application or job
       default: "0.25"
-    - name: max-scale
-      description: maximum scale of the Code Engine application
-      default: "1"
     - name: memory
-      description: total memory of the Code Engine application
+      description: the amount of memory set for each instance of the application or job
       default: "0.5G"
-    - name: min-scale
+    - name: ephemeral-storage
+      description: the amount of ephemeral storage to set for each instance of the application or job
+      default: "0.4G"
+    - name: app-max-scale
+      description: maximum scale of the Code Engine job or application
+      default: "1"
+    - name: app-min-scale
       description: minimum scale of the Code Engine application
       default: "0"
-    - name: port
+    - name: app-port
       description: port where the application is listening
-      default: "http1:8080"
+      default: "8080"
+    - name: app-visibility
+      description: the visibility for the application. Valid values are 'public', 'private' and 'project'.
+      default: "public"
+    - name: app-concurrency
+      description: the maximum number of requests that can be processed concurrently per instance. 
+      default: "100"
     - name: service-bindings
       description: service binding JSON for the application deployment
       default: "{}"
 
       #For health task
-    - name: health-endpoint
+    - name: app-health-endpoint
       description: application health endpoint, e.g. /health
       default: ""
-    - name: deployment-timeout
+    - name: app-deployment-timeout
       description: maximum timeout for the application deployment.
       default: "300"
 
@@ -169,21 +178,35 @@ spec:
     # User control params
     - name: cra-scan-image
       description: Image to use for `scan` task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.9"
 
     # BuildPack related params
-    - name: size
-      description:  The size to use for the build, which determines the amount of resources used. Valid values include small, medium, large, xlarge.
-      default: "medium"  
     - name: build-strategy
       description:  The strategy to use for building the image. Valid values are 'dockerfile' and 'buildpacks'. 
       default: "dockerfile"
+    - name: build-timeout
+      description: the amount of time, in seconds, that can pass before the build run must succeed or fail.
+      default: "600"
+    - name: build-size
+      description: the size to use for the build, which determines the amount of resources used. Valid values include small, medium, large, xlarge.
+      default: "medium"
     - name: deployment-type
       description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
       default: "application"
-    - name: maxexecutiontime
+    - name: build-use-native-docker
+      description:  Optional property to opt-in for using native docker build capabilities as opposed to use Code Engine build to containerize the source. Note this setting only takes effect if the build-strategy is set to 'dockerfile'. Valid values are 'true' and 'false'. 
+      default: "false"
+    
+    # Job specific configuration
+    - name: job-instances
+      description: Specifies the number of instances that are used for runs of the job. When you use this option, the system converts to array indices. For example, if you specify 'instances' of 5, the system converts to 'array-indices' of '0 - 4'
+      default: "1"
+    - name: job-maxexecutiontime
       description: The maximum execution time in seconds for runs of the job. 
       default: "7200"
+    - name: job-retrylimit
+      description: The number of times to rerun an instance of the job before the job is marked as failed.
+      default: "3"
 
   resourcetemplates:
     - apiVersion: v1
@@ -255,22 +278,28 @@ spec:
             value: $(params.service-bindings)
           - name: cpu
             value: $(params.cpu)
-          - name: max-scale
-            value: $(params.max-scale)
+          - name: app-max-scale
+            value: $(params.app-max-scale)
           - name: memory
             value: $(params.memory)
-          - name: min-scale
-            value: $(params.min-scale)
-          - name: port
-            value: $(params.port)
-          - name: health-endpoint
-            value: $(params.health-endpoint)
+          - name: ephemeral-storage
+            value: $(params.ephemeral-storage)
+          - name: app-min-scale
+            value: $(params.app-min-scale)
+          - name: app-port
+            value: $(params.app-port)
+          - name: app-visibility
+            value: $(params.app-visibility)
+          - name: app-concurrency
+            value: $(params.app-concurrency)
+          - name: app-health-endpoint
+            value: $(params.app-health-endpoint)
           - name: pipeline-debug
             value: $(params.pipeline-debug)
           - name: custom-script
             value: $(params.custom-script)
-          - name: deployment-timeout
-            value: $(params.deployment-timeout)
+          - name: app-deployment-timeout
+            value: $(params.app-deployment-timeout)
           #cra specific
           - name: ibmcloud-region
             value: $(params.ibmcloud-region)
@@ -322,14 +351,22 @@ spec:
             value: $(params.vulnerability-report)
           - name: cra-scan-image
             value: $(params.cra-scan-image)
-          - name: size
-            value: $(params.size)
           - name: build-strategy
             value: $(params.build-strategy)
+          - name: build-size
+            value: $(params.build-size)
+          - name: build-timeout
+            value: $(params.build-timeout)
+          - name: build-use-native-docker
+            value: $(params.build-use-native-docker)
           - name: deployment-type
             value: $(params.deployment-type)
-          - name: maxexecutiontime
-            value: $(params.maxexecutiontime)
+          - name: job-instances
+            value: $(params.job-instances)
+          - name: job-maxexecutiontime
+            value: $(params.job-maxexecutiontime)
+          - name: job-retrylimit
+            value: $(params.job-retrylimit)
         workspaces:
           - name: pipeline-ws
             persistentVolumeClaim:
