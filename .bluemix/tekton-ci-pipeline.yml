@@ -107,9 +107,9 @@ properties:
   - name: app-visibility
     type: single_select
     value:
-      "0": "public"
-      "1": "private"
-      "2": "project"
+      "public": "true"
+      "private": "false"
+      "project": "false"
   - name: app-concurrency
     type: text
     value: "100"
