@@ -519,9 +519,8 @@ spec:
               if [ ! -f ".ceignore" ]; then
                 echo "File .ceignore does not exist. Using '.dockerignore' or '.gitignore' instead"
 
-                # Given the order of copy statements, .dockerignore will be used to define the .ceignore if present
+                # .gitignore will be used to define the .ceignore, if present
                 [ -f .gitignore ] && cp .gitignore .ceignore
-                [ -f .dockerignore ] && cp .dockerignore .ceignore
               fi
               if [ -f ".ceignore" ]; then
                 echo "Following file patterns aren't considered as part of the build:"
