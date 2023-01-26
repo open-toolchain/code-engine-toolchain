@@ -131,8 +131,8 @@ properties:
   - name: build-use-native-docker
     type: single_select
     value:
-      "true": "false"
-      "false": "true"
+      "true": false
+      "false": true
   - name: build-size
     type: text
     value: "medium"
