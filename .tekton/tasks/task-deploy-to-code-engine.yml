@@ -159,7 +159,7 @@ spec:
         fi
 
         echo "Loading Kube config..."
-        ibmcloud ce proj select -n $(params.code-engine-project) -k
+        ibmcloud ce proj select -n "$(params.code-engine-project)" -k
 
         if [[ $(params.service-bindings) != "" ]]; then
             RG_NAME=$(ibmcloud resource groups --output json | jq -r --arg RG "$(params.resource-group)" '.[] | select(.id==$RG) | .name')
