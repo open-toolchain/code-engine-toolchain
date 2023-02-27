@@ -16,6 +16,8 @@ spec:
       description: resource group for source code-engine-project
     - name: source-code-engine-project
       description: Code Engine project source for fetching entity information
+    - name: source-app-name
+      description: source application name
     - name: region
       description: region of application deployment
     - name: resource-group
@@ -106,6 +108,8 @@ spec:
             value: $(params.source-resource-group)
           - name: source-code-engine-project
             value: $(params.source-code-engine-project)
+          - name: source-app-name
+            value: $(params.source-app-name)
           - name: region
             value: $(params.region)
           - name: resource-group
