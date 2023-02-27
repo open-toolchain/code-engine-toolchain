@@ -89,5 +89,5 @@ spec:
         IMAGE=$(jq -r '.spec.template.spec.containers[0].image' output.json)
 
         # Record task results
-        echo -n "$(echo $IMAGE |  awk -F: '{print $1}')" >$(results.image-repository)
-        echo -n "$(echo $IMAGE |  awk -F: '{print $2}')" >$(results.image-tag)
+        echo -n "$(echo $IMAGE |  awk -F: '{print $1}')" >$(results.image-repository.path)
+        echo -n "$(echo $IMAGE |  awk -F: '{print $2}')" >$(results.image-tag.path)
