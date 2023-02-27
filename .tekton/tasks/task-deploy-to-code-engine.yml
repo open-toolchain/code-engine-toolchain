@@ -133,10 +133,16 @@ spec:
         ibmcloud target -g "$(params.resource-group)"
 
         # View shuttle properties
-        cat $(params.shuttle-properties-file)
+        if [ -n "$(params.shuttle-properties-file)" ]; then
+          if [ -f $(params.shuttle-properties-file) ]; then
+            cat $(params.shuttle-properties-file)
 
-        source $(params.shuttle-properties-file)
-        export $(cut -d= -f1 $(params.shuttle-properties-file))
+            source $(params.shuttle-properties-file)
+            export $(cut -d= -f1 $(params.shuttle-properties-file))
+          else 
+            echo "WARNING: shuttle-properties-file provided is not existing - $(params.shuttle-properties-file)"
+          fi
+        fi
 
         #
         # Make sure that the latest version of Code Engine CLI is installed

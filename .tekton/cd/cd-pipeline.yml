@@ -106,7 +106,7 @@ spec:
         - name: ibmcloud-api
           value: $(params.ibmcloud-api)
         - name: shuttle-properties-file
-          value: "build.properties"
+          value: ""
         - name: app-name
           value: $(params.app-name)
         - name: region
