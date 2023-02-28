@@ -77,7 +77,12 @@ services:
       repo_name: '{{toolchain.name}}-pipeline'
       repo_url: $env.repository
       source_repo_url: $env.services.pipeline-repo.parameters.repo_url
-      type: 'clone'
+      type: >
+        if ($env.source_provider === "github_integrated") {
+          'link'
+        } else {
+          'clone'
+        }
       has_issues: false
       enable_traceability: false
       kind: ['pipeline']
@@ -93,7 +98,12 @@ services:
           "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
         }
       source_repo_url: $env.services.tekton-catalog-repo.parameters.repo_url
-      type: 'clone'
+      type: >
+        if ($env.source_provider === "github_integrated") {
+          'link'
+        } else {
+          'clone'
+        }
       has_issues: false
       enable_traceability: false
       kind: ['pipeline']
