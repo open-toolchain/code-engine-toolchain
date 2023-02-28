@@ -169,10 +169,9 @@ services:
             if ($env.source_provider === "github_integrated") {
               'main'
             } else if ($env.template.info.hosted_region === "") {
-                'master'
-              } else {
-                'main'
-              }
+              'master'
+            } else {
+              'main'
             }
         execute: false
   build:
@@ -234,10 +233,9 @@ services:
             if ($env.source_provider === "github_integrated") {
               'main'
             } else if ($env.template.info.hosted_region === "") {
-                'master'
-              } else {
-                'main'
-              }
+              'master'
+            } else {
+              'main'
             }
           BUILD_STRATEGY: '{{form.buildpipeline.parameters.strategy}}' 
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
@@ -281,10 +279,9 @@ services:
             if ($env.source_provider === "github_integrated") {
               'main'
             } else if ($env.template.info.hosted_region === "") {
-                'master'
-              } else {
-                'main'
-              }
+              'master'
+            } else {
+              'main'
             }
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
   devops-insights:
