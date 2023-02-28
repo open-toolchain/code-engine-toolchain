@@ -92,10 +92,14 @@ services:
     parameters:
       repo_name: '{{toolchain.name}}-tekton-catalog'
       repo_url:  >
-        if ($env.template.info.hosted_region === "") {
-          "https://github.com/open-toolchain/tekton-catalog"
+        if ($env.source_provider === "github_integrated") {
+          "https://github.ibm.com/open-toolchain/tekton-catalog"
         } else {
-          "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
+          if ($env.template.info.hosted_region === "") {
+            "https://github.com/open-toolchain/tekton-catalog"
+          } else {
+            "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
+          }
         }
       source_repo_url: $env.services.tekton-catalog-repo.parameters.repo_url
       type: >
@@ -224,10 +228,14 @@ services:
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
           TEKTON_CATALOG_REPO: tekton-catalog-repo
           TEKTON_CATALOG_REPO_BRANCH: >
-            if ($env.template.info.hosted_region === "") {
-              'master'
-            } else {
+            if ($env.services.tekton-catalog-repo.parameters.repo_url === "https://github.ibm.com/open-toolchain/tekton-catalog")
               'main'
+            } else {
+              if ($env.template.info.hosted_region === "") {
+                'master'
+              } else {
+                'main'
+              }
             }
           BUILD_STRATEGY: '{{form.buildpipeline.parameters.strategy}}' 
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
