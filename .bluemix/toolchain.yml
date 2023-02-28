@@ -264,7 +264,6 @@ services:
               'main'
             }
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
-        execute: 'cd-manual-run'
   devops-insights:
       service_id: 'draservicebroker'
 form:
