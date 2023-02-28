@@ -92,7 +92,7 @@ spec:
 
         IMAGE=$(jq -r '.spec.template.spec.containers[0].image' entity_output.json)
 
-        IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[1].name//empty' entity_output.json)
+        IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' entity_output.json)
         if [ -n "$IMAGE_PULL_SECRET" ]; then          
           ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" --output json > secret_output.json
           # look at annotations in the secret to identify if it is a code-entity-managed secret
