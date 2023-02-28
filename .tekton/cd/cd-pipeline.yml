@@ -88,7 +88,7 @@ spec:
       taskRef:
         name: fetch-entity-information
       params:
-        - name: app-name
+        - name: entity-name
           value: $(params.source-app-name)
         - name: deployment-type
           value: $(params.deployment-type)

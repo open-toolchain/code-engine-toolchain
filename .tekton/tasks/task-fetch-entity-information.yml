@@ -13,8 +13,6 @@ spec:
     - name: ibmcloud-apikey-secret-key
       description: field in the secret that contains the api key used to login to ibmcloud
       default: apikey
-    - name: app-name
-      description: name of the Code Engine application
     - name: resource-group
       description: target resource group (name or id) for the ibmcloud login operation
     - name: region
@@ -24,6 +22,8 @@ spec:
     - name: deployment-type
       description: Specifies the type of deployment. Valid values are 'application' and 'job'.
       default: "application"
+    - name: entity-name
+      description: name of the Code Engine entity to fetch information
     - name: task-image
       description: image used to execute this task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
@@ -84,7 +84,7 @@ spec:
 
         ibmcloud ce project select --name "$(params.code-engine-project)"
 
-        ibmcloud ce $(params.deployment-type) get --name "$(params.app-name)" --output json > output.json
+        ibmcloud ce $(params.deployment-type) get --name "$(params.entity-name)" --output json > output.json
 
         IMAGE=$(jq -r '.spec.template.spec.containers[0].image' output.json)
 
