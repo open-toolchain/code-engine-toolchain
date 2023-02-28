@@ -222,7 +222,7 @@ services:
           BUILD_STRATEGY: '{{form.buildpipeline.parameters.strategy}}' 
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
         execute: 'manual-run'
-  build:
+  deploy:
     service_id: pipeline
     parameters:
       services:
