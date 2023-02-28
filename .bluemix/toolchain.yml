@@ -166,10 +166,14 @@ services:
           REGISTRY_NAMESPACE: "{{form.pipeline.parameters.registry-namespace}}"
           TEKTON_CATALOG_REPO: tekton-catalog-repo
           TEKTON_CATALOG_REPO_BRANCH: >
-            if ($env.template.info.hosted_region === "") {
-              'master'
-            } else {
+            if ($env.services.tekton-catalog-repo.parameters.repo_url === "https://github.ibm.com/open-toolchain/tekton-catalog") {
               'main'
+            } else {
+              if ($env.template.info.hosted_region === "") {
+                'master'
+              } else {
+                'main'
+              }
             }
         execute: false
   build:
@@ -228,7 +232,7 @@ services:
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
           TEKTON_CATALOG_REPO: tekton-catalog-repo
           TEKTON_CATALOG_REPO_BRANCH: >
-            if ($env.services.tekton-catalog-repo.parameters.repo_url === "https://github.ibm.com/open-toolchain/tekton-catalog")
+            if ($env.services.tekton-catalog-repo.parameters.repo_url === "https://github.ibm.com/open-toolchain/tekton-catalog") {
               'main'
             } else {
               if ($env.template.info.hosted_region === "") {
@@ -276,10 +280,14 @@ services:
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
           TEKTON_CATALOG_REPO: tekton-catalog-repo
           TEKTON_CATALOG_REPO_BRANCH: >
-            if ($env.template.info.hosted_region === "") {
-              'master'
-            } else {
+            if ($env.services.tekton-catalog-repo.parameters.repo_url === "https://github.ibm.com/open-toolchain/tekton-catalog") {
               'main'
+            } else {
+              if ($env.template.info.hosted_region === "") {
+                'master'
+              } else {
+                'main'
+              }
             }
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
   devops-insights:
