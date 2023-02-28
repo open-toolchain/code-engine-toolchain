@@ -163,7 +163,7 @@ spec:
 apiVersion: tekton.dev/v1beta1
 kind: EventListener
 metadata:
-  name: code-engine-cd-manual-run
+  name: cd-manual-run
 spec:
   triggers:
     - binding:

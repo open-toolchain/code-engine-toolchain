@@ -1,0 +1,102 @@
+inputs:
+  - type: git
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
+    service: ${TEKTON_CATALOG_REPO}
+    path: cra
+  - type: git
+    service: ${TEKTON_CATALOG_REPO}
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
+    path: toolchain
+  - type: git
+    service: ${TEKTON_CATALOG_REPO}
+    branch: ${TEKTON_CATALOG_REPO_BRANCH}
+    path: devops-insights
+  - type: git
+    branch: ${PIPELINE_REPO_BRANCH}
+    service: ${PIPELINE_REPO}
+    path: .tekton/ci
+  - type: git
+    branch: ${PIPELINE_REPO_BRANCH}
+    service: ${PIPELINE_REPO}
+    path: .tekton/tasks
+triggers:
+  - type: manual
+    name: cd-manual-run
+    eventListener: cd-manual-run
+    properties: []
+properties:
+  - name: ibmcloud-api
+    type: text
+    value: ${IBMCLOUD_API}
+  - name: toolchain-apikey
+    type: secure
+    value: ${API_KEY}
+  - name: apikey
+    type: secure
+    value: ${API_KEY}
+  - name: source-app-name
+    type: text
+    value: ${APP_NAME}
+  - name: source-region
+    type: text
+    value: ${CODE_ENGINE_REGION}
+  - name: source-resource-group
+    type: text
+    value: ${CODE_ENGINE_RESOURCE_GROUP}
+  - name: source-code-engine-project
+    type: text
+    value: ${CODE_ENGINE_PROJECT}
+  - name: app-name
+    type: text
+    value: ${APP_NAME}-by-cd
+  - name: region
+    type: text
+    value: ${CODE_ENGINE_REGION}
+  - name: resource-group
+    type: text
+    value: ${CODE_ENGINE_RESOURCE_GROUP}
+  - name: code-engine-project
+    type: text
+    value: ${CODE_ENGINE_PROJECT}
+  - name: service-bindings
+    type: text
+    value: ${SERVICE_BINDINGS}
+  - name: cpu
+    type: text
+    value: "0.25"
+  - name: app-max-scale
+    type: text
+    value: "1"
+  - name: memory
+    type: text
+    value: "0.5G"
+  - name: ephemeral-storage
+    type: text
+    value: "0.4G"
+  - name: app-min-scale
+    type: text
+    value: "0"
+  - name: app-port
+    type: text
+    value: "8080"
+  - name: app-visibility
+    type: single_select
+    value:
+      "public": "true"
+      "private": "false"
+      "project": "false"
+  - name: app-concurrency
+    type: text
+    value: "100"
+  - name: app-health-endpoint
+    type: text
+    value: "/health"
+  - name: pipeline-debug
+    type: text
+    value: "0"
+  - name: app-deployment-timeout
+    type: text
+    value: "300"
+  - name: deployment-type
+    type: text
+    value: ${DEPLOYMENT_TYPE}
