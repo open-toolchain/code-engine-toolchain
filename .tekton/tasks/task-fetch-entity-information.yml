@@ -35,6 +35,10 @@ spec:
       description: image repository
     - name: image-tag
       description: image tag
+    - name: image-pull-secret
+      description: name of the image pull secret
+    - name: image-pull-secret-kind
+      description: user-managed or ce-managed (code-engine managed)
   steps:
     - name: fetch-entity-information
       image: $(params.task-image)
@@ -84,10 +88,23 @@ spec:
 
         ibmcloud ce project select --name "$(params.code-engine-project)"
 
-        ibmcloud ce $(params.deployment-type) get --name "$(params.entity-name)" --output json > output.json
+        ibmcloud ce $(params.deployment-type) get --name "$(params.entity-name)" --output json > entity_output.json
 
-        IMAGE=$(jq -r '.spec.template.spec.containers[0].image' output.json)
+        IMAGE=$(jq -r '.spec.template.spec.containers[0].image' entity_output.json)
+
+        IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[1].name//empty' entity_output.json)
+        if [ -n "$IMAGE_PULL_SECRET" ]; then          
+          ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" --output json > secret_output.json
+          # look at annotations in the secret to identify if it is a code-entity-managed secret
+          if jq -e '.metadata.annotations["codeengine.cloud.ibm.com/serviceIdRef"]' secret_output.json >/dev/null 2>&1; then
+            IMAGE_PULL_SECRET_KIND="ce-managed"
+          else
+            IMAGE_PULL_SECRET_KIND="user-managed"
+          fi
+        fi
 
         # Record task results
         echo -n "$(echo $IMAGE |  awk -F: '{print $1}')" >$(results.image-repository.path)
         echo -n "$(echo $IMAGE |  awk -F: '{print $2}')" >$(results.image-tag.path)
+        echo -n "$IMAGE_PULL_SECRET" >$(results.image-pull-secret.path)
+        echo -n "$IMAGE_PULL_SECRET_KIND" >$(results.image-pull-secret-kind.path)
