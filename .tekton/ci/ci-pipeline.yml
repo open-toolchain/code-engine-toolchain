@@ -567,6 +567,7 @@ spec:
           workspace: pipeline-ws
 
     - name: define-registry-secret-context
+      runAfter: [containerize]
       params:
         - name: image-repository
           value: $(tasks.containerize.results.image-repository)
