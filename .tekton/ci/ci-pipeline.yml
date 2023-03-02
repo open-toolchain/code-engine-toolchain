@@ -583,7 +583,7 @@ spec:
           - name: image-pull-secret-kind
         steps:
           - name: evaluate-build-context
-            image: $(params.cra-scan-image)
+            image: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
             script: |
               #!/bin/bash
               set -e -o pipefail
@@ -604,7 +604,7 @@ spec:
               REGISTRY_REGION=$(echo "$(params.registry-region)" | awk -F ':' '{print $NF;}')
 
               if [[ "$(params.build-strategy)" == "dockerfile" && "$(params.build-use-native-docker)" == "true" ]]; then
-                PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /artifacts/_toolchain.json | awk -F: '{print $3}')
+                PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json | awk -F: '{print $3}')
                 # docker native build used
                 # defined an name for the registry secret to be used
                 IMAGE_PULL_SECRET_KIND="user-managed"
@@ -620,8 +620,7 @@ spec:
               echo -n "$IMAGE_PULL_SECRET_KIND" >$(results.image-pull-secret-kind.path)
               echo -n "$IMAGE_PULL_SECRET" >$(results.image-pull-secret.path)
             volumeMounts:
-              - mountPath: /artifacts/_toolchain.json
-                subPath: toolchain.json
+              - mountPath: /cd-config
                 name: cd-config-volume
         volumes:
           - name: cd-config-volume
