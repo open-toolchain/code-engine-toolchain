@@ -592,6 +592,25 @@ spec:
             script: |
               #!/bin/bash
               set -e -o pipefail
+              # if registry region is in the 'ibm:yp:<region>' just keep the region part
+              REGISTRY_REGION=$(echo "$(params.registry-region)" | awk -F ':' '{print $NF;}')
+
+              if [[ "$(params.build-strategy)" == "dockerfile" && "$(params.build-use-native-docker)" == "true" ]]; then
+                PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json | awk -F: '{print $3}')
+                # docker native build used
+                # defined an name for the registry secret to be used
+                IMAGE_PULL_SECRET_KIND="user-managed"
+                IMAGE_PULL_SECRET="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${REGISTRY_REGION}"
+              else
+                # code-engine build used
+                # the registry secret for this image is code-engine managed
+                IMAGE_PULL_SECRET_KIND="ce-managed"
+                IMAGE_PULL_SECRET="ce-auto-icr-private-$REGISTRY_REGION"
+              fi
+
+              # Record task results
+              echo -n "$IMAGE_PULL_SECRET_KIND" >$(results.image-pull-secret-kind.path)
+              echo -n "$IMAGE_PULL_SECRET" >$(results.image-pull-secret.path)
 
             volumeMounts:
               - mountPath: /cd-config
