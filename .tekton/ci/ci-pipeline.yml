@@ -569,6 +569,8 @@ spec:
       params:
         - name: image-repository
           value: $(tasks.containerize.results.image-repository)
+        - name: registry-region
+          value: $(params.registry-region)
         - name: build-strategy
           value: $(params.build-strategy)
         - name: build-use-native-docker
@@ -576,11 +578,15 @@ spec:
       taskSpec:
         params:
           - name: image-repository
+          - name: registry-region
           - name: build-strategy
           - name: build-use-native-docker
+        results:
+          - name: image-pull-secret
+          - name: image-pull-secret-kind
         steps:
           - name: evaluate-build-context
-            image: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
+            image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11
             script: |
               #!/bin/bash
               set -e -o pipefail
@@ -616,6 +622,16 @@ spec:
               # Record task results
               echo -n "$IMAGE_PULL_SECRET_KIND" >$(results.image-pull-secret-kind.path)
               echo -n "$IMAGE_PULL_SECRET" >$(results.image-pull-secret.path)
+            volumeMounts:
+              - mountPath: /cd-config
+                name: cd-config-volume
+        volumes:
+          - name: cd-config-volume
+            configMap:
+              name: toolchain
+              items:
+                - key: toolchain.json
+                  path: toolchain.json
 
     - name: vulnerability-advisor
       taskRef:
