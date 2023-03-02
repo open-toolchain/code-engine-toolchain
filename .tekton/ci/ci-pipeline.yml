@@ -612,7 +612,7 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    - name: deploy-application
+    - name: deploy-entity
       taskRef:
         name: deploy-to-code-engine
       runAfter: [vulnerability-advisor]

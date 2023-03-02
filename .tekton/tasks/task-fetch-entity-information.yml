@@ -24,6 +24,9 @@ spec:
       default: "application"
     - name: entity-name
       description: name of the Code Engine entity to fetch information
+    - name: entity-revision
+      description: revision to fetch information from
+      default: ""
     - name: task-image
       description: image used to execute this task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
