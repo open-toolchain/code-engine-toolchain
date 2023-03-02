@@ -710,9 +710,9 @@ spec:
         - name: image-tags
           value: $(tasks.containerize.results.image-tags)
         - name: image-pull-secret
-          value: "test-secret"
+          value: $(tasks.define-registry-secret-context.results.image-pull-secret)
         - name: image-pull-secret-kind
-          value: "user-managed"
+          value: $(tasks.define-registry-secret-context.results.image-pull-secret-kind)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
         - name: deployment-timeout
