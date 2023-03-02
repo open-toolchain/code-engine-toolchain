@@ -52,6 +52,10 @@ spec:
       description: the repository for the built image
     - name: image-tags
       description: the tags for the built image
+    - name: image-pull-secret
+      description: name of the image pull secret
+    - name: image-pull-secret-kind
+      description: user-managed or ce-managed (code-engine managed)
     - name: shuttle-properties-file
       description: name of the properties file that contain properties to include in the environment
       default: "build.properties"
