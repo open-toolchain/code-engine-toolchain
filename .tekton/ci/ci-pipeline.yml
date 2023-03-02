@@ -568,7 +568,7 @@ spec:
     - name: define-registry-secret-context
       params:
         - name: image-repository
-          value: $(tasks.containerize.image-repository)
+          value: $(tasks.containerize.results.image-repository)
         - name: build-strategy
           value: $(params.build-strategy)
         - name: build-use-native-docker
