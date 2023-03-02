@@ -578,9 +578,6 @@ spec:
           - name: image-repository
           - name: build-strategy
           - name: build-use-native-docker
-        results:
-          - name: image-pull-secret
-          - name: image-pull-secret-kind
         steps:
           - name: evaluate-build-context
             image: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
