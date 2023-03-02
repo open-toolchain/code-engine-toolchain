@@ -84,7 +84,7 @@ spec:
       description: A workspace
       mountPath: /artifacts
   steps:
-    - name: deploy-$(params.deployment-type)
+    - name: "deploy-$(params.deployment-type)"
       image: $(params.task-image)
       workingDir: /artifacts
       env:
