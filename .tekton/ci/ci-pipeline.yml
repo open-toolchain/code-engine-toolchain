@@ -736,7 +736,7 @@ spec:
         - name: artifacts
           workspace: pipeline-ws
     - name: publish-deployable-task
-      runAfter: [deploy-application]
+      runAfter: [deploy-entity]
       taskRef:
         name: publish-code-engine-deployable-mapping
       params:
@@ -757,10 +757,10 @@ spec:
     - name: check-application-health
       taskRef:
         name: check-health
-      runAfter: [deploy-application]
+      runAfter: [deploy-entity]
       params:
         - name: app-hostname
-          value: $(tasks.deploy-application.results.app-url)
+          value: $(tasks.deploy-entity.results.app-url)
         - name: app-health-endpoint
           value: $(params.app-health-endpoint)
         - name: pipeline-debug
