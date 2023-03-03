@@ -595,12 +595,8 @@ spec:
               # if registry region is in the 'ibm:yp:<region>' just keep the region part
               REGISTRY_REGION=$(echo "$(params.registry-region)" | awk -F ':' '{print $NF;}')
 
-              ls /
-
-              ls /cd-config
-
               if [[ "$(params.build-strategy)" == "dockerfile" && "$(params.build-use-native-docker)" == "true" ]]; then
-                PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json | awk -F: '{print $3}')
+                PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
                 # docker native build used
                 # defined an name for the registry secret to be used
                 IMAGE_PULL_SECRET_KIND="user-managed"

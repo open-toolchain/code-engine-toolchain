@@ -193,6 +193,27 @@ spec:
             echo -e "Pointing image reference to private ICR location: $IMAGE_URL"
         fi
 
+        #
+        # Make sure the secret to be used is existing
+        #
+        IMAGE_PULL_SECRET=$(params.image-pull-secret)
+        IMAGE_PULL_SECRET_KIND=$(params.image-pull-secret-kind)
+        if ! ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" >/dev/null 2>&1; then
+          echo "registry-secret $IMAGE_PULL_SECRET is not existing"
+          if [[ "$IMAGE_PULL_SECRET_KIND" == "ce-managed" ]]; then
+            # if the secret is expected to be ce-managed but not present, then fallback to create a user one based on the apikey
+            # until https://github.ibm.com/coligo/cli/issues/3015 is available
+            IMAGE_PULL_SECRET_KIND="user-managed"
+            PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /artifacts/_toolchain.json)
+            IMAGE_PULL_SECRET="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${IBM_CLOUD_REGION}"
+            echo "user-managed registry-secret $IMAGE_PULL_SECRET will be created and used for this deployment."
+          fi
+          # Create the registry-secret with the proper apikey
+          if [[ "$IMAGE_PULL_SECRET_KIND" == "user-managed" ]]; then
+            ibmcloud ce registry create --name $IMAGE_PULL_SECRET --password $PIPELINE_BLUEMIX_API_KEY --server $(echo "$IMAGE_URL" | awk -F/ '{print $1}')
+          fi
+        fi
+
         echo "deployment type: $(params.deployment-type)"
         if [[ $(params.deployment-type) == "application" ]]; then
             echo "Deploying your code as Code Engine application '$(params.app-name)'..."
