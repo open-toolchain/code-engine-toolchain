@@ -227,7 +227,7 @@ spec:
             fi
 
             echo "   image: $IMAGE_URL:$(params.image-tags)"
-            echo "   registry-secret: $(params.image-pull-secret)"
+            echo "   registry-secret: $IMAGE_PULL_SECRET"
             echo "   cpu: $(params.cpu)"
             echo "   memory: $(params.memory)"
             echo "   ephemeral-storage: $(params.ephemeral-storage)"
@@ -239,7 +239,7 @@ spec:
             
             ibmcloud ce app $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
-                --registry-secret "$(params.image-pull-secret)" \
+                --registry-secret "$IMAGE_PULL_SECRET" \
                 --cpu $(params.cpu) \
                 --memory $(params.memory) \
                 --ephemeral-storage $(params.ephemeral-storage) \
@@ -322,7 +322,7 @@ spec:
             fi
 
             echo "   image: $IMAGE_URL:$(params.image-tags)"
-            echo "   registry-secret: $(params.image-pull-secret)"
+            echo "   registry-secret: $IMAGE_PULL_SECRET"
             echo "   cpu: $(params.cpu)"
             echo "   memory: $(params.memory)"
             echo "   ephemeral-storage: $(params.ephemeral-storage)"
@@ -332,7 +332,7 @@ spec:
             
             ibmcloud ce job $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
-                --registry-secret "$(params.image-pull-secret)" \
+                --registry-secret "$IMAGE_PULL_SECRET" \
                 --cpu $(params.cpu) \
                 --memory $(params.memory) \
                 --ephemeral-storage $(params.ephemeral-storage) \
