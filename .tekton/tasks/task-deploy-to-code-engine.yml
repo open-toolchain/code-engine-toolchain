@@ -203,10 +203,14 @@ spec:
           if [[ "$IMAGE_PULL_SECRET_KIND" == "ce-managed" ]]; then
             # if the secret is expected to be ce-managed but not present, then fallback to create a user one based on the apikey
             # until https://github.ibm.com/coligo/cli/issues/3015 is available
-            IMAGE_PULL_SECRET_KIND="user-managed"
             PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /artifacts/_toolchain.json)
             IMAGE_PULL_SECRET="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${IBM_CLOUD_REGION}"
             echo "user-managed registry-secret $IMAGE_PULL_SECRET will be created and used for this deployment."
+            # Check if the to-be-used user-managed secret exists
+            if ! ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" >/dev/null 2>&1; then
+              # user-secret is not existing so process it as user-managed secret
+              IMAGE_PULL_SECRET_KIND="user-managed"
+            fi
           fi
           # Create the registry-secret with the proper apikey
           if [[ "$IMAGE_PULL_SECRET_KIND" == "user-managed" ]]; then
