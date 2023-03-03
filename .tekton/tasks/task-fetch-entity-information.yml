@@ -91,7 +91,7 @@ spec:
 
         ibmcloud ce project select --name "$(params.code-engine-project)"
 
-        if [[ -n "$(params.entity-revision)" ]] && [[ "$(params.deployment-type)" == "application"  ]]; then
+        if [[ -n "$(params.entity-revision)" && "$(params.deployment-type)" == "application" ]]; then
           # application revision specified
           ibmcloud ce revision get --name "$(params.entity-name)" --output json > revision_output.json
           IMAGE=$(jq -r '.spec.containers[0].image' revision_output.json)
