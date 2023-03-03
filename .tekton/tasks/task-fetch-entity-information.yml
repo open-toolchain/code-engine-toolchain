@@ -24,8 +24,8 @@ spec:
       default: "application"
     - name: entity-name
       description: name of the Code Engine entity to fetch information
-    - name: entity-revision
-      description: revision to fetch information from
+    - name: application-revision
+      description: application revision to fetch information from. Default to empty meaning the latest revision of the application will be used
       default: ""
     - name: task-image
       description: image used to execute this task
@@ -91,11 +91,16 @@ spec:
 
         ibmcloud ce project select --name "$(params.code-engine-project)"
 
-        ibmcloud ce $(params.deployment-type) get --name "$(params.entity-name)" --output json > entity_output.json
-
-        IMAGE=$(jq -r '.spec.template.spec.containers[0].image' entity_output.json)
-
-        IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' entity_output.json)
+        if [[ -n "$(params.entity-revision)" ]] && [[ "$(params.deployment-type)" == "application"  ]]; then
+          # application revision specified
+          ibmcloud ce revision get --name "$(params.entity-name)" --output json > revision_output.json
+          IMAGE=$(jq -r '.spec.containers[0].image' revision_output.json)
+          IMAGE_PULL_SECRET=$(jq -r '.spec.imagePullSecrets[0].name//empty' revision_output.json)
+        else
+          ibmcloud ce $(params.deployment-type) get --name "$(params.entity-name)" --output json > entity_output.json
+          IMAGE=$(jq -r '.spec.template.spec.containers[0].image' entity_output.json)
+          IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' entity_output.json)
+        fi
         if [ -n "$IMAGE_PULL_SECRET" ]; then          
           ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" --output json > secret_output.json
           # look at annotations in the secret to identify if it is a code-entity-managed secret

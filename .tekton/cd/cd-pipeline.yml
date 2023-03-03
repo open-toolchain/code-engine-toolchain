@@ -16,6 +16,9 @@ spec:
       description: Code Engine project source for fetching entity information
     - name: source-app-name
       description: source application name
+    - name: source-app-revision
+      description: revision of the source application
+      default: ""
 
     - name: region
       description: region of application deployment
@@ -92,6 +95,8 @@ spec:
           value: $(params.source-app-name)
         - name: deployment-type
           value: $(params.deployment-type)
+        - name: application-revision
+          value: $(params.source-app-revision)
         - name: region
           value: $(params.source-region)
         - name: resource-group
