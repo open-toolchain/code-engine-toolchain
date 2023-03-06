@@ -670,7 +670,7 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    - name: deploy-entity
+    - name: deploy-component
       taskRef:
         name: deploy-to-code-engine
       runAfter: [vulnerability-advisor]
@@ -729,7 +729,7 @@ spec:
         - name: artifacts
           workspace: pipeline-ws
     - name: publish-deployable-task
-      runAfter: [deploy-entity]
+      runAfter: [deploy-component]
       taskRef:
         name: publish-code-engine-deployable-mapping
       params:
@@ -750,10 +750,10 @@ spec:
     - name: check-application-health
       taskRef:
         name: check-health
-      runAfter: [deploy-entity]
+      runAfter: [deploy-component]
       params:
         - name: app-hostname
-          value: $(tasks.deploy-entity.results.app-url)
+          value: $(tasks.deploy-component.results.app-url)
         - name: app-health-endpoint
           value: $(params.app-health-endpoint)
         - name: pipeline-debug
