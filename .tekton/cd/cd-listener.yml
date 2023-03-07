@@ -15,7 +15,7 @@ spec:
     - name: source-resource-group
       description: resource group for source code-engine-project
     - name: source-code-engine-project
-      description: Code Engine project source for fetching entity information
+      description: Code Engine project source for fetching component information
     - name: source-app-name
       description: source application name
     - name: source-app-revision

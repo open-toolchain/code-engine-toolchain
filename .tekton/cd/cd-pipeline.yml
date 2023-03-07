@@ -13,7 +13,7 @@ spec:
     - name: source-resource-group
       description: resource group for source code-engine-project
     - name: source-code-engine-project
-      description: Code Engine project source for fetching entity information
+      description: Code Engine project source for fetching component information
     - name: source-app-name
       description: source application name
     - name: source-app-revision
@@ -87,11 +87,11 @@ spec:
   workspaces:
     - name: pipeline-ws
   tasks:
-    - name: fetch-entity-information
+    - name: fetch-component-information
       taskRef:
-        name: fetch-entity-information
+        name: fetch-component-information
       params:
-        - name: entity-name
+        - name: component-name
           value: $(params.source-app-name)
         - name: deployment-type
           value: $(params.deployment-type)
@@ -108,7 +108,7 @@ spec:
     - name: deploy-component
       taskRef:
         name: deploy-to-code-engine
-      runAfter: [fetch-entity-information]
+      runAfter: [fetch-component-information]
       params:
         - name: ibmcloud-api
           value: $(params.ibmcloud-api)
@@ -141,13 +141,13 @@ spec:
         - name: app-concurrency
           value: $(params.app-concurrency)
         - name: image-repository
-          value: $(tasks.fetch-entity-information.results.image-repository)
+          value: $(tasks.fetch-component-information.results.image-repository)
         - name: image-tags
-          value: $(tasks.fetch-entity-information.results.image-tag)
+          value: $(tasks.fetch-component-information.results.image-tag)
         - name: image-pull-secret
-          value: $(tasks.fetch-entity-information.results.image-pull-secret)
+          value: $(tasks.fetch-component-information.results.image-pull-secret)
         - name: image-pull-secret-kind
-          value: $(tasks.fetch-entity-information.results.image-pull-secret-kind)
+          value: $(tasks.fetch-component-information.results.image-pull-secret-kind)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
         - name: deployment-timeout

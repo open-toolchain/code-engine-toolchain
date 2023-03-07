@@ -1,7 +1,7 @@
 apiVersion: tekton.dev/v1beta1
 kind: Task
 metadata:
-  name: fetch-entity-information
+  name: fetch-component-information
 spec:
   params:
     - name: ibmcloud-api
@@ -22,8 +22,8 @@ spec:
     - name: deployment-type
       description: Specifies the type of deployment. Valid values are 'application' and 'job'.
       default: "application"
-    - name: entity-name
-      description: name of the Code Engine entity to fetch information
+    - name: component-name
+      description: name of the Code Engine component to fetch information
     - name: application-revision
       description: application revision to fetch information from. Default to empty meaning the latest revision of the application will be used
       default: ""
@@ -43,7 +43,7 @@ spec:
     - name: image-pull-secret-kind
       description: user-managed or ce-managed (code-engine managed)
   steps:
-    - name: fetch-entity-information
+    - name: fetch-component-information
       image: $(params.task-image)
       env:
         - name: IBMCLOUD_API_KEY
@@ -97,13 +97,13 @@ spec:
           IMAGE=$(jq -r '.spec.containers[0].image' revision_output.json)
           IMAGE_PULL_SECRET=$(jq -r '.spec.imagePullSecrets[0].name//empty' revision_output.json)
         else
-          ibmcloud ce $(params.deployment-type) get --name "$(params.entity-name)" --output json > entity_output.json
-          IMAGE=$(jq -r '.spec.template.spec.containers[0].image' entity_output.json)
-          IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' entity_output.json)
+          ibmcloud ce $(params.deployment-type) get --name "$(params.component-name)" --output json > component_output.json
+          IMAGE=$(jq -r '.spec.template.spec.containers[0].image' component_output.json)
+          IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' component_output.json)
         fi
         if [ -n "$IMAGE_PULL_SECRET" ]; then          
           ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" --output json > secret_output.json
-          # look at annotations in the secret to identify if it is a code-entity-managed secret
+          # look at annotations in the secret to identify if it is a code-component-managed secret
           if jq -e '.metadata.annotations["codeengine.cloud.ibm.com/serviceIdRef"]' secret_output.json >/dev/null 2>&1; then
             IMAGE_PULL_SECRET_KIND="ce-managed"
           else
