@@ -77,7 +77,12 @@ services:
       repo_name: '{{toolchain.name}}-pipeline'
       repo_url: $env.repository
       source_repo_url: $env.services.pipeline-repo.parameters.repo_url
-      type: 'clone'
+      type: >
+        if ($env.source_provider === "github_integrated") {
+          'link'
+        } else {
+          'clone'
+        }
       has_issues: false
       enable_traceability: false
       kind: ['pipeline']
@@ -87,13 +92,22 @@ services:
     parameters:
       repo_name: '{{toolchain.name}}-tekton-catalog'
       repo_url:  >
-        if ($env.template.info.hosted_region === "") {
-          "https://github.com/open-toolchain/tekton-catalog"
+        if ($env.source_provider === "github_integrated") {
+          "https://github.ibm.com/open-toolchain/tekton-catalog"
         } else {
-          "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
+          if ($env.template.info.hosted_region === "") {
+            "https://github.com/open-toolchain/tekton-catalog"
+          } else {
+            "https://{{template.info.hosted_region}}.git.cloud.ibm.com/open-toolchain/tekton-catalog"
+          }
         }
       source_repo_url: $env.services.tekton-catalog-repo.parameters.repo_url
-      type: 'clone'
+      type: >
+        if ($env.source_provider === "github_integrated") {
+          'link'
+        } else {
+          'clone'
+        }
       has_issues: false
       enable_traceability: false
       kind: ['pipeline']
@@ -152,7 +166,9 @@ services:
           REGISTRY_NAMESPACE: "{{form.pipeline.parameters.registry-namespace}}"
           TEKTON_CATALOG_REPO: tekton-catalog-repo
           TEKTON_CATALOG_REPO_BRANCH: >
-            if ($env.template.info.hosted_region === "") {
+            if ($env.source_provider === "github_integrated") {
+              'main'
+            } else if ($env.template.info.hosted_region === "") {
               'master'
             } else {
               'main'
@@ -214,7 +230,9 @@ services:
           SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
           TEKTON_CATALOG_REPO: tekton-catalog-repo
           TEKTON_CATALOG_REPO_BRANCH: >
-            if ($env.template.info.hosted_region === "") {
+            if ($env.source_provider === "github_integrated") {
+              'main'
+            } else if ($env.template.info.hosted_region === "") {
               'master'
             } else {
               'main'
@@ -222,6 +240,50 @@ services:
           BUILD_STRATEGY: '{{form.buildpipeline.parameters.strategy}}' 
           DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
         execute: 'manual-run'
+  deploy:
+    service_id: pipeline
+    parameters:
+      services:
+        - repo
+      name: 'cd-pipeline'
+      ui-pipeline: true
+      type: 'tekton'
+      configuration:
+        content:
+          $text: tekton-cd-pipeline.yml
+        env:
+          API_KEY: '{{form.pipeline.parameters.api-key}}'
+          APP_NAME: '{{form.pipeline.parameters.app-name}}'
+          APP_REPO: repo
+          CODE_ENGINE_PROJECT: '{{form.pipeline.parameters.code-engine-project}}'
+          CODE_ENGINE_REGION: '{{form.pipeline.parameters.code-engine-region}}'
+          CODE_ENGINE_RESOURCE_GROUP: '{{form.pipeline.parameters.code-engine-resource-group}}'
+          IBMCLOUD_API: >
+            if ( $env.env_id === 'ibm:ys1:us-south' || $env.env_id === 'ibm:ys1:eu-gb' ) {
+              "https://test.cloud.ibm.com"
+            } else {
+              "https://cloud.ibm.com"
+            }
+          PIPELINE_REPO: pipeline-repo
+          PIPELINE_REPO_BRANCH: >
+            if ($env.branch) {
+              $env.branch
+            } else if ($env.template.info.hosted_region === "") {
+              'master'
+            } else {
+              'main'
+            }
+          SERVICE_BINDINGS: '{{form.pipeline.parameters.service-bindings}}'
+          TEKTON_CATALOG_REPO: tekton-catalog-repo
+          TEKTON_CATALOG_REPO_BRANCH: >
+            if ($env.source_provider === "github_integrated") {
+              'main'
+            } else if ($env.template.info.hosted_region === "") {
+              'master'
+            } else {
+              'main'
+            }
+          DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
   devops-insights:
       service_id: 'draservicebroker'
 form:

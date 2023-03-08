@@ -565,6 +565,64 @@ spec:
       workspaces:
         - name: source
           workspace: pipeline-ws
+
+    - name: define-registry-secret-context
+      runAfter: [containerize]
+      params:
+        - name: image-repository
+          value: $(tasks.containerize.results.image-repository)
+        - name: registry-region
+          value: $(params.registry-region)
+        - name: build-strategy
+          value: $(params.build-strategy)
+        - name: build-use-native-docker
+          value: $(params.build-use-native-docker)
+      taskSpec:
+        params:
+          - name: image-repository
+          - name: registry-region
+          - name: build-strategy
+          - name: build-use-native-docker
+        results:
+          - name: image-pull-secret
+          - name: image-pull-secret-kind
+        steps:
+          - name: evaluate-build-context
+            image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11
+            script: |
+              #!/bin/bash
+              set -e -o pipefail
+              # if registry region is in the 'ibm:yp:<region>' just keep the region part
+              REGISTRY_REGION=$(echo "$(params.registry-region)" | awk -F ':' '{print $NF;}')
+
+              if [[ "$(params.build-strategy)" == "dockerfile" && "$(params.build-use-native-docker)" == "true" ]]; then
+                PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /cd-config/toolchain.json)
+                # docker native build used
+                # defined an name for the registry secret to be used
+                IMAGE_PULL_SECRET_KIND="user-managed"
+                IMAGE_PULL_SECRET="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${REGISTRY_REGION}"
+              else
+                # code-engine build used
+                # the registry secret for this image is code-engine managed
+                IMAGE_PULL_SECRET_KIND="ce-managed"
+                IMAGE_PULL_SECRET="ce-auto-icr-private-$REGISTRY_REGION"
+              fi
+
+              # Record task results
+              echo -n "$IMAGE_PULL_SECRET_KIND" >$(results.image-pull-secret-kind.path)
+              echo -n "$IMAGE_PULL_SECRET" >$(results.image-pull-secret.path)
+
+            volumeMounts:
+              - mountPath: /cd-config
+                name: cd-config-volume
+        volumes:
+          - name: cd-config-volume
+            configMap:
+              name: toolchain
+              items:
+                - key: toolchain.json
+                  path: toolchain.json
+
     - name: vulnerability-advisor
       taskRef:
         name: icr-check-va-scan
@@ -612,7 +670,7 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    - name: deploy-application
+    - name: deploy-component
       taskRef:
         name: deploy-to-code-engine
       runAfter: [vulnerability-advisor]
@@ -651,6 +709,10 @@ spec:
           value: $(tasks.containerize.results.image-repository)
         - name: image-tags
           value: $(tasks.containerize.results.image-tags)
+        - name: image-pull-secret
+          value: $(tasks.define-registry-secret-context.results.image-pull-secret)
+        - name: image-pull-secret-kind
+          value: $(tasks.define-registry-secret-context.results.image-pull-secret-kind)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
         - name: deployment-timeout
@@ -667,7 +729,7 @@ spec:
         - name: artifacts
           workspace: pipeline-ws
     - name: publish-deployable-task
-      runAfter: [deploy-application]
+      runAfter: [deploy-component]
       taskRef:
         name: publish-code-engine-deployable-mapping
       params:
@@ -688,10 +750,10 @@ spec:
     - name: check-application-health
       taskRef:
         name: check-health
-      runAfter: [deploy-application]
+      runAfter: [deploy-component]
       params:
         - name: app-hostname
-          value: $(tasks.deploy-application.results.app-url)
+          value: $(tasks.deploy-component.results.app-url)
         - name: app-health-endpoint
           value: $(params.app-health-endpoint)
         - name: pipeline-debug

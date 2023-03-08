@@ -1,0 +1,177 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: code-engine-cd-trigger-template
+spec:
+  params:
+    - name: ibmcloud-api
+      description: the ibmcloud api
+      default: https://cloud.ibm.com
+    - name: app-name
+      description: application name
+    - name: source-region
+      description: region of source code-engine project
+    - name: source-resource-group
+      description: resource group for source code-engine-project
+    - name: source-code-engine-project
+      description: Code Engine project source for fetching component information
+    - name: source-app-name
+      description: source application name
+    - name: source-app-revision
+      description: revision of the source application
+      default: ""
+    - name: region
+      description: region of application deployment
+    - name: resource-group
+      description: resource group for the application deployment
+    - name: code-engine-project
+      description: Code Engine project for the application deployment
+    - name: pipeline-debug
+      description: Pipeline debug mode. Value can be 0 or 1. Default to 0
+      default: "0"
+    - name: cpu
+      description: the amount of vCPU set for each instance of the application or job
+      default: "0.25"
+    - name: memory
+      description: the amount of memory set for each instance of the application or job
+      default: "0.5G"
+    - name: ephemeral-storage
+      description: the amount of ephemeral storage to set for each instance of the application or job
+      default: "0.4G"
+    - name: app-max-scale
+      description: maximum scale of the Code Engine job or application
+      default: "1"
+    - name: app-min-scale
+      description: minimum scale of the Code Engine application
+      default: "0"
+    - name: app-port
+      description: port where the application is listening
+      default: "8080"
+    - name: app-visibility
+      description: the visibility for the application. Valid values are 'public', 'private' and 'project'.
+      default: "public"
+    - name: app-concurrency
+      description: the maximum number of requests that can be processed concurrently per instance. 
+      default: "100"
+    - name: service-bindings
+      description: service binding JSON for the application deployment
+      default: "{}"
+
+      #For health task
+    - name: app-health-endpoint
+      description: application health endpoint, e.g. /health
+      default: ""
+    - name: app-deployment-timeout
+      description: maximum timeout for the application deployment.
+      default: "300"
+
+    - name: deployment-type
+      description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
+      default: "application"
+    
+    # Job specific configuration
+    - name: job-instances
+      description: Specifies the number of instances that are used for runs of the job. When you use this option, the system converts to array indices. For example, if you specify 'instances' of 5, the system converts to 'array-indices' of '0 - 4'
+      default: "1"
+    - name: job-maxexecutiontime
+      description: The maximum execution time in seconds for runs of the job. 
+      default: "7200"
+    - name: job-retrylimit
+      description: The number of times to rerun an instance of the job before the job is marked as failed.
+      default: "3"
+
+  resourcetemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: code-engine-$(uid)-pvc
+      spec:
+        resources:
+          requests:
+            storage: 5Gi
+        volumeMode: Filesystem
+        accessModes:
+          - ReadWriteOnce
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        name: code-engine-$(uid)
+      spec:
+        pipelineRef:
+          name: code-engine-cd-pipeline
+        params:
+          - name: ibmcloud-api
+            value: $(params.ibmcloud-api)
+          - name: app-name
+            value: $(params.app-name)
+          - name: source-region
+            value: $(params.source-region)
+          - name: source-resource-group
+            value: $(params.source-resource-group)
+          - name: source-code-engine-project
+            value: $(params.source-code-engine-project)
+          - name: source-app-name
+            value: $(params.source-app-name)
+          - name: source-app-revision
+            value: $(params.source-app-revision)
+          - name: region
+            value: $(params.region)
+          - name: resource-group
+            value: $(params.resource-group)
+          - name: code-engine-project
+            value: $(params.code-engine-project)
+          - name: service-bindings
+            value: $(params.service-bindings)
+          - name: cpu
+            value: $(params.cpu)
+          - name: app-max-scale
+            value: $(params.app-max-scale)
+          - name: memory
+            value: $(params.memory)
+          - name: ephemeral-storage
+            value: $(params.ephemeral-storage)
+          - name: app-min-scale
+            value: $(params.app-min-scale)
+          - name: app-port
+            value: $(params.app-port)
+          - name: app-visibility
+            value: $(params.app-visibility)
+          - name: app-concurrency
+            value: $(params.app-concurrency)
+          - name: app-health-endpoint
+            value: $(params.app-health-endpoint)
+          - name: pipeline-debug
+            value: $(params.pipeline-debug)
+          - name: deployment-timeout
+            value: $(params.app-deployment-timeout)
+          - name: deployment-type
+            value: $(params.deployment-type)
+          - name: job-instances
+            value: $(params.job-instances)
+          - name: job-maxexecutiontime
+            value: $(params.job-maxexecutiontime)
+          - name: job-retrylimit
+            value: $(params.job-retrylimit)
+        workspaces:
+          - name: pipeline-ws
+            persistentVolumeClaim:
+              claimName: code-engine-$(uid)-pvc
+---
+apiVersion: tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: code-engine-cd-manual-trigger
+spec:
+  params:
+---
+apiVersion: tekton.dev/v1beta1
+kind: EventListener
+metadata:
+  name: cd-manual-run
+spec:
+  triggers:
+    - binding:
+        name: code-engine-cd-manual-trigger
+      template:
+        name: code-engine-cd-trigger-template

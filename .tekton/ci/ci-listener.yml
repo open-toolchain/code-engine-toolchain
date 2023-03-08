@@ -298,7 +298,7 @@ spec:
             value: $(params.pipeline-debug)
           - name: custom-script
             value: $(params.custom-script)
-          - name: app-deployment-timeout
+          - name: deployment-timeout
             value: $(params.app-deployment-timeout)
           #cra specific
           - name: ibmcloud-region

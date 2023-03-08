@@ -52,6 +52,10 @@ spec:
       description: the repository for the built image
     - name: image-tags
       description: the tags for the built image
+    - name: image-pull-secret
+      description: name of the image pull secret
+    - name: image-pull-secret-kind
+      description: user-managed or ce-managed (code-engine managed)
     - name: shuttle-properties-file
       description: name of the properties file that contain properties to include in the environment
       default: "build.properties"
@@ -133,10 +137,16 @@ spec:
         ibmcloud target -g "$(params.resource-group)"
 
         # View shuttle properties
-        cat $(params.shuttle-properties-file)
+        if [ -n "$(params.shuttle-properties-file)" ]; then
+          if [ -f $(params.shuttle-properties-file) ]; then
+            cat $(params.shuttle-properties-file)
 
-        source $(params.shuttle-properties-file)
-        export $(cut -d= -f1 $(params.shuttle-properties-file))
+            source $(params.shuttle-properties-file)
+            export $(cut -d= -f1 $(params.shuttle-properties-file))
+          else 
+            echo "WARNING: shuttle-properties-file provided is not existing - $(params.shuttle-properties-file)"
+          fi
+        fi
 
         #
         # Make sure that the latest version of Code Engine CLI is installed
@@ -183,6 +193,31 @@ spec:
             echo -e "Pointing image reference to private ICR location: $IMAGE_URL"
         fi
 
+        #
+        # Make sure the secret to be used is existing
+        #
+        IMAGE_PULL_SECRET=$(params.image-pull-secret)
+        IMAGE_PULL_SECRET_KIND=$(params.image-pull-secret-kind)
+        if ! ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" >/dev/null 2>&1; then
+          echo "registry-secret $IMAGE_PULL_SECRET is not existing"
+          if [[ "$IMAGE_PULL_SECRET_KIND" == "ce-managed" ]]; then
+            # if the secret is expected to be ce-managed but not present, then fallback to create a user one based on the apikey
+            # until https://github.ibm.com/coligo/cli/issues/3015 is available
+            PIPELINE_TOOLCHAIN_ID=$(jq -r '.toolchain_guid' /artifacts/_toolchain.json)
+            IMAGE_PULL_SECRET="ibmcloud-toolchain-${PIPELINE_TOOLCHAIN_ID}-${IBM_CLOUD_REGION}"
+            echo "user-managed registry-secret $IMAGE_PULL_SECRET will be created and used for this deployment."
+            # Check if the to-be-used user-managed secret exists
+            if ! ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" >/dev/null 2>&1; then
+              # user-secret is not existing so process it as user-managed secret
+              IMAGE_PULL_SECRET_KIND="user-managed"
+            fi
+          fi
+          # Create the registry-secret with the proper apikey
+          if [[ "$IMAGE_PULL_SECRET_KIND" == "user-managed" ]]; then
+            ibmcloud ce registry create --name $IMAGE_PULL_SECRET --password $PIPELINE_BLUEMIX_API_KEY --server $(echo "$IMAGE_URL" | awk -F/ '{print $1}')
+          fi
+        fi
+
         echo "deployment type: $(params.deployment-type)"
         if [[ $(params.deployment-type) == "application" ]]; then
             echo "Deploying your code as Code Engine application '$(params.app-name)'..."
@@ -196,7 +231,7 @@ spec:
             fi
 
             echo "   image: $IMAGE_URL:$(params.image-tags)"
-            echo "   registry-secret: ce-auto-icr-private-$IBM_CLOUD_REGION"
+            echo "   registry-secret: $IMAGE_PULL_SECRET"
             echo "   cpu: $(params.cpu)"
             echo "   memory: $(params.memory)"
             echo "   ephemeral-storage: $(params.ephemeral-storage)"
@@ -208,7 +243,7 @@ spec:
             
             ibmcloud ce app $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
-                --registry-secret "ce-auto-icr-private-$IBM_CLOUD_REGION" \
+                --registry-secret "$IMAGE_PULL_SECRET" \
                 --cpu $(params.cpu) \
                 --memory $(params.memory) \
                 --ephemeral-storage $(params.ephemeral-storage) \
@@ -291,7 +326,7 @@ spec:
             fi
 
             echo "   image: $IMAGE_URL:$(params.image-tags)"
-            echo "   registry-secret: ce-auto-icr-private-$IBM_CLOUD_REGION"
+            echo "   registry-secret: $IMAGE_PULL_SECRET"
             echo "   cpu: $(params.cpu)"
             echo "   memory: $(params.memory)"
             echo "   ephemeral-storage: $(params.ephemeral-storage)"
@@ -301,7 +336,7 @@ spec:
             
             ibmcloud ce job $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
-                --registry-secret "ce-auto-icr-private-$IBM_CLOUD_REGION" \
+                --registry-secret "$IMAGE_PULL_SECRET" \
                 --cpu $(params.cpu) \
                 --memory $(params.memory) \
                 --ephemeral-storage $(params.ephemeral-storage) \
