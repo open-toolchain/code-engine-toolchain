@@ -135,10 +135,10 @@ properties:
       "false": true
   - name: build-size
     type: text
-    value: "medium"
+    value: "large"
   - name: build-timeout
     type: text
-    value: "600"
+    value: "1200"
   - name: deployment-type
     type: text
     value: ${DEPLOYMENT_TYPE}
@@ -148,3 +148,6 @@ properties:
   - name: path-to-dockerfile
     type: text
     value: "."
+  - name: wait-timeout
+    type: text
+    value: "1300"
