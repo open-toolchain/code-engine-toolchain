@@ -65,7 +65,7 @@ spec:
     - name: task-image
       description: image used to execute this task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
-    - name: deployment-timeout
+    - name: app-deployment-timeout
       description: maximum timeout for the application deployment.
       default: "300"
     - name: deployment-type
@@ -267,8 +267,8 @@ spec:
             echo "Checking if application is ready..."
             KUBE_SERVICE_NAME=$(params.app-name)
 
-            DEPLOYMENT_TIMEOUT=$(params.deployment-timeout)
-            echo "Timeout for the application deployment is ${DEPLOYMENT_TIMEOUT}"
+            DEPLOYMENT_TIMEOUT=$(params.app-deployment-timeout)
+            echo "Timeout for the application deployment is ${DEPLOYMENT_TIMEOUT} seconds"
             ITERATION=0
             while [[ "${ITERATION}" -le "${DEPLOYMENT_TIMEOUT}" ]]; do
                 sleep 1
@@ -283,6 +283,7 @@ spec:
                     echo "Application not ready, retrying"
                 elif [ -n "$SVC_STATUS_READY" ]; then
                     echo "Application is ready"
+                    ibmcloud ce app get --name $(params.app-name)
                     break
                 else
                     echo "Application status unknown, retrying"
@@ -290,10 +291,33 @@ spec:
                 ITERATION="${ITERATION}"+1
             done
 
-            echo "Application service details:"
-            kubectl describe ksvc/${KUBE_SERVICE_NAME}
             if [ \( -n "$SVC_STATUS_NOT_READY" \) -o \( -n "$SVC_STATUS_UNKNOWN" \) ]; then
+                echo ""
+                echo "Gathering details to help troubleshooting the problem ..."
+                
+                echo ""
+                echo "Application details:"
+                echo "$(ibmcloud ce app get --name $(params.app-name) --output yaml)"
+                
+                echo ""
+                echo "Application events:"
+                echo "$(ibmcloud ce app events --app $(params.app-name))"
+                
+                echo ""
+                echo "Application logs:"
+                echo "$(ibmcloud ce app logs --app $(params.app-name) --all)"
+                
+                echo ""
+                echo "========================================================="
+                echo "DEPLOYMENT FAILED"
+                echo "========================================================="
                 echo "Application is not ready after waiting maximum time"
+
+                echo ""
+                echo "Please review the app details, events and logs printed above and check whether the output contains information which relates to the problem."
+                echo "Also, please see our troubleshooting guide https://cloud.ibm.com/docs/codeengine?topic=codeengine-ts-app-neverready and check for common issues."
+                echo ""
+                
                 exit 1
             fi
 

@@ -1,4 +1,4 @@
-# ![Icon](./.bluemix/clg-experimental-banner.svg) Developing a Code Engine app
+# ![Icon](./.bluemix/code-engine.svg) Developing a Code Engine app
 
 ## How Code Engine deployment works
 IBM Cloud Code Engine provides a platform to unify the deployment of all of your container-based applications. Code Engine helps developers by hiding many of the complex tasks like configuration, dependency management etc. Code Engine simplifies container-based management and enables you to concentrate on writing code. It also makes available many of the features of a serverless platform, such as "scale-to-zero". The application code is stored in source control along with its Dockerfile. If you have not yet created a Code Engine project, the toolchain automatically generates one during deployment. Any code changes detected in the Git repo are automatically built, validated, and deployed into the Code Engine project. For more information, refer to the [Code Engine documentation](https://cloud.ibm.com/docs/codeengine).
@@ -13,6 +13,7 @@ You can continuously deliver a secure Code Engine app to a Code Engine project. 
 * Deployment to IBM Code Engine
 
 ## Prerequisites
+* Make sure the account that creates the toolchain pipeline based on the Code Engine template has proper permissions in the account. See "[Integrating Code Engine workloads with Continuous Delivery](https://cloud.ibm.com/docs/codeengine?topic=codeengine-toolchain-ce)" to learn more.
 * Optional: Install the [IBM Cloud CLI and the IBM Cloud Code Engine plug-in](https://cloud.ibm.com/docs/codeengine?topic=codeengine-kn-install-cli) for managing Code Engine projects and applications on your local system.
 * Optional: Create a [project](https://cloud.ibm.com/docs/codeengine?topic=codeengine-manage-project). If you do not create one, the toolchain will create one for you with the project name you enter.
 
@@ -33,6 +34,7 @@ The following best practices are implemented automatically upon app creation:
 ---
 ## Learn more
 
-* [Text analysis with Code Engine](https://cloud.ibm.com/docs/solution-tutorials?topic=solution-tutorials-image_classification_code_engine)
+* [Getting started with IBM Cloud Code Engine](https://cloud.ibm.com/docs/codeengine?topic=codeengine-getting-started)
 * [Getting started with toolchains](https://cloud.ibm.com/devops/getting-started)
 * [Getting started with IBM Cloud Continuous Delivery](https://cloud.ibm.com/docs/services/ContinuousDelivery?topic=ContinuousDelivery-getting-started&pos=2)
+* [Integrating Code Engine workloads with Continuous Delivery](https://cloud.ibm.com/docs/codeengine?topic=codeengine-toolchain-ce)

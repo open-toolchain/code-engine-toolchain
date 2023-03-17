@@ -80,14 +80,14 @@ spec:
     - name: service-bindings
       description: JSON object of a map of names to services instances to be bound to the application
       default: "{}"
-    - name: deployment-timeout
-      description: maximum timeout for the application deployment.
-      default: "300"
 
       # For health task
     - name: app-health-endpoint
       description: application health endpoint, e.g. /health
       default: ""
+    - name: app-deployment-timeout
+      description: maximum timeout for the application deployment.
+      default: "300"
 
       #Cra specific params
     - name: ibmcloud-region
@@ -176,22 +176,25 @@ spec:
       description: Image to use for `scan` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
     
-    # BuildPack related params
+    # Build related params
     - name: build-strategy
       description:  The strategy to use for building the image. Valid values are 'dockerfile' and 'buildpacks'. 
       default: "dockerfile"
     - name: build-timeout
       description: the amount of time, in seconds, that can pass before the build run must succeed or fail.
-      default: "600"
+      default: "1200"
     - name: build-size
       description: the size to use for the build, which determines the amount of resources used. Valid values include small, medium, large, xlarge.
-      default: "medium"
+      default: "large"
     - name: deployment-type
       description:  Specifies the type of deployment. Valid values are 'application' and 'job'. 
       default: "application"
     - name: build-use-native-docker
       description:  Optional property to opt-in for using native docker build capabilities as opposed to use Code Engine build to containerize the source. Note this setting only takes effect if the build-strategy is set to 'dockerfile'. Valid values are 'true' and 'false'. 
       default: "false"
+    - name: wait-timeout
+      description: Maximum timeout for the CLI operation to wait.
+      default: "1300"
     
     # Job specific configuration
     - name: job-instances
@@ -527,6 +530,35 @@ spec:
                 cat .ceignore
               fi
 
+              # 
+              # Helper function which is used in case the Code Engine build fails.
+              print_mustgather () {
+
+                echo ""
+                echo "Gathering details to help troubleshooting the problem ..."
+
+                echo ""
+                echo "Build run details:"
+                echo "$(ibmcloud ce buildrun get --name $1)"
+
+                echo ""
+                echo "Build run events:"
+                echo "$(ibmcloud ce buildrun events --name $1)"
+
+                echo ""
+                echo "Build run logs:"
+                echo "$(ibmcloud ce buildrun logs --name $1)"
+
+                echo ""
+                echo "========================================================="
+                echo "BUILD FAILED"
+                echo "========================================================="
+                echo ""
+                echo "Please review the build details, events and logs printed above and check whether the output contains information which relates to the problem."
+                echo "Also, please see our troubleshooting guide https://cloud.ibm.com/docs/codeengine?topic=codeengine-ts-build-bldpush-stepfail and check for common issues."
+                echo ""
+              }
+
               #
               # Printing build configuration, prior submitting it
               echo "Using Code Engine to build the application container image '$IMAGE_URL_TO_USE:$IMAGE_TAG'."
@@ -535,7 +567,8 @@ spec:
               echo "   dockerfile: $DOCKERFILE"
               echo "   context-dir: $PATH_TO_CONTEXT"
               echo "   size: $(params.build-size)"
-              echo "   timeout: $(params.build-timeout)"
+              echo "   build timeout: $(params.build-timeout)"
+              echo "   wait timeout: $(params.wait-timeout)"
 
               #
               # Submit the build
@@ -549,8 +582,8 @@ spec:
                   --image "$IMAGE_URL_TO_USE:$IMAGE_TAG" \
                   --timeout $(params.build-timeout) \
                   --dockerfile "$DOCKERFILE" \
-                  --wait --wait-timeout $(params.deployment-timeout) \
-                  || (ibmcloud ce buildrun logs --buildrun "${BUILD_RUN_NAME}" && exit 1)
+                  --wait --wait-timeout $(params.wait-timeout) \
+                  || (print_mustgather "${BUILD_RUN_NAME}" && exit 1)
 
               #
               # Print the build run logs
@@ -715,8 +748,8 @@ spec:
           value: $(tasks.define-registry-secret-context.results.image-pull-secret-kind)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
-        - name: deployment-timeout
-          value: $(params.deployment-timeout)
+        - name: app-deployment-timeout
+          value: $(params.app-deployment-timeout)
         - name: deployment-type
           value: $(params.deployment-type)
         - name: job-instances

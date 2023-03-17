@@ -143,7 +143,7 @@ spec:
             value: $(params.app-health-endpoint)
           - name: pipeline-debug
             value: $(params.pipeline-debug)
-          - name: deployment-timeout
+          - name: app-deployment-timeout
             value: $(params.app-deployment-timeout)
           - name: deployment-type
             value: $(params.deployment-type)

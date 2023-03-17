@@ -65,14 +65,14 @@ spec:
     - name: service-bindings
       description: JSON object of a map of names to services instances to be bound to the application
       default: "{}"
-    - name: deployment-timeout
-      description: maximum timeout for the application deployment.
-      default: "300"
 
       # For health task
     - name: app-health-endpoint
       description: application health endpoint, e.g. /health
       default: ""
+    - name: app-deployment-timeout
+      description: maximum timeout for the application deployment.
+      default: "300"
         
     # Job specific configuration
     - name: job-instances
@@ -150,8 +150,8 @@ spec:
           value: $(tasks.fetch-component-information.results.image-pull-secret-kind)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
-        - name: deployment-timeout
-          value: $(params.deployment-timeout)
+        - name: app-deployment-timeout
+          value: $(params.app-deployment-timeout)
         - name: deployment-type
           value: $(params.deployment-type)
         - name: job-instances
