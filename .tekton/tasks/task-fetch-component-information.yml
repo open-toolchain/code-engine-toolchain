@@ -96,8 +96,14 @@ spec:
           ibmcloud ce revision get --name "$(params.application-revision)" --output json > revision_output.json
           IMAGE=$(jq -r '.spec.containers[0].image' revision_output.json)
           IMAGE_PULL_SECRET=$(jq -r '.spec.imagePullSecrets[0].name//empty' revision_output.json)
+        elif [[ "$(params.deployment-type)" == "job" ]]; then
+          # job
+          ibmcloud ce job get --name "$(params.component-name)" --output json > component_output.json
+          IMAGE=$(jq -r '.spec.template.containers[0].image' component_output.json)
+          IMAGE_PULL_SECRET=$(jq -r '.spec.template.imagePullSecrets[0].name//empty' component_output.json)
         else
-          ibmcloud ce $(params.deployment-type) get --name "$(params.component-name)" --output json > component_output.json
+          # application
+          ibmcloud ce application get --name "$(params.component-name)" --output json > component_output.json
           IMAGE=$(jq -r '.spec.template.spec.containers[0].image' component_output.json)
           IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' component_output.json)
         fi
