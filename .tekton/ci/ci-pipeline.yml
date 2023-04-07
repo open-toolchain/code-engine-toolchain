@@ -451,7 +451,10 @@ spec:
               GIT_COMMIT_SHORT=$( echo ${GIT_COMMIT} | head -c 8 )
               IMAGE_TAG=${GIT_COMMIT_SHORT}-${IMAGE_TAG}
             fi
-            if [ ! -z "${GIT_BRANCH}" ]; then IMAGE_TAG=${GIT_BRANCH}-${IMAGE_TAG} ; fi
+            if [ ! -z "${GIT_BRANCH}" ]; then 
+              GIT_BRANCH_TAG=$(echo -n $GIT_BRANCH | tr -c '[:alnum:]_.-' '_')
+              IMAGE_TAG=${GIT_BRANCH_TAG}-${IMAGE_TAG};
+            fi
             IMAGE_TAG=${BUILD_NUMBER}-${IMAGE_TAG}
             echo "Image tag: $IMAGE_TAG"
             
