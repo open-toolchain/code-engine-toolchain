@@ -196,6 +196,9 @@ spec:
     - name: build-use-native-docker
       description:  Optional property to opt-in for using native docker build capabilities as opposed to use Code Engine build to containerize the source. Note this setting only takes effect if the build-strategy is set to 'dockerfile'. Valid values are 'true' and 'false'. 
       default: "false"
+    - name: wait-timeout
+      description: Maximum timeout for the CLI operation to wait.
+      default: "1300"
     
     # Job specific configuration
     - name: job-instances
