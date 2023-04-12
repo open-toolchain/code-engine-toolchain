@@ -159,7 +159,7 @@ repo_conditions:
         parameters:
           configuration:
             env:
-              GIT_COMMIT_EVENT_LISTENER_NAME: "github-ent-commit"
+              GIT_COMMIT_EVENT_LISTENER_NAME: "github-commit"
   - condition:
       any:
         - parameter: source_provider

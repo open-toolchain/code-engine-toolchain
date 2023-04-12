@@ -206,7 +206,7 @@ services:
             } else if ( $env.source_provider === 'bitbucketgit' ) {
               'bitbucket-commit';
             } else if ( $env.source_provider === 'github_integrated' ) {
-              'github-ent-commit';
+              'github-commit';
             } else {
               'grit-or-gitlab-commit';
             }
