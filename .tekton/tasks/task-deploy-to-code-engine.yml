@@ -80,6 +80,18 @@ spec:
     - name: job-retrylimit
       description: The number of times to rerun an instance of the job before the job is marked as failed.
       default: "3"
+    - name: env-from-configmaps
+      description: semi-colon separated list of configmaps to set environment variables from
+      default: ""
+    - name: env-from-secrets
+      description: semi-colon separated list of secrets to set environment variables from
+      default: ""
+    - name: suffix-for-cd-auto-managed-configuration-resources
+      description: suffix for secret or configmap created based on CD environment properties
+      default: ""
+    - name: remove-unspecified-references-to-configuration-resources
+      description: remove references to unspecified configuration resources (configmap/secret) references (pulled from env-from-configmaps, env-from-secrets along with auto-managed by CD)
+      default: "false"
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)
@@ -122,6 +134,100 @@ spec:
             trap env EXIT
             set -x
         fi
+
+        # function to create secret or configmap out of the environment properties
+        setup-ce-env-component_() {
+          local kind=$1
+          local cm_or_secret_name=$2
+
+          if [ "$kind" == "secret" ]; then
+            properties_files_path="/config/secure-properties"
+          else
+            properties_files_path="/config/environment-properties"
+          fi
+
+          props=$(mktemp)
+          # shellcheck disable=SC2086,SC2012
+          if [ "$(ls -1 ${properties_files_path}/CE_ENV_* 2>/dev/null | wc -l)" != "0" ]; then
+            # shellcheck disable=SC2086,SC2012
+            for prop in "${properties_files_path}/CE_ENV_"*; do
+              # shellcheck disable=SC2295
+              echo "${prop##${properties_files_path}/CE_ENV_}=$(cat $prop)" >> $props
+            done
+          fi
+
+          if [ -s "$props" ]; then
+            # shellcheck disable=SC2086
+            if ibmcloud ce $kind get --name "$cm_or_secret_name" > /dev/null 2>&1; then
+              # configmap get does not fail if non existing - use the json output to ensure existing or not
+              if [[ "$kind" == "configmap" && -z "$(ibmcloud ce $kind get --name "$cm_or_secret_name" --output json | jq -r '.metadata.name//empty')" ]]; then
+                echo "$kind $cm_or_secret_name does not exist. Creating it"
+                operation="create"
+              else
+                echo "$kind $cm_or_secret_name already exists. Updating it"
+                operation="update"
+              fi
+            else
+              echo "$kind $cm_or_secret_name does not exist. Creating it"
+              operation="create"
+            fi
+            # shellcheck disable=SC2086
+            ibmcloud ce $kind $operation --name "$cm_or_secret_name" --from-env-file "$props"
+            return 0
+          else
+            # no cm or secret created
+            return 1
+          fi
+        }
+
+        # function to return codeengine update parameters for configuration resources to remove
+        compute-env-configuration-resources-references-remove-parameters() {
+          # configmap or secret
+          local kind=$1
+          local entity_json_spec=$2
+          local params_for_env_from_configuration_resources=$3
+          if [ "$kind" == "configmap" ]; then
+             kindOfRef="configMapRef"
+             command="--env-from-configmap-rm"
+          else
+             kindOfRef="secretRef"
+             command="--env-from-secret-rm"
+          fi
+          rm_command_parameters=""
+          current_references=$(echo $entity_json_spec | jq -r --arg kindOfRef "$kindOfRef" '.envFrom[] | select(.[$kindOfRef]) | if has("prefix") then .prefix + "=" + .[$kindOfRef].name else .[$kindOfRef].name end')
+          while read -r a_reference; do
+            # check if current reference is still present in the params_for_env_from_configuration_resources
+            if [[ "$params_for_env_from_configuration_resources" != *"$a_reference"* ]]; then
+              # current reference is not required anymore
+              if [[ $a_reference == *"="* ]]; then
+                # use only the configmap or secret name
+                rm_command_parameter=" $command $(echo $a_reference | awk -F= '{print $2}')"
+              else
+                rm_command_parameter=" $command $a_reference"
+              fi
+              rm_command_parameters="$rm_command_parameters $rm_command_parameter"
+            fi
+          done <<< "$current_references"
+          echo $rm_command_parameters
+        }
+
+        # function to return codeengine update parameters for individual configuration resource to remove
+        compute-individual-configuration-resource-remove-parameters() {
+          local entity_json_spec=$1
+          local params_for_env_from_configmap=$2
+          local params_for_env_from_secret=$3
+
+          rm_command_parameters=""
+          current_individual_env_references=$(echo $entity_json_spec | jq -r '.env[] | select(has("valueFrom")) | (.valueFrom.configMapKeyRef//.valueFrom.secretKeyRef).key as $key | (.valueFrom.configMapKeyRef//.valueFrom.secretKeyRef).name as $resource_name | if .name == $key then $resource_name + ":" + $key else $resource_name + ":" + .name + "=" + $key end')
+          while read -r an_individual_env_reference; do
+            # check if current individual env reference is still present in the params_for_env_from_configmap or params_for_env_from_secret
+            if [[ "$params_for_env_from_configmap" != *"$an_individual_env_reference"* ]] && [[ "$params_for_env_from_secret" != *"$an_individual_env_reference"* ]]; then
+              # individual env rm command expect the environment variable name as argument
+              rm_command_parameters="$rm_command_parameters --env-rm $(echo "$an_individual_env_reference" | awk -F: '{print $2}' | awk -F= '{print $1}')"
+            fi
+          done <<< "$current_individual_env_references"
+          echo $rm_command_parameters
+        }
 
         # SETUP BEGIN
         ibmcloud config --check-version false
@@ -218,20 +324,61 @@ spec:
           fi
         fi
 
+        env_from_configmap_params="$(params.env-from-configmaps)"
+        if [ -n "$env_from_configmap_params" ]; then
+          # replace ; by appropriate parameter
+          env_from_configmap_params="--env-from-configmap ${env_from_configmap_params//;/ --env-from-configmap\ }"
+        fi
+
+        cm_toolchain_managed="cd-auto-${PIPELINE_ID}-cm$(params.suffix-for-cd-auto-managed-configuration-resources)"
+        if setup-ce-env-component_ "configmap" "$cm_toolchain_managed"; then
+          env_from_configmap_params="--env-from-configmap $cm_toolchain_managed $env_from_configmap_params"
+        fi
+
+        env_from_secret_params="$(params.env-from-secrets)"
+        if [ -n "$env_from_secret_params" ]; then
+          # replace ; by appropriate parameter
+          env_from_secret_params="--env-from-secret ${env_from_secret_params//;/ --env-from-secret\ }"
+        fi
+
+        secret_toolchain_managed="cd-auto-${PIPELINE_ID}-secret$(params.suffix-for-cd-auto-managed-configuration-resources)"
+        if setup-ce-env-component_ "secret" "$secret_toolchain_managed"; then
+          env_from_secret_params="--env-from-secret $secret_toolchain_managed $env_from_secret_params"
+        fi
+
         echo "deployment type: $(params.deployment-type)"
         if [[ $(params.deployment-type) == "application" ]]; then
             echo "Deploying your code as Code Engine application '$(params.app-name)'..."
 
             OPERATION="create"
-            if ibmcloud ce app get -n $(params.app-name); then
+            json_file=$(mktemp)
+            if ibmcloud ce app get -n $(params.app-name) --output json > $json_file; then
                 echo "Code Engine app with name $(params.app-name) found, updating it"
                 OPERATION="update"
+                if [ "$(params.remove-unspecified-references-to-configuration-resources)" == "true" ]; then
+                  # ensure synchronization of references to configmaps or secrets for the given application
+                  json_spec=$(jq -c '.spec.template.spec.containers[0]' $json_file)
+                  env_from_configmap_rm_params=$(compute-env-configuration-resources-references-remove-parameters configmap "$json_spec" "$env_from_configmap_params")
+                  env_from_secret_rm_params=$(compute-env-configuration-resources-references-remove-parameters secret "$json_spec" "$env_from_secret_params")
+                  env_rm_params=$(compute-individual-configuration-resource-remove-parameters "$json_spec" "$env_from_configmap_params" "$env_from_secret_params")
+                fi
             else
                 echo "Code Engine app with name $(params.app-name) not found, creating it"
             fi
 
             echo "   image: $IMAGE_URL:$(params.image-tags)"
             echo "   registry-secret: $IMAGE_PULL_SECRET"
+            echo "   env-from-configmap parameters: $env_from_configmap_params"
+            echo "   env-from-secret parameters: $env_from_secret_params"
+            if [ -n "$env_from_configmap_rm_params" ]; then
+              echo "   env-from-configmap-rm parameters: $env_from_configmap_rm_params"
+            fi
+            if [ -n "$env_from_secret_rm_params" ]; then
+              echo "   env-from-secret-rm parameters: $env_from_secret_rm_params"
+            fi
+            if [ -n "$env_rm_params" ]; then
+              echo "   env-rm parameters: $env_rm_params"
+            fi
             echo "   cpu: $(params.cpu)"
             echo "   memory: $(params.memory)"
             echo "   ephemeral-storage: $(params.ephemeral-storage)"
@@ -244,6 +391,11 @@ spec:
             ibmcloud ce app $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
                 --registry-secret "$IMAGE_PULL_SECRET" \
+                $env_from_configmap_params \
+                $env_from_secret_params \
+                $env_from_configmap_rm_params \
+                $env_from_secret_rm_params \
+                $env_rm_params \
                 --cpu $(params.cpu) \
                 --memory $(params.memory) \
                 --ephemeral-storage $(params.ephemeral-storage) \
@@ -342,15 +494,34 @@ spec:
             echo "Deploying your code as Code Engine job......"
 
             OPERATION="create"
-            if ibmcloud ce job get --name $(params.app-name); then
+            json_file=$(mktemp)
+            if ibmcloud ce job get --name $(params.app-name) --output json > $json_file; then
                 echo "Code Engine job with name $(params.app-name) found, updating it"
                 OPERATION="update"
+                if [ "$(params.remove-unspecified-references-to-configuration-resources)" == "true" ]; then
+                  # ensure synchronization of references to configmaps or secrets for the given job
+                  json_spec=$(jq -c '.spec.template.containers[0]' $json_file)
+                  env_from_configmap_rm_params=$(compute-env-configuration-resources-references-remove-parameters configmap "$json_spec" "$env_from_configmap_params")
+                  env_from_secret_rm_params=$(compute-env-configuration-resources-references-remove-parameters secret "$json_spec" "$env_from_secret_params")
+                  env_rm_params=$(compute-individual-configuration-resource-remove-parameters "$json_spec" "$env_from_configmap_params" "$env_from_secret_params")
+                fi
             else
                 echo "Code Engine job with name $(params.app-name) not found, creating it"
             fi
 
             echo "   image: $IMAGE_URL:$(params.image-tags)"
             echo "   registry-secret: $IMAGE_PULL_SECRET"
+            echo "   env-from-configmap parameters: $env_from_configmap_params"
+            echo "   env-from-secret parameters: $env_from_secret_params"
+            if [ -n "$env_from_configmap_rm_params" ]; then
+              echo "   env-from-configmap-rm parameters: $env_from_configmap_rm_params"
+            fi
+            if [ -n "$env_from_secret_rm_params" ]; then
+              echo "   env-from-secret-rm parameters: $env_from_secret_rm_params"
+            fi
+            if [ -n "$env_rm_params" ]; then
+              echo "   env-rm parameters: $env_rm_params"
+            fi
             echo "   cpu: $(params.cpu)"
             echo "   memory: $(params.memory)"
             echo "   ephemeral-storage: $(params.ephemeral-storage)"
@@ -361,6 +532,11 @@ spec:
             ibmcloud ce job $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
                 --registry-secret "$IMAGE_PULL_SECRET" \
+                $env_from_configmap_params \
+                $env_from_secret_params \
+                $env_from_configmap_rm_params \
+                $env_from_secret_rm_params \
+                $env_rm_params \
                 --cpu $(params.cpu) \
                 --memory $(params.memory) \
                 --ephemeral-storage $(params.ephemeral-storage) \
@@ -392,6 +568,10 @@ spec:
         - mountPath: /artifacts/_toolchain.json
           subPath: toolchain.json
           name: cd-config-volume
+        - mountPath: /config/environment-properties
+          name: environment-properties
+        - mountPath: /config/secure-properties
+          name: secure-properties
   volumes:
     - name: steps-volume
       emptyDir: {}
@@ -401,3 +581,9 @@ spec:
         items:
           - key: toolchain.json
             path: toolchain.json
+    - name: environment-properties
+      configMap:
+        name: environment-properties
+    - name: secure-properties
+      secret:
+        secretName: secure-properties

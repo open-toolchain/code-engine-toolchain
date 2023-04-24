@@ -151,3 +151,14 @@ properties:
   - name: wait-timeout
     type: text
     value: "1300"
+  - name: remove-unspecified-references-to-configuration-resources
+    type: single_select
+    value:
+      "true": false
+      "false": true
+  - name: env-from-configmaps
+    value: ""
+  - name: env-from-secrets
+    value: ""
+  - name: suffix-for-cd-auto-managed-configuration-resources
+    value: ""

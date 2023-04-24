@@ -100,3 +100,14 @@ properties:
   - name: deployment-type
     type: text
     value: ${DEPLOYMENT_TYPE}
+  - name: remove-unspecified-references-to-configuration-resources
+    type: single_select
+    value:
+      "true": false
+      "false": true
+  - name: env-from-configmaps
+    value: ""
+  - name: env-from-secrets
+    value: ""
+  - name: suffix-for-cd-auto-managed-configuration-resources
+    value: ""

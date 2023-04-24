@@ -38,6 +38,19 @@ spec:
       description: Pipeline debug mode. Value can be 0 or 1. Default to 0
       default: "0"
 
+    - name: env-from-configmaps
+      description: semi-colon separated list of configmaps to set environment variables from
+      default: ""
+    - name: env-from-secrets
+      description: semi-colon separated list of secrets to set environment variables from
+      default: ""
+    - name: suffix-for-cd-auto-managed-configuration-resources
+      description: suffix for secret or configmap created based on CD environment properties
+      default: ""
+    - name: remove-unspecified-references-to-configuration-resources
+      description: remove references to unspecified configuration resources (configmap/secret) references (pulled from env-from-configmaps, env-from-secrets along with auto-managed by CD)
+      default: "false"
+
     - name: cpu
       description: the amount of vCPU set for each instance of the application or job
       default: "0.25"
@@ -124,6 +137,14 @@ spec:
           value: $(params.code-engine-project)
         - name: service-bindings
           value: $(params.service-bindings)
+        - name: env-from-configmaps
+          value: $(params.env-from-configmaps)
+        - name: env-from-secrets
+          value: $(params.env-from-secrets)
+        - name: suffix-for-cd-auto-managed-configuration-resources
+          value: $(params.suffix-for-cd-auto-managed-configuration-resources)
+        - name: remove-unspecified-references-to-configuration-resources
+          value: $(params.remove-unspecified-references-to-configuration-resources)
         - name: cpu
           value: $(params.cpu)
         - name: app-max-scale
