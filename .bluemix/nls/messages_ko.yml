@@ -4,7 +4,7 @@
 # text in toolchain.yml
 template.name: "Code Engine 앱 개발"
 template.description: "(종량과금제 계정 필요) 이 도구 체인을 사용하여 IBM Cloud에서 애플리케이션을 Code Engine, 공유, 다중 테넌트 Kubernetes 서비스로 안전하게 개발하고 배치할 수 있습니다. 기본적으로 도구 체인은 샘플 Node.js \"Hello World\" 앱을 사용하지만 사용자가 사용자 자체 GitHub 저장소에 링크할 수 있습니다. 도구 체인은 [Vulnerability Advisor](https://cloud.ibm.com/docs/services/va?topic=va-va_index)가 포함된 지속적 딜리버리, 소스 제어, 문제 추적 및 온라인 편집을 위해 사전 구성되어 있습니다.\n\n [console](https://cloud.ibm.com/codeengine/projects)에서 Code Engine 프로젝트 및 애플리케이션을 관리할 수 있습니다.\n\n이 도구 체인은 지속적 딜리버리 서비스의 일부인 도구를 사용합니다. 해당 서비스의 인스턴스가 선택된 리소스 그룹이나 조직에 아직 없는 경우, **작성**을 클릭하면 무료 [Lite](/catalog/services/continuous-delivery/) 플랜이 선택된 상태로 인스턴스가 자동으로 추가됩니다.\n\n\n\n시작하려면 **작성**을 클릭하십시오."
-template.gettingStarted: " **도구 체인이 준비되었습니다!**\n\n**빠른 시작:** 새 Docker 이미지 빌드를 트리거하려면 Git repo에 변경사항을 커미트하십시오. 이는 취약성에 대해 스캔되고 Code Engine 프로젝트에 배치됩니다. 단계별 지시사항은 이 도구 체인의 [학습서](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)를 참조하십시오."
+template.gettingStarted: " **도구 체인이 준비되었습니다!**\n**빠른 시작:** Git 저장소에 대한 변경 사항을 확정하여, (취약성 검사를 마쳤으며 Code Engine 프로젝트에 배치된) 새로운 Docker 이미지 빌드를 트리거합니다. 단계별 지시사항은 이 도구 체인에 대한 [학습서](https://cloud.ibm.com/docs/ContinuousDelivery?topic=ContinuousDelivery-tutorial-cd-code-engine)를 참조하십시오."
 
 # text in form-schema.json
 deploy.title: "Hello World 배치 단계"
