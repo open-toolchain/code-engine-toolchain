@@ -1,4 +1,6 @@
 ---
+#NLS_MESSAGEFORMAT_NONE
+#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
 
 # text in toolchain.yml
@@ -12,7 +14,7 @@ deploy.description: "Hello World 简单工具链"
 deploy.longDescription: "Delivery Pipeline 会自动持续构建、测试和部署 Docker 应用程序。 \n\n [查看文档](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "应用程序名称"
 deploy.appDescription: "应用程序的名称。"
-deploy.apikeyDescription: "使用 IBM Cloud API 密钥来访问 IBM Cloud。 可以使用“bx iam API-key-create”获取 API 密钥，也可以通过位于 https://cloud.ibm.com/iam/apikeys 的控制台（通过单击 **创建 IBM Cloud API 密钥**）（每个 API 密钥只能查看一次）。"
+deploy.apikeyDescription: "使用 IBM Cloud API 密钥来访问 IBM Cloud。 您可以使用 \"ibmcloud iam api-key-create\" 来获取 API 密钥，也可以通过 https://cloud.ibm.com/iam/apikeys 上的控制台单击 **创建 IBM Cloud API 密钥** (每个 API 密钥只能查看一次) 来获取 API 密钥。"
 deploy.registryRegionDescription: "用于映像注册表的 IBM Cloud 区域"
 deploy.registrynsDescription: "容器映像注册表中的名称空间。 您可以使用 [ibmcloud cr namespace-add] 对其进行设置。 了解更多信息：https://cloud.ibm.com/docs/services/Registry?topic=registry-getting-started#getting-started."
 deploy.apikey: "IBM Cloud API 密钥"

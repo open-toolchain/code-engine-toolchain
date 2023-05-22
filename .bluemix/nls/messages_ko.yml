@@ -1,4 +1,6 @@
 ---
+#NLS_MESSAGEFORMAT_NONE
+#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
 
 # text in toolchain.yml
@@ -12,7 +14,7 @@ deploy.description: "hello World 단순 도구 체인"
 deploy.longDescription: "Delivery Pipeline을 사용하여 Docker 애플리케이션의 지속적인 빌드, 테스트 및 배치를 자동화합니다. \n\n [문서 보기](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "앱 이름"
 deploy.appDescription: "사용자 애플리케이션의 이름입니다."
-deploy.apikeyDescription: "IBM Cloud API 키는 IBM Cloud에 액세스하는 데 사용됩니다. API 키는 'bx iam API-key-create'를 사용하거나 https://cloud.ibm.com/iam/apikeys의 콘솔을 통해 **IBM Cloud API 키 작성**(각 API 키 한 번만 볼 수 있습니다)."
+deploy.apikeyDescription: "IBM Cloud API 키는 IBM Cloud에 액세스하는 데 사용됩니다. 'ibmcloud iam api-key-create'를 사용하거나 **IBM Cloud API 키 작성** (각 API 키는 한 번만 볼 수 있음)을 클릭하여 https://cloud.ibm.com/iam/apikeys에서 콘솔을 통해 API 키를 얻을 수 있습니다."
 deploy.registryRegionDescription: "이미지 레지스트리의 IBM Cloud 지역"
 deploy.registrynsDescription: "컨테이너 이미지 레지스트리의 네임스페이스입니다. [ibmcloud cr namespace-add]를 사용하여 설정할 수 있습니다. https://cloud.ibm.com/docs/services/Registry?topic=registry-getting-started#getting-started. 자세히 보기"
 deploy.apikey: "IBM Cloud API 키"

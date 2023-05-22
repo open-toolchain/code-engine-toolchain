@@ -1,12 +1,4 @@
 ---
-###############################################################################
-# Licensed Materials - Property of IBM
-# (c) Copyright IBM Corporation 2016, 2022. All Rights Reserved.
-#
-# Note to U.S. Government Users Restricted Rights:
-# Use, duplication or disclosure restricted by GSA ADP Schedule
-# Contract with IBM Corp.
-###############################################################################
 #NLS_MESSAGEFORMAT_NONE
 #NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
@@ -21,7 +13,7 @@ deploy.description: "99:hello World simple toolchain"
 deploy.longDescription: "100:The Delivery Pipeline automates continuous build, test, and deploy of the Docker application. \n\n [View docs](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "101:App name"
 deploy.appDescription: "102:The name of your application."
-deploy.apikeyDescription: "103:The IBM Cloud API key is used to access the IBM Cloud. You can obtain your API key with 'bx iam api-key-create' or through the console at https://cloud.ibm.com/iam/apikeys by clicking **Create an IBM Cloud API key** (Each API key only can be viewed once)."
+deploy.apikeyDescription: "103:The IBM Cloud API key is used to access the IBM Cloud. You can obtain your API key with 'ibmcloud iam api-key-create' or through the console at https://cloud.ibm.com/iam/apikeys by clicking **Create an IBM Cloud API key** (Each API key only can be viewed once)."
 deploy.registryRegionDescription: "104:The IBM Cloud region for image registry"
 deploy.registrynsDescription: "105:The namespace in the container image registry. You can set it up with [ibmcloud cr namespace-add]. Learn more at https://cloud.ibm.com/docs/services/Registry?topic=registry-getting-started#getting-started."
 deploy.apikey: "106:IBM Cloud API key"

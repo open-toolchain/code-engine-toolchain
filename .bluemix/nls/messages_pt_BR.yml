@@ -1,4 +1,6 @@
 ---
+#NLS_MESSAGEFORMAT_NONE
+#NLS_ENCODING=UTF-8
 #The format for creating a link with a URL and text is [link text](link url) with no spaces or characters between the two sets of brackets- []()
 
 # text in toolchain.yml
@@ -12,7 +14,7 @@ deploy.description: "cadeia de ferramentas simples hello World"
 deploy.longDescription: "O Delivery Pipeline automatiza a construção contínua, o teste e a implementação do aplicativo Docker. \n\n [Visualizar docs](https://cloud.ibm.com/docs/codeengine#term-summary) ![](https://cloud.ibm.com/media/docs/images/icons/launch-glyph.svg)"
 deploy.appName: "Nome do app"
 deploy.appDescription: "O nome do aplicativo."
-deploy.apikeyDescription: "A chave de API IBM Cloud é usada para acessar a IBM Cloud. É possível obter sua chave de API com 'bx iam API-key-create ' ou por meio do console em https://cloud.ibm.com/iam/apikeys, clicando **Criar uma chave de API IBM Cloud** (Cada chave de API só pode ser visualizada uma vez)."
+deploy.apikeyDescription: "A chave de API IBM Cloud é usada para acessar a IBM Cloud. É possível obter sua chave de API com 'ibmcloud iam api-key-create' ou por meio do console em https://cloud.ibm.com/iam/apikeys, clicando em **Criar uma chave de API da IBM Cloud** (Cada chave de API pode ser visualizada apenas uma vez)."
 deploy.registryRegionDescription: "A região da IBM Cloud para registro de imagem"
 deploy.registrynsDescription: "O namespace no registro da imagem de contêiner. É possível configurá-lo com [ibmcloud cr namespace-add]. Saiba mais em https://cloud.ibm.com/docs/services/Registry?topic=registry-getting-started#getting-started."
 deploy.apikey: "Chave de API da IBM Cloud"
