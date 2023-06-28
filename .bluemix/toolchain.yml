@@ -67,7 +67,7 @@ services:
         }
       type: $env.type || 'clone'
       has_issues: true
-      enable_traceability: true
+      enable_traceability: false
       source_provider: >
         $env.source_provider ? $env.source_provider : 'hostedgit'
   pipeline-repo:
