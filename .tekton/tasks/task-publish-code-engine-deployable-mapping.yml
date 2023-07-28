@@ -82,7 +82,7 @@ spec:
             ibmcloud plugin update code-engine --force
         fi
 
-        ibmcloud ce proj select -n $(params.code-engine-project)
+        ibmcloud ce proj select -n "$(params.code-engine-project)"
 
         DEPLOYABLE_JSON=$(ibmcloud ce app get -n $(params.app-name) -o json)
         APPLICATION_URL=$(echo $DEPLOYABLE_JSON | jq -j '.status.url')
