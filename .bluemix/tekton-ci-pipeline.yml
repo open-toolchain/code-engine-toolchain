@@ -49,7 +49,10 @@ triggers:
   - type: manual
     name: manual-run
     eventListener: manual-run
-    properties: []
+    properties: 
+      - name: branch
+        type: text
+        value: ${APP_REPO_BRANCH}
 properties:
   - name: ibmcloud-api
     type: text
@@ -116,9 +119,6 @@ properties:
   - name: pipeline-debug
     type: text
     value: "0"
-  - name: branch
-    type: text
-    value: ${APP_REPO_BRANCH}
   - name: app-deployment-timeout
     type: text
     value: "300"
@@ -154,10 +154,14 @@ properties:
       "true": false
       "false": true
   - name: env-from-configmaps
+    type: text
     value: ""
   - name: env-from-secrets
+    type: text
     value: ""
   - name: suffix-for-cd-auto-managed-configuration-resources
+    type: text
     value: ""
   - name: CE_ENV_a_property
+    type: text
     value: "value injected as environment variable a_property from ci-pipeline CE_ENV_a_property (because of CE_ENV_ prefix)"
