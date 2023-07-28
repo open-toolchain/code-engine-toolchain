@@ -13,12 +13,12 @@ spec:
     - name: git-token
       description: access token for the git repo
       default: ""
-    - name: target-repository
-      description: the repo integration name
-    - name: target-branch
-      description: target branch
-    - name: pr-commit-id
-      description: commit id
+    - name: context
+      description: (Optional) context for the commit status check
+      default: "code-engine devops"
+    - name: description
+      description: (Optional) description for the commit status check
+      default: "code-engine devops (PR)"
     - name: ibmcloud-region
       description: (Optional) ibmcloud region to use
       default: ""
@@ -32,22 +32,20 @@ spec:
       description: (Optional) Target resource group (name or id) for the ibmcloud login operation
       default: ""  
     # Event params
-    - name: branch
-      description: The git branch
-      default: ""
-    - name: commit-id
+    - name: target-repository
+      description: the repo integration name
+    - name: target-branch
+      description: target branch
+    - name: pr-commit-id
       description: commit id
-      default: ""
     - name: pr-branch
       description: The branch in the forked git repo from where the PR is made
       default: ""
     - name: pr-repository
       description: The forked git repo from where the PR is made
       default: ""
-    - name: repository
-      description: The git repo
     # Common command related params
-    - name: custom-script
+    - name: cra-custom-script
       description: (Optional) A custom script to be ran prior to CRA scanning
       default: ""
     - name: env-props
@@ -126,13 +124,7 @@ spec:
     - name: cra-scan-image
       description: Image to use for `scan` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
-    - name: repository
-    - name: insights
-    - name: region 
-    - name: scripts-repo
-      description: The variable storing git integration for the repository storing build and deploying source code
-    - name: scripts-subpath
-      description: The subpath to the script folder from the base of the git repository storing scripts folder. By default the folder path is scripts
+
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -169,6 +161,10 @@ spec:
             value: $(params.ibmcloud-api)
           - name: git-token
             value: $(params.git-token)
+          - name: context
+            value: $(params.context)
+          - name: description
+            value: $(params.description)
           - name: pr-commit-id
             value: $(params.pr-commit-id)
           - name: target-repository
@@ -183,18 +179,12 @@ spec:
             value: $(params.registry-region)
           - name: resource-group
             value: $(params.resource-group)
-          - name: branch
-            value: $(params.branch)
-          - name: commit-id
-            value: $(params.commit-id)
           - name: pr-branch
             value: $(params.pr-branch)
           - name: pr-repository
             value: $(params.pr-repository)
-          - name: repository
-            value: $(params.repository)
-          - name: custom-script
-            value: $(params.custom-script)
+          - name: cra-custom-script
+            value: $(params.cra-custom-script)
           - name: env-props
             value: $(params.env-props)
           - name: fileignore
@@ -239,16 +229,6 @@ spec:
             value: $(params.vulnerability-report)
           - name: cra-scan-image
             value: $(params.cra-scan-image)
-          - name: insights
-            value: $(params.insights) 
-          - name: region
-            value: $(params.region) 
-          - name: scripts-repo
-            value: $(params.scripts-repo)
-          - name: scripts-subpath
-            value: $(params.scripts-subpath)
-          - name: scripts-repo-branch
-            value: $(params.scripts-repo-branch)    
 ---
 apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding

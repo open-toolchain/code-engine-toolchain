@@ -110,6 +110,8 @@ spec:
       description: The ibmcloud api key
 
     # Common command related params
+    - name: cra-custom-script
+      description: (Optional) Filepath to a custom script that is ran prior to CRA scanning
     - name: env-props
       description: (Optional) A custom configuration of environment properties to source before execution, ex. 'export ABC=123 export DEF=456'
       default: ""
@@ -186,7 +188,10 @@ spec:
 
     # User control params
     - name: cra-scan-image
-      description: Image to use for `scan` task
+      description: Image to use for `code-risk-analyzer` task
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
+    - name: toolchain-build-image
+      description: Image to use for `build` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
     
     # Build related params
@@ -315,7 +320,7 @@ spec:
         - name: cra-scan-image
           value: $(params.cra-scan-image)
         - name: custom-script
-          value: $(params.custom-script)
+          value: $(params.cra-custom-script)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
@@ -374,6 +379,8 @@ spec:
       taskRef:
         name: toolchain-build
       params:
+        - name: run-build-image
+          value: $(params.toolchain-build-image)
         - name: custom-script
           value: $(params.custom-script)
         - name: pipeline-debug

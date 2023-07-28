@@ -9,17 +9,10 @@ spec:
       default: https://cloud.ibm.com
     - name: git-token
       description: access token for the git repo
-    - name: target-repository
-      description: the git repo
-    - name: target-branch
-      description: the branch for the git repo
-    - name: pr-commit-id
-      description: the commit id/sha for the PullRequest
-      default: ""
     - name: context
-      default: "unit tests"
+      default: "code-engine devops"
     - name: description
-      default: "Unit tests passed"
+      default: "code-engine devops (PR)"
     - name: ibmcloud-region
       description: (Optional) ibmcloud region to use
     - name: pipeline-debug
@@ -29,27 +22,18 @@ spec:
     - name: resource-group
       description: (Optional) Target resource group (name or id) for the ibmcloud login operation  
     # Event params
-    - name: branch
-      description: The git branch
-    - name: commit-id
-      description: commit id
+    - name: target-repository
+      description: the git repo
+    - name: target-branch
+      description: the branch for the git repo
+    - name: pr-commit-id
+      description: the commit id/sha for the PullRequest
+      default: ""
     - name: pr-branch
       description: The branch in the forked git repo from where the PR is made
     - name: pr-repository
       description: The forked git repo from where the PR is made
-    - name: repository
-      description: The git repo
-    - name: region
-    - name: revision
-      description: the git revision/commit for the git repo
-      default: "" 
-    - name: scripts-subpath
-      description: The subpath to the script repo from root
-    - name: scripts-repo
-      description: The variable storing git integration for the repository storing build and deploying source code
-    - name: scripts-repo-branch
-      description: The branch of the scripts-repo
-    - name: custom-script
+    - name: cra-custom-script
       description: (Optional) A custom script to be ran prior to CRA scanning
       default: ""      
     - name: env-props
@@ -173,7 +157,7 @@ spec:
         - name: resource-group
           value: $(params.resource-group)
         - name: custom-script
-          value: $(params.custom-script)
+          value: $(params.cra-custom-script)
         - name: env-props
           value: $(params.env-props)
         - name: fileignore

@@ -83,9 +83,6 @@ properties:
   - name: code-engine-project
     type: text
     value: ${CODE_ENGINE_PROJECT}
-  - name: service-bindings
-    type: text
-    value: ${SERVICE_BINDINGS}
   - name: cpu
     type: text
     value: "0.25"
@@ -162,3 +159,5 @@ properties:
     value: ""
   - name: suffix-for-cd-auto-managed-configuration-resources
     value: ""
+  - name: CE_ENV_a_property
+    value: "value injected as environment variable a_property from ci-pipeline CE_ENV_a_property (because of CE_ENV_ prefix)"
