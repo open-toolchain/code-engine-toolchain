@@ -64,7 +64,7 @@ spec:
       default: "0"
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.29"
     - name: app-deployment-timeout
       description: maximum timeout for the application deployment.
       default: "300"
