@@ -25,6 +25,11 @@ spec:
       description: region of application deployment
     - name: resource-group
       description: resource group for the application deployment
+    - name: custom-image-registry-dockerconfigjson
+      description: |
+        dockerconfigjson for custom images used in pipeline tasks.
+        See https://cloud.ibm.com/docs/devsecops?topic=devsecops-troubleshoot-devsecops#troubleshoot-pipe-abort-early
+      default: "eyJhdXRocyI6e319" # ie. {"auths":{}} base64 encoded
     - name: code-engine-project
       description: Code Engine project for the application deployment
     - name: pipeline-debug
@@ -105,6 +110,13 @@ spec:
         volumeMode: Filesystem
         accessModes:
           - ReadWriteOnce
+    - apiVersion: v1
+      kind: Secret
+      data:
+        .dockerconfigjson: $(params.custom-image-registry-dockerconfigjson)
+      metadata:
+        name: custom-image-registry-pull-secret
+      type: kubernetes.io/dockerconfigjson
     - apiVersion: tekton.dev/v1beta1
       kind: PipelineRun
       metadata:
@@ -177,6 +189,9 @@ spec:
           - name: pipeline-ws
             persistentVolumeClaim:
               claimName: code-engine-$(uid)-pvc
+        podTemplate:
+          imagePullSecrets:
+            - name: custom-image-registry-pull-secret
 ---
 apiVersion: tekton.dev/v1beta1
 kind: TriggerBinding

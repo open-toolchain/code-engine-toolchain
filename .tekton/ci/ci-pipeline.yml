@@ -189,10 +189,13 @@ spec:
     # User control params
     - name: cra-scan-image
       description: Image to use for `code-risk-analyzer` task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.29"
     - name: toolchain-build-image
       description: Image to use for `build` task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.29"
+    - name: tester-tests-image
+      description: Image to use for `unit-test` task
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.29"
     
     # Build related params
     - name: build-strategy
@@ -393,6 +396,8 @@ spec:
       taskRef:
         name: tester-run-tests
       params:
+        - name: tests-image
+          value: $(params.tester-tests-image)
         - name: tests-script
           value: |
             if [ -f ./test/run-tests.sh ]; then
@@ -644,7 +649,7 @@ spec:
           - name: image-pull-secret-kind
         steps:
           - name: evaluate-build-context
-            image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.11
+            image: icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.29
             script: |
               #!/bin/bash
               set -e -o pipefail
