@@ -80,7 +80,7 @@
       "type": "string",
       "disabled": false,
       "validator": {
-        "v-type": "k8s-region",
+        "v-type": "ce-region",
         "params": [
           "api-key"
         ]
