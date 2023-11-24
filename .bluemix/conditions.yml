@@ -18,6 +18,32 @@ repo_conditions:
           - has_issues
           - enable_traceability
           - legal
+      - type: update-service
+        service_id: hostedgit
+        service_label: pipeline-repo
+        parameters:
+          source_provider: hostedgit
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: hostedgit
+        service_label: tekton-catalog-repo
+        parameters:
+          source_provider: hostedgit
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
       - type: update-service-parameters
         service_id: pipeline
         service_label: pr
@@ -40,6 +66,32 @@ repo_conditions:
       - type: update-service
         service_id: githubconsolidated
         service_label: repo
+        parameters:
+          source_provider: githubconsolidated
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: githubconsolidated
+        service_label: pipeline-repo
+        parameters:
+          source_provider: githubconsolidated
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: githubconsolidated
+        service_label: tekton-catalog-repo
         parameters:
           source_provider: githubconsolidated
         keep_parameters:
@@ -82,6 +134,32 @@ repo_conditions:
           - has_issues
           - enable_traceability
           - legal
+      - type: update-service
+        service_id: gitlab
+        service_label: pipeline-repo
+        parameters:
+          source_provider: gitlab
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: gitlab
+        service_label: tekton-catalog-repo
+        parameters:
+          source_provider: gitlab
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
       - type: update-service-parameters
         service_id: pipeline
         service_label: pr
@@ -114,6 +192,32 @@ repo_conditions:
           - has_issues
           - enable_traceability
           - legal
+      - type: update-service
+        service_id: bitbucketgit
+        service_label: pipeline-repo
+        parameters:
+          source_provider: bitbucketgit
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: bitbucketgit
+        service_label: tekton-catalog-repo
+        parameters:
+          source_provider: bitbucketgit
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
       - type: update-service-parameters
         service_id: pipeline
         service_label: pr
@@ -136,6 +240,32 @@ repo_conditions:
       - type: update-service
         service_id: github_integrated
         service_label: repo
+        parameters:
+          source_provider: github_integrated
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: github_integrated
+        service_label: pipeline-repo
+        parameters:
+          source_provider: github_integrated
+        keep_parameters:
+          - repo_name
+          - repo_url
+          - source_repo_url
+          - type
+          - has_issues
+          - enable_traceability
+          - legal
+      - type: update-service
+        service_id: github_integrated
+        service_label: tekton-catalog-repo
         parameters:
           source_provider: github_integrated
         keep_parameters:

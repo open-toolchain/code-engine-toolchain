@@ -44,7 +44,7 @@ services:
     service_id: >
       $env.source_provider ? $env.source_provider : 'hostedgit'
     parameters:
-      repo_name: '{{toolchain.name}}'
+      repo_name: 'app-{{timestamp}}'
       repo_url: >
         if ($env.type === 'link') {
           $env.app_repo
@@ -74,7 +74,7 @@ services:
     service_id: >
       $env.source_provider ? $env.source_provider : 'hostedgit'
     parameters:
-      repo_name: '{{toolchain.name}}-pipeline'
+      repo_name: 'pipeline-{{timestamp}}'
       repo_url: $env.repository
       source_repo_url: $env.services.pipeline-repo.parameters.repo_url
       type: >
@@ -90,7 +90,7 @@ services:
     service_id: >
       $env.source_provider ? $env.source_provider : 'hostedgit'
     parameters:
-      repo_name: '{{toolchain.name}}-tekton-catalog'
+      repo_name: 'tekton-catalog-{{timestamp}}'
       repo_url:  >
         if ($env.source_provider === "github_integrated") {
           "https://github.ibm.com/open-toolchain/tekton-catalog"
