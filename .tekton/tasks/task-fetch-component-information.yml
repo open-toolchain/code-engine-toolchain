@@ -29,7 +29,7 @@ spec:
       default: ""
     - name: task-image
       description: image used to execute this task
-      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.29"
+      default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.46"
     - name: pipeline-debug
       description: Pipeline debug mode
       default: "0"
