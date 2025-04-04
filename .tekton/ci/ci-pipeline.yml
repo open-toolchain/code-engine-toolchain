@@ -497,8 +497,6 @@ spec:
 
               #
               # Setting up the IBM Cloud CLI including the Code Engine plugin
-              apk update
-              apk add curl 
               curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
       
               #
