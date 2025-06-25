@@ -73,8 +73,8 @@ spec:
     - name: path
       description: Repository path to scan
       default: "/artifacts"
-    - name: strict
-      description: (Optional) Enables strict mode for scanning
+    - name: fail-on-cra-vulnerabilities
+      description: (Optional) force failure of task when code-risk-analyzer vulnerabilities are found (enables strict mode for scanning)
       default: "false"
     - name: toolchainid
       description: (Optional) The target toolchain id to be used. Defaults to the current toolchain id
@@ -218,8 +218,8 @@ spec:
             value: $(params.output)
           - name: path
             value: $(params.path)
-          - name: strict
-            value: $(params.strict)
+          - name: fail-on-cra-vulnerabilities
+            value: $(params.fail-on-cra-vulnerabilities)
           - name: toolchainid
             value: $(params.toolchainid)
           - name: verbose

@@ -51,8 +51,8 @@ spec:
       description: (Optional) Prints command result to console
     - name: path
       description: Repository path to scan
-    - name: strict
-      description: (Optional) Enables strict mode for scanning
+    - name: fail-on-cra-vulnerabilities
+      description: (Optional) force failure of task when code-risk-analyzer vulnerabilities are found (enables strict mode for scanning)
     - name: toolchainid
       description: (Optional) The target toolchain id to be used. Defaults to the current toolchain id
     - name: verbose
@@ -180,7 +180,7 @@ spec:
         - name: path
           value: $(params.path)
         - name: strict
-          value: $(params.strict)
+          value: $(params.fail-on-cra-vulnerabilities)
         - name: toolchainid
           value: $(params.toolchainid)
         - name: verbose
@@ -266,6 +266,6 @@ spec:
         - name: description
           value: $(params.description)
         - name: state
-          value: "$(tasks.unit-tests.status)"
+          value: "$(tasks.status)"
         - name: pipeline-debug
           value: $(params.pipeline-debug)

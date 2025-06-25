@@ -165,3 +165,18 @@ properties:
   - name: CE_ENV_a_property
     type: text
     value: "value injected as environment variable a_property from ci-pipeline CE_ENV_a_property (because of CE_ENV_ prefix)"
+  - name: fail-on-cra-vulnerabilities
+    type: single_select
+    value:
+      "true": false
+      "false": true
+  - name: fail-on-lint-errors
+    type: single_select
+    value:
+      "true": true
+      "false": false
+  - name: fail-on-scanned-issues
+    type: single_select
+    value:
+      "true": false
+      "false": true

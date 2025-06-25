@@ -8,6 +8,12 @@ spec:
     - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
+    - name: context
+      description: (Optional) context for the commit status check
+      default: "code-engine devops"
+    - name: description
+      description: (Optional) description for the commit status check
+      default: "code-engine devops (CI)"
     - name: repository
       description: the git repo containing source code. If empty, the repository url will be found from toolchain
       default: ""
@@ -135,8 +141,8 @@ spec:
     - name: path
       description: Repository path to scan
       default: "/artifacts"
-    - name: strict
-      description: (Optional) Enables strict mode for scanning
+    - name: fail-on-cra-vulnerabilities
+      description: (Optional) force failure of task when code-risk-analyzer vulnerabilities are found (enables strict mode for scanning)
       default: "false"
     - name: toolchainid
       description: (Optional) The target toolchain id to be used. Defaults to the current toolchain id
@@ -277,6 +283,10 @@ spec:
             value: $(params.apikey)
           - name: ibmcloud-api
             value: $(params.ibmcloud-api)
+          - name: context
+            value: $(params.context)
+          - name: description
+            value: $(params.description)
           - name: repository
             value: $(params.repository)
           - name: branch
@@ -364,8 +374,8 @@ spec:
             value: $(params.output)
           - name: path
             value: $(params.path)
-          - name: strict
-            value: $(params.strict)
+          - name: fail-on-cra-vulnerabilities
+            value: $(params.fail-on-cra-vulnerabilities)
           - name: toolchainid
             value: $(params.toolchainid)
           - name: verbose

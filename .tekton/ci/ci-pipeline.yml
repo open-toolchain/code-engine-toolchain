@@ -7,6 +7,10 @@ spec:
     - name: ibmcloud-api
       description: the ibmcloud api
       default: https://cloud.ibm.com
+    - name: context
+      default: "code-engine devops"
+    - name: description
+      default: "code-engine devops (CI)"
     - name: repository
       description: the git repo containing source code. If empty, the repository url will be found from toolchain
       default: ""
@@ -127,8 +131,8 @@ spec:
     - name: path
       description: Repository path to scan
       default: "/artifacts"
-    - name: strict
-      description: (Optional) Enables strict mode for scanning
+    - name: fail-on-cra-vulnerabilities
+      description: (Optional) force failure of task when code-risk-analyzer vulnerabilities are found (enables strict mode for scanning)
       default: "false"
     - name: toolchainid
       description: (Optional) The target toolchain id to be used. Defaults to the current toolchain id
@@ -227,6 +231,12 @@ spec:
     - name: job-retrylimit
       description: The number of times to rerun an instance of the job before the job is marked as failed.
       default: "3"
+
+    # DOI
+    - name: doi-environment
+      description: the environment for DOI
+      default: "dev"
+
   workspaces:
     - name: pipeline-ws
   tasks:
@@ -262,6 +272,27 @@ spec:
       workspaces:
         - name: output
           workspace: pipeline-ws
+    - name: set-git-commit-pending
+      taskRef:
+        name: git-set-commit-status
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-ws
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: repository
+          value: $(tasks.git-clone.results.git-repository)
+        - name: revision
+          value: $(tasks.git-clone.results.git-commit)
+        - name: context
+          value: $(params.context)
+        - name: description
+          value: $(params.description)
+        - name: state
+          value: "pending"
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
     - name: code-risk-analyzer
       runAfter:
         - git-clone
@@ -285,7 +316,7 @@ spec:
         - name: path
           value: $(params.path)
         - name: strict
-          value: $(params.strict)
+          value: $(params.fail-on-cra-vulnerabilities)
         - name: toolchainid
           value: $(params.toolchainid)
         - name: verbose
@@ -825,3 +856,73 @@ spec:
           value: $(params.app-health-endpoint)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
+  finally:
+    - name: set-git-commit-status
+      taskRef:
+        name: git-set-commit-status
+      workspaces:
+        - name: artifacts
+          workspace: pipeline-ws
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: repository
+          value: $(tasks.git-clone.results.git-repository)
+        - name: revision
+          value: $(tasks.git-clone.results.git-commit)
+        - name: context
+          value: $(params.context)
+        - name: description
+          value: $(params.description)
+        - name: state
+          value: "$(tasks.status)"
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+    - name: publish-fail-doi-deployrecord
+      taskRef:
+        name: doi-publish-deployrecord
+      when:
+        - input: $(tasks.extract-doi-enablement.results.extracted-value)
+          operator: in
+          values: ["1"]
+        - input: $(tasks.status)
+          operator: in
+          values: ["Failed"]
+      params:
+        - name: toolchain-apikey-secret-key
+          value: "toolchain-apikey"
+        - name: build-number
+          value: "$(tasks.publish-doi-buildrecord.results.build-number)"
+        - name: app-name
+          value: $(params.app-name)
+        - name: environment
+          value: $(params.doi-environment)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+        - name: deploy-status
+          value: "fail"
+    - name: publish-pass-doi-deployrecord
+      taskRef:
+        name: doi-publish-deployrecord
+      when:
+        - input: $(tasks.extract-doi-enablement.results.extracted-value)
+          operator: in
+          values: ["1"]
+        - input: $(tasks.status)
+          operator: in
+          values: ["Succeeded", "Completed"]
+      params:
+        - name: toolchain-apikey-secret-key
+          value: "toolchain-apikey"
+        - name: build-number
+          value: "$(tasks.publish-doi-buildrecord.results.build-number)"
+        - name: app-name
+          value: $(params.app-name)
+        - name: app-url
+          value: $(tasks.deploy-component.results.app-url)
+        - name: environment
+          value: $(params.doi-environment)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+        - name: deploy-status
+          value: "pass"
