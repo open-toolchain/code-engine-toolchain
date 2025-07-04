@@ -140,6 +140,10 @@ spec:
     - name: tester-tests-image
       description: Image to use for `unit-test` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.46"
+    - name: fail-on-test-errors
+      description: |
+        flag ("true" | "false") to indicate if the unit-test should be marked as fail or successfull
+      default: "true"
 
   resourcetemplates:
     - apiVersion: v1
@@ -258,6 +262,8 @@ spec:
             value: $(params.build-script)
           - name: tester-tests-image
             value: $(params.tester-tests-image)
+          - name: fail-on-test-errors
+            value: $(params.fail-on-test-errors)
         podTemplate:
           imagePullSecrets:
             - name: custom-image-registry-pull-secret

@@ -200,7 +200,11 @@ spec:
     - name: tester-tests-image
       description: Image to use for `unit-test` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.46"
-    
+    - name: fail-on-test-errors
+      description: |
+        flag ("true" | "false") to indicate if the unit-test should be marked as fail or successfull
+      default: "true"
+
     # Build related params
     - name: build-strategy
       description:  The strategy to use for building the image. Valid values are 'dockerfile' and 'buildpacks'. 
@@ -367,27 +371,6 @@ spec:
           value: 'reduce .services[] as $service (0; if $service.service_id=="draservicebroker" then .+1 else . end)'
         - name: pipeline-debug
           value: $(params.pipeline-debug)
-    - name: publish-doi-buildrecord
-      runAfter: [extract-doi-enablement]
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-      taskRef:
-        name: doi-publish-buildrecord
-      params:
-        - name: ibmcloud-api
-          value: $(params.ibmcloud-api)
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: git-repository
-          value: $(tasks.git-clone.results.git-repository)
-        - name: git-branch
-          value: $(tasks.git-clone.results.git-branch)
-        - name: git-commit
-          value: $(tasks.git-clone.results.git-commit)
     - name: docker-lint
       when:
         - input: "$(params.build-strategy)"
@@ -429,6 +412,8 @@ spec:
       params:
         - name: tests-image
           value: $(params.tester-tests-image)
+        - name: fail-on-test-errors
+          value: $(params.fail-on-test-errors)
         - name: tests-script
           value: |
             if [ -f ./test/run-tests.sh ]; then
@@ -454,8 +439,6 @@ spec:
           value: $(params.ibmcloud-api)
         - name: toolchain-apikey-secret-key
           value: "toolchain-apikey"
-        - name: build-number
-          value: "$(tasks.publish-doi-buildrecord.results.build-number)"
         - name: app-name
           value: $(params.app-name)
         - name: file-locations
@@ -747,8 +730,6 @@ spec:
       params:
         - name: toolchain-apikey-secret-key
           value: "toolchain-apikey"
-        - name: build-number
-          value: "$(tasks.publish-doi-buildrecord.results.build-number)"
         - name: app-name
           value: $(params.app-name)
         - name: file-locations
@@ -878,9 +859,7 @@ spec:
           value: "$(tasks.status)"
         - name: pipeline-debug
           value: $(params.pipeline-debug)
-    - name: publish-fail-doi-deployrecord
-      taskRef:
-        name: doi-publish-deployrecord
+    - name: publish-fail-doi-buildrecord
       when:
         - input: $(tasks.extract-doi-enablement.results.extracted-value)
           operator: in
@@ -888,11 +867,61 @@ spec:
         - input: $(tasks.status)
           operator: in
           values: ["Failed"]
+      taskRef:
+        name: doi-publish-buildrecord
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: toolchain-apikey-secret-key
+          value: "toolchain-apikey"
+        - name: app-name
+          value: $(params.app-name)
+        - name: git-repository
+          value: $(tasks.git-clone.results.git-repository)
+        - name: git-branch
+          value: $(tasks.git-clone.results.git-branch)
+        - name: git-commit
+          value: $(tasks.git-clone.results.git-commit)
+        - name: build-status
+          value: "fail"
+    - name: publish-pass-doi-buildrecord
+      when:
+        - input: $(tasks.extract-doi-enablement.results.extracted-value)
+          operator: in
+          values: ["1"]
+        - input: $(tasks.status)
+          operator: in
+          values: ["Succeeded", "Completed"]
+      taskRef:
+        name: doi-publish-buildrecord
+      params:
+        - name: ibmcloud-api
+          value: $(params.ibmcloud-api)
+        - name: toolchain-apikey-secret-key
+          value: "toolchain-apikey"
+        - name: app-name
+          value: $(params.app-name)
+        - name: git-repository
+          value: $(tasks.git-clone.results.git-repository)
+        - name: git-branch
+          value: $(tasks.git-clone.results.git-branch)
+        - name: git-commit
+          value: $(tasks.git-clone.results.git-commit)
+        - name: build-status
+          value: "pass"
+    - name: publish-fail-doi-deployrecord
+      taskRef:
+        name: doi-publish-deployrecord
+      when:
+        - input: $(tasks.extract-doi-enablement.results.extracted-value)
+          operator: in
+          values: ["1"]
+        - input: $(tasks.deploy-component.status)
+          operator: in
+          values: ["Failed"]
       params:
         - name: toolchain-apikey-secret-key
           value: "toolchain-apikey"
-        - name: build-number
-          value: "$(tasks.publish-doi-buildrecord.results.build-number)"
         - name: app-name
           value: $(params.app-name)
         - name: environment
@@ -908,14 +937,12 @@ spec:
         - input: $(tasks.extract-doi-enablement.results.extracted-value)
           operator: in
           values: ["1"]
-        - input: $(tasks.status)
+        - input: $(tasks.deploy-component.status)
           operator: in
           values: ["Succeeded", "Completed"]
       params:
         - name: toolchain-apikey-secret-key
           value: "toolchain-apikey"
-        - name: build-number
-          value: "$(tasks.publish-doi-buildrecord.results.build-number)"
         - name: app-name
           value: $(params.app-name)
         - name: app-url

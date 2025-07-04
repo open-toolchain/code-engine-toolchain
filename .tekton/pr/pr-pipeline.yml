@@ -99,6 +99,10 @@ spec:
     - name: tester-tests-image
       description: Image to use for `unit-test` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.46"
+    - name: fail-on-test-errors
+      description: |
+        flag ("true" | "false") to indicate if the unit-test should be marked as fail or successfull
+      default: "true"
 
   workspaces:
     - name: pipeline-ws
@@ -237,6 +241,8 @@ spec:
       params:
         - name: tests-image
           value: $(params.tester-tests-image)
+        - name: fail-on-test-errors
+          value: $(params.fail-on-test-errors)
         - name: tests-script
           value: |
             if [ -f ./test/run-tests.sh ]; then
