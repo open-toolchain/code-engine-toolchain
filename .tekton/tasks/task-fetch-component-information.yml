@@ -42,6 +42,10 @@ spec:
       description: name of the image pull secret
     - name: image-pull-secret-kind
       description: user-managed or ce-managed (code-engine managed)
+    - name: doi-build-number
+      description: Devops Insights build number reference
+    - name: doi-logical-app-name
+      description: Devops Insights logical application name
   steps:
     - name: fetch-component-information
       image: $(params.task-image)
@@ -96,16 +100,22 @@ spec:
           ibmcloud ce revision get --name "$(params.application-revision)" --output json > revision_output.json
           IMAGE=$(jq -r '.spec.containers[0].image' revision_output.json)
           IMAGE_PULL_SECRET=$(jq -r '.spec.imagePullSecrets[0].name//empty' revision_output.json)
+          CD_DOI_BUILD_NUMBER=$(jq -r '.spec.containers[0].env[] | select(.name=="CD_DOI_BUILD_NUMBER") | .value//empty' revision_output.json)
+          CD_DOI_LOGICAL_APP_NAME=$(jq -r '.spec.containers[0].env[] | select(.name=="CD_DOI_LOGICAL_APP_NAME") | .value//empty' revision_output.json)
         elif [[ "$(params.deployment-type)" == "job" ]]; then
           # job
           ibmcloud ce job get --name "$(params.component-name)" --output json > component_output.json
           IMAGE=$(jq -r '.spec.template.containers[0].image' component_output.json)
           IMAGE_PULL_SECRET=$(jq -r '.spec.template.imagePullSecrets[0].name//empty' component_output.json)
+          CD_DOI_BUILD_NUMBER=$(jq -r '.spec.template.containers[0].env[] | select(.name=="CD_DOI_BUILD_NUMBER") | .value//empty' component_output.json)
+          CD_DOI_LOGICAL_APP_NAME=$(jq -r '.spec.template.containers[0].env[] | select(.name=="CD_DOI_LOGICAL_APP_NAME") | .value//empty' component_output.json)
         else
           # application
           ibmcloud ce application get --name "$(params.component-name)" --output json > component_output.json
           IMAGE=$(jq -r '.spec.template.spec.containers[0].image' component_output.json)
           IMAGE_PULL_SECRET=$(jq -r '.spec.template.spec.imagePullSecrets[0].name//empty' component_output.json)
+          CD_DOI_BUILD_NUMBER=$(jq -r '.spec.template.spec.containers[0].env[] | select(.name=="CD_DOI_BUILD_NUMBER") | .value//empty' component_output.json)
+          CD_DOI_LOGICAL_APP_NAME=$(jq -r '.spec.template.spec.containers[0].env[] | select(.name=="CD_DOI_LOGICAL_APP_NAME") | .value//empty' component_output.json)
         fi
         if [ -n "$IMAGE_PULL_SECRET" ]; then          
           ibmcloud ce registry get --name "$IMAGE_PULL_SECRET" --output json > secret_output.json
@@ -122,3 +132,5 @@ spec:
         echo -n "$(echo $IMAGE |  awk -F: '{print $2}')" >$(results.image-tag.path)
         echo -n "$IMAGE_PULL_SECRET" >$(results.image-pull-secret.path)
         echo -n "$IMAGE_PULL_SECRET_KIND" >$(results.image-pull-secret-kind.path)
+        echo -n "$CD_DOI_BUILD_NUMBER" >$(results.doi-build-number.path)
+        echo -n "$CD_DOI_LOGICAL_APP_NAME" >$(results.doi-logical-app-name.path)

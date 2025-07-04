@@ -92,6 +92,9 @@ spec:
     - name: remove-unspecified-references-to-configuration-resources
       description: remove references to unspecified configuration resources (configmap/secret) references (pulled from env-from-configmaps, env-from-secrets along with auto-managed by CD)
       default: "false"
+    - name: doi-build-number
+      description: Devops Insights build number reference. Default to the CD Tekton Pipeline build number
+      default: ""
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)
@@ -346,6 +349,11 @@ spec:
           env_from_secret_params="--env-from-secret $secret_toolchain_managed $env_from_secret_params"
         fi
 
+        CD_DOI_BUILD_NUMBER="$(params.doi-build-number)"
+        if [ -z "$CD_DOI_BUILD_NUMBER" ]; then
+          CD_DOI_BUILD_NUMBER="$BUILD_NUMBER"
+        fi
+
         echo "deployment type: $(params.deployment-type)"
         if [[ $(params.deployment-type) == "application" ]]; then
             echo "Deploying your code as Code Engine application '$(params.app-name)'..."
@@ -391,6 +399,8 @@ spec:
             ibmcloud ce app $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
                 --registry-secret "$IMAGE_PULL_SECRET" \
+                --env CD_DOI_LOGICAL_APP_NAME="$(params.app-name)" \
+                --env CD_DOI_BUILD_NUMBER="$CD_DOI_BUILD_NUMBER" \
                 $env_from_configmap_params \
                 $env_from_secret_params \
                 $env_from_configmap_rm_params \
@@ -532,6 +542,8 @@ spec:
             ibmcloud ce job $OPERATION -n $(params.app-name) \
                 --image "$IMAGE_URL:$(params.image-tags)" \
                 --registry-secret "$IMAGE_PULL_SECRET" \
+                --env CD_DOI_LOGICAL_APP_NAME="$(params.app-name)" \
+                --env CD_DOI_BUILD_NUMBER="$CD_DOI_BUILD_NUMBER" \
                 $env_from_configmap_params \
                 $env_from_secret_params \
                 $env_from_configmap_rm_params \

@@ -97,6 +97,12 @@ spec:
     - name: job-retrylimit
       description: The number of times to rerun an instance of the job before the job is marked as failed.
       default: "3"
+
+    # DOI
+    - name: doi-environment
+      description: the environment for DOI
+      default: "prod"
+
   workspaces:
     - name: pipeline-ws
   tasks:
@@ -116,6 +122,15 @@ spec:
           value: $(params.source-resource-group)
         - name: code-engine-project
           value: $(params.source-code-engine-project)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+    - name: extract-doi-enablement
+      taskRef:
+        name: toolchain-extract-value
+      params:
+        # count the number of service in the toolchain that are DevopsInsights
+        - name: expression
+          value: 'reduce .services[] as $service (0; if $service.service_id=="draservicebroker" then .+1 else . end)'
         - name: pipeline-debug
           value: $(params.pipeline-debug)
     - name: deploy-component
@@ -214,3 +229,52 @@ spec:
           value: $(params.app-health-endpoint)
         - name: pipeline-debug
           value: $(params.pipeline-debug)
+  finally:
+    - name: publish-fail-doi-deployrecord
+      taskRef:
+        name: doi-publish-deployrecord
+      when:
+        - input: $(tasks.extract-doi-enablement.results.extracted-value)
+          operator: in
+          values: ["1"]
+        - input: $(tasks.status)
+          operator: in
+          values: ["Failed"]
+      params:
+        - name: toolchain-apikey-secret-key
+          value: "toolchain-apikey"
+        - name: build-number
+          value: "$(tasks.fetch-component-information.results.doi-build-number)"
+        - name: app-name
+          value: "$(tasks.fetch-component-information.results.doi-logical-app-name)"
+        - name: environment
+          value: $(params.doi-environment)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+        - name: deploy-status
+          value: "fail"
+    - name: publish-pass-doi-deployrecord
+      taskRef:
+        name: doi-publish-deployrecord
+      when:
+        - input: $(tasks.extract-doi-enablement.results.extracted-value)
+          operator: in
+          values: ["1"]
+        - input: $(tasks.status)
+          operator: in
+          values: ["Succeeded", "Completed"]
+      params:
+        - name: toolchain-apikey-secret-key
+          value: "toolchain-apikey"
+        - name: build-number
+          value: "$(tasks.fetch-component-information.results.doi-build-number)"
+        - name: app-name
+          value: "$(tasks.fetch-component-information.results.doi-logical-app-name)"
+        - name: app-url
+          value: $(tasks.deploy-component.results.app-url)
+        - name: environment
+          value: $(params.doi-environment)
+        - name: pipeline-debug
+          value: $(params.pipeline-debug)
+        - name: deploy-status
+          value: "pass"

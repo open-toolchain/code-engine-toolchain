@@ -244,6 +244,11 @@ spec:
       description: The number of times to rerun an instance of the job before the job is marked as failed.
       default: "3"
 
+    # DOI
+    - name: doi-environment
+      description: the environment for DOI
+      default: "dev"
+
   resourcetemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim
@@ -430,6 +435,8 @@ spec:
             value: $(params.job-retrylimit)
           - name: wait-timeout
             value: $(params.wait-timeout)
+          - name: doi-environment
+            value: $(params.doi-environment)
         workspaces:
           - name: pipeline-ws
             persistentVolumeClaim:
