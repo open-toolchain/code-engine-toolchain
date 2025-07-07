@@ -48,7 +48,6 @@ properties:
     value: "0"
     type: text
   - name: fail-on-cra-vulnerabilities
-    value: "false"
     type: single_select
     value:
       "true": false
