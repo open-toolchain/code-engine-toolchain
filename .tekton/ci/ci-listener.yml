@@ -477,7 +477,7 @@ metadata:
 spec:
   params:
     - name: repository
-      value: "$(event.repository.url)"
+      value: "$(event.repository.html_url)"
     - name: branch
       value: "$(event.ref)"
     - name: revision
