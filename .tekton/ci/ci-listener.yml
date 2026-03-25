@@ -9,10 +9,10 @@ spec:
       description: the ibmcloud api
       default: https://cloud.ibm.com
     - name: context
-      description: (Optional) context for the commit status check
+      description:  context for the commit status check
       default: "code-engine devops"
     - name: description
-      description: (Optional) description for the commit status check
+      description:  description for the commit status check
       default: "code-engine devops (CI)"
     - name: repository
       description: the git repo containing source code. If empty, the repository url will be found from toolchain
@@ -33,10 +33,13 @@ spec:
       description: force failure of task when vulnerability advisor scan issues are found
       default: "false"
     - name: path-to-context
+      description: the path to the context that is used for the build (`.` meaning current directory)
       default: "."
     - name: path-to-dockerfile
+      description: the path to the Dockerfile that is used for the build (`.` meaning current directory)
       default: "."
     - name: dockerfile
+      description: The name of the Dockerfile to use for building the image
       default: "Dockerfile"
     - name: registry-region
       description: The IBM Cloud region for image registry
@@ -54,9 +57,9 @@ spec:
     - name: resource-group
       description: resource group for the application deployment
     - name: custom-image-registry-dockerconfigjson
-      description: |
+      description: >-
         dockerconfigjson for custom images used in pipeline tasks.
-        See https://cloud.ibm.com/docs/devsecops?topic=devsecops-troubleshoot-devsecops#troubleshoot-pipe-abort-early
+        See [Pipeline cannot pull images](https://cloud.ibm.com/docs/devsecops?topic=devsecops-troubleshoot-devsecops#troubleshoot-pipe-abort-early)
       default: "eyJhdXRocyI6e319" # ie. {"auths":{}} base64 encoded
     - name: code-engine-project
       description: Code Engine project for the application deployment
@@ -119,36 +122,36 @@ spec:
     - name: apikey
       description: The ibmcloud api key
     - name: ibmcloud-region
-      description: (Optional) ibmcloud region to use
+      description:  ibmcloud region to use
       default: ""
 
     # Common command related params
     - name: cra-custom-script
-      description: (Optional) Filepath to a custom script that is ran prior to CRA scanning
+      description:  Filepath to a custom script that is ran prior to CRA scanning
       default: ""
     - name: env-props
-      description: (Optional) A custom configuration of environment properties to source before execution, ex. 'export ABC=123 export DEF=456'
+      description:  A custom configuration of environment properties to source before execution, ex. 'export ABC=123 export DEF=456'
       default: ""
     - name: fileignore
-      description: (Optional) Filepath to .fileignore
+      description:  Filepath to .fileignore
       default: ""
     - name: ibmcloud-trace
-      description: (Optional) Enables IBMCLOUD_TRACE for ibmcloud cli logging
+      description:  Enables IBMCLOUD_TRACE for ibmcloud cli logging
       default: "false"
     - name: output
-      description: (Optional) Prints command result to console
+      description:  Prints command result to console
       default: "false"
     - name: path
       description: Repository path to scan
       default: "/artifacts"
     - name: fail-on-cra-vulnerabilities
-      description: (Optional) force failure of task when code-risk-analyzer vulnerabilities are found (enables strict mode for scanning)
+      description:  force failure of task when code-risk-analyzer vulnerabilities are found (enables strict mode for scanning)
       default: "false"
     - name: toolchainid
-      description: (Optional) The target toolchain id to be used. Defaults to the current toolchain id
+      description:  The target toolchain id to be used. Defaults to the current toolchain id
       default: ""
     - name: verbose
-      description: (Optional) Enable verbose log messages
+      description:  Enable verbose log messages
       default: "false"
 
     # BOM related params
@@ -159,12 +162,12 @@ spec:
       description: Filepath to store generated Bill of Materials
       default: "bom.json"
     - name: docker-build-flags
-      description: (Optional) Customize docker build command for build stage scanning
+      description:  Customize docker build command for build stage scanning
       default: ""
     - name: docker-build-context
-      description: (Optional) If specified, CRA will use the directory in the path parameter as docker build context
+      description:  If specified, CRA will use the directory in the path parameter as docker build context
     - name: dockerfile-pattern
-      description: (Optional) Pattern to identify Dockerfile in the repository
+      description:  Pattern to identify Dockerfile in the repository
     - name: docker-registry-secret
       description: Secret to authenticate for docker-registry-url
     - name: docker-registry-url
@@ -174,13 +177,13 @@ spec:
       description: Username to authenticate for docker-registry-url
       default: ""
     - name: gradle-exclude-configs
-      description: (Optional) Exclude gradle configurations, ex. 'runtimeClasspath,testCompileClasspath'
+      description:  Exclude gradle configurations, ex. 'runtimeClasspath,testCompileClasspath'
       default: ""
     - name: maven-exclude-scopes
-      description: (Optional) Exclude maven scopes, ex. 'test,compile'
+      description:  Exclude maven scopes, ex. 'test,compile'
       default: ""
     - name: nodejs-create-package-lock
-      description: (Optional) Enable the task to build the package-lock.json for node.js projects
+      description:  Enable the task to build the package-lock.json for node.js projects
       default: "false"
     - name: prev-report
       description: Filepath to previous BoM report to skip Dockerfile or application manifest scans
@@ -193,10 +196,10 @@ spec:
 
     # Vulnerability related params
     - name: cveignore
-      description: (Optional) Filepath to cveignore
+      description:  Filepath to cveignore
       default: ""
     - name: exclude-dev
-      description: (Optional) Exclude dev dependencies during vulnerability scan
+      description:  Exclude dev dependencies during vulnerability scan
       default: "false"
     - name: vulnerability-report
       description: Filepath to store Vulnerability report, not stored if empty
@@ -213,8 +216,7 @@ spec:
       description: Image to use for `unit-test` task
       default: "icr.io/continuous-delivery/pipeline/pipeline-base-ubi:3.46"
     - name: fail-on-test-errors
-      description: |
-        flag ("true" | "false") to indicate if the unit-test should be marked as fail or successfull
+      description: flag (`true` or `false`) to indicate if the unit-test should be marked as fail or successfull
       default: "true"
 
     # BuildPack related params

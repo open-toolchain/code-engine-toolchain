@@ -26,9 +26,9 @@ spec:
     - name: resource-group
       description: resource group for the application deployment
     - name: custom-image-registry-dockerconfigjson
-      description: |
+      description: >-
         dockerconfigjson for custom images used in pipeline tasks.
-        See https://cloud.ibm.com/docs/devsecops?topic=devsecops-troubleshoot-devsecops#troubleshoot-pipe-abort-early
+        See [Pipeline cannot pull images](https://cloud.ibm.com/docs/devsecops?topic=devsecops-troubleshoot-devsecops#troubleshoot-pipe-abort-early)
       default: "eyJhdXRocyI6e319" # ie. {"auths":{}} base64 encoded
     - name: code-engine-project
       description: Code Engine project for the application deployment
