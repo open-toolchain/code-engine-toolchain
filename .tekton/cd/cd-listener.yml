@@ -1,5 +1,5 @@
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: TriggerTemplate
 metadata:
   name: code-engine-cd-trigger-template
@@ -122,7 +122,7 @@ spec:
       metadata:
         name: custom-image-registry-pull-secret
       type: kubernetes.io/dockerconfigjson
-    - apiVersion: tekton.dev/v1beta1
+    - apiVersion: tekton.dev/v1
       kind: PipelineRun
       metadata:
         name: code-engine-$(uid)
@@ -200,14 +200,14 @@ spec:
           imagePullSecrets:
             - name: custom-image-registry-pull-secret
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: TriggerBinding
 metadata:
   name: code-engine-cd-manual-trigger
 spec:
   params:
 ---
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: EventListener
 metadata:
   name: cd-manual-run

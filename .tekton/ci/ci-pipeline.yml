@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Pipeline
 metadata:
   name: code-engine-pipeline
@@ -236,11 +236,6 @@ spec:
       description: The number of times to rerun an instance of the job before the job is marked as failed.
       default: "3"
 
-    # DOI
-    - name: doi-environment
-      description: the environment for DOI
-      default: "dev"
-
   workspaces:
     - name: pipeline-ws
   tasks:
@@ -362,15 +357,6 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    - name: extract-doi-enablement
-      taskRef:
-        name: toolchain-extract-value
-      params:
-        # count the number of service in the toolchain that are DevopsInsights
-        - name: expression
-          value: 'reduce .services[] as $service (0; if $service.service_id=="draservicebroker" then .+1 else . end)'
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
     - name: docker-lint
       when:
         - input: "$(params.build-strategy)"
@@ -423,30 +409,6 @@ spec:
             else
               echo "Test runner script not found: ./test/run-tests.sh"
             fi
-      workspaces:
-        - name: artifacts
-          workspace: pipeline-ws
-    - name: publish-doi-code-tests
-      runAfter: [unit-tests]
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-      taskRef:
-        name: doi-publish-testrecord
-      params:
-        - name: ibmcloud-api
-          value: $(params.ibmcloud-api)
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: file-locations
-          value: "$(tasks.unit-tests.results.test-result-file-paths)"
-        - name: test-types
-          value: "$(tasks.unit-tests.results.test-types)"
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
@@ -719,28 +681,6 @@ spec:
       workspaces:
         - name: artifacts
           workspace: pipeline-ws
-    - name: publish-doi-va-scan-record
-      runAfter: [vulnerability-advisor]
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-      taskRef:
-        name: doi-publish-testrecord
-      params:
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: file-locations
-          value: $(tasks.vulnerability-advisor.results.scan-report-file)
-        - name: test-types
-          value: vulnerabilityadvisor
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
-      workspaces:
-        - name: artifacts
-          workspace: pipeline-ws
     - name: deploy-component
       taskRef:
         name: deploy-to-code-engine
@@ -859,97 +799,3 @@ spec:
           value: "$(tasks.status)"
         - name: pipeline-debug
           value: $(params.pipeline-debug)
-    - name: publish-fail-doi-buildrecord
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-        - input: $(tasks.status)
-          operator: in
-          values: ["Failed"]
-      taskRef:
-        name: doi-publish-buildrecord
-      params:
-        - name: ibmcloud-api
-          value: $(params.ibmcloud-api)
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: git-repository
-          value: $(tasks.git-clone.results.git-repository)
-        - name: git-branch
-          value: $(tasks.git-clone.results.git-branch)
-        - name: git-commit
-          value: $(tasks.git-clone.results.git-commit)
-        - name: build-status
-          value: "fail"
-    - name: publish-pass-doi-buildrecord
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-        - input: $(tasks.status)
-          operator: in
-          values: ["Succeeded", "Completed"]
-      taskRef:
-        name: doi-publish-buildrecord
-      params:
-        - name: ibmcloud-api
-          value: $(params.ibmcloud-api)
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: git-repository
-          value: $(tasks.git-clone.results.git-repository)
-        - name: git-branch
-          value: $(tasks.git-clone.results.git-branch)
-        - name: git-commit
-          value: $(tasks.git-clone.results.git-commit)
-        - name: build-status
-          value: "pass"
-    - name: publish-fail-doi-deployrecord
-      taskRef:
-        name: doi-publish-deployrecord
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-        - input: $(tasks.deploy-component.status)
-          operator: in
-          values: ["Failed"]
-      params:
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: environment
-          value: $(params.doi-environment)
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
-        - name: deploy-status
-          value: "fail"
-    - name: publish-pass-doi-deployrecord
-      taskRef:
-        name: doi-publish-deployrecord
-      when:
-        - input: $(tasks.extract-doi-enablement.results.extracted-value)
-          operator: in
-          values: ["1"]
-        - input: $(tasks.deploy-component.status)
-          operator: in
-          values: ["Succeeded", "Completed"]
-      params:
-        - name: toolchain-apikey-secret-key
-          value: "toolchain-apikey"
-        - name: app-name
-          value: $(params.app-name)
-        - name: app-url
-          value: $(tasks.deploy-component.results.app-url)
-        - name: environment
-          value: $(params.doi-environment)
-        - name: pipeline-debug
-          value: $(params.pipeline-debug)
-        - name: deploy-status
-          value: "pass"

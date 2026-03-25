@@ -283,9 +283,7 @@ services:
             } else {
               'main'
             }
-          DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}' 
-  devops-insights:
-      service_id: 'draservicebroker'
+          DEPLOYMENT_TYPE: '{{form.buildpipeline.parameters.deployment}}'
 form:
   pipeline:
     parameters:

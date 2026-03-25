@@ -382,20 +382,4 @@ vault_conditions:
         service_id: hashicorpvault
         service_label: hc-vault
 
-tools_conditions:
-  - condition:
-      any:
-        - parameter: doi
-          value: true
-    actions:
-      - type: create-service
-        service_id: draservicebroker
-        service_label: devops-insights
-  - condition:
-      any:
-        - parameter: doi
-          value: false
-    actions:
-      - type: delete-service
-        service_id: draservicebroker
-        service_label: devops-insights
+tools_conditions: []

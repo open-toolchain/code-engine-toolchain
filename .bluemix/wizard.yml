@@ -130,13 +130,6 @@ steps:
       $ref: "#/messages/wizard.step.deploy.title"
     form: pipeline
 
-  - name: optionaltools
-    title:
-      $ref: "#/messages/wizard.step.optionaltools.title"
-    form: wizard_optional_tools
-    conditions:
-      $ref: conditions.yml#/tools_conditions
-
   - name: summary
     title:
       $ref: "#/messages/wizard.step.summary.title"
@@ -154,12 +147,6 @@ form:
       secrets-manager: true
     schema:
       $ref: wizard_vault.json
-
-  wizard_optional_tools:
-    parameters:
-      doi: true
-    schema:
-      $ref: wizard_optional_tools.json
 
   wizard_summary:
     schema:

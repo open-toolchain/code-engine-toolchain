@@ -1,4 +1,4 @@
-apiVersion: tekton.dev/v1beta1
+apiVersion: tekton.dev/v1
 kind: Task
 metadata:
   name: deploy-to-code-engine
@@ -92,9 +92,6 @@ spec:
     - name: remove-unspecified-references-to-configuration-resources
       description: remove references to unspecified configuration resources (configmap/secret) references (pulled from env-from-configmaps, env-from-secrets along with auto-managed by CD)
       default: "false"
-    - name: doi-build-number
-      description: Devops Insights build number reference. Default to the CD Tekton Pipeline build number
-      default: ""
   results:
     - name: app-url
       description: The running application's URL (obtained from APP_URL variable set by the executed script)
@@ -347,11 +344,6 @@ spec:
         secret_toolchain_managed="cd-auto-${PIPELINE_ID}-secret$(params.suffix-for-cd-auto-managed-configuration-resources)"
         if setup-ce-env-component_ "secret" "$secret_toolchain_managed"; then
           env_from_secret_params="--env-from-secret $secret_toolchain_managed $env_from_secret_params"
-        fi
-
-        CD_DOI_BUILD_NUMBER="$(params.doi-build-number)"
-        if [ -z "$CD_DOI_BUILD_NUMBER" ]; then
-          CD_DOI_BUILD_NUMBER="$BUILD_NUMBER"
         fi
 
         echo "deployment type: $(params.deployment-type)"
