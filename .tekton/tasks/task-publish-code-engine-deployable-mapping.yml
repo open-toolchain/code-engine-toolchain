@@ -52,10 +52,7 @@ spec:
         set -e -o pipefail
 
         if [ $(params.pipeline-debug) == 1 ]; then
-            pwd
-            env
-            trap env EXIT
-            set -x
+          set -x
         fi
 
         if [[ "$(params.deployment-type)" == "job" ]]; then
